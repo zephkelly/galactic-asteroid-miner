@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 106398923809917211}
   - component: {fileID: 8310338067648253354}
   m_Layer: 0
-  m_Name: Astroid-S
-  m_TagString: Untagged
+  m_Name: Asteroid-S
+  m_TagString: Asteroid
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -48,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxRotation: 0.1
+  rotationMultiplier: 1
 --- !u!50 &106398923809917211
 Rigidbody2D:
   serializedVersion: 4
