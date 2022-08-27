@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8874523443404751}
   - component: {fileID: 106398923809917211}
   - component: {fileID: 8310338067648253354}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Asteroid-S
   m_TagString: Asteroid
   m_Icon: {fileID: 0}
@@ -114,7 +114,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4240829733660073789}
   - component: {fileID: 6343666858576425913}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

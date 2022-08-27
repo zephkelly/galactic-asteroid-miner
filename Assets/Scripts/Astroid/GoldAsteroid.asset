@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 902a16ca3694bb34aa3f26210bdd292f, type: 3}
   m_Name: GoldAsteroid
   m_EditorClassIdentifier: 
-  asteroidType: 0
-  asteroidDensity: 0
-  asteroidValue: 0
-  value: 0
+  asteroidType: 3
+  asteroidDensity: 1.8144628
+  asteroidValue: 8
+  value: 14.515702
