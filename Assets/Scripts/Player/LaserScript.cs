@@ -33,9 +33,23 @@ namespace zephkelly
       laserParticleSystem.GetCollisionEvents(other, collisonEvents);
 
       GameObject explosion = Instantiate(explosionPrefab, collisonEvents[0].intersection, Quaternion.identity);
+      var explosionLight = explosion.GetComponent<Light2D>();
 
-      laserParticleSystem.Clear();
+      StartCoroutine(FadeLight(explosionLight, 0, 0.5f));
+      
       Destroy(explosion, 0.5f);
+    }
+
+    IEnumerator FadeLight(Light2D light, float targetIntensity, float duration)
+    {
+      float startIntensity = light.intensity;
+      float t = 0;
+      while (t < 1)
+      {
+        t += Time.deltaTime / duration;
+        light.intensity = Mathf.Lerp(startIntensity, targetIntensity, t);
+        yield return null;
+      }
     }
   }
 }
