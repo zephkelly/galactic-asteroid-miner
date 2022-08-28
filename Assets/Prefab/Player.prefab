@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Intensity: 3
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 00000000
+  m_ApplyToSortingLayers: 000000001bcbbd5c53380e59
   m_LightCookieSprite: {fileID: 21300000, guid: 119f93d0bcbf1e743bf5fcf237507d39, type: 3}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -5066,7 +5066,7 @@ MonoBehaviour:
   m_Intensity: 3
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 00000000
+  m_ApplyToSortingLayers: 000000001bcbbd5c53380e59
   m_LightCookieSprite: {fileID: 21300000, guid: 119f93d0bcbf1e743bf5fcf237507d39, type: 3}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -5148,10 +5148,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8847222160136322753}
-  - component: {fileID: 8847222160136322815}
   - component: {fileID: 8847222160136322814}
-  - component: {fileID: 8847222160136322752}
-  - component: {fileID: 4397339477279489156}
+  - component: {fileID: 1928648050}
+  - component: {fileID: 1928648049}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -5176,7 +5175,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!50 &8847222160136322815
+--- !u!70 &8847222160136322814
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8847222160136322754}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0.04}
+  m_Size: {x: 0.35, y: 0.84}
+  m_Direction: 0
+--- !u!50 &1928648050
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
@@ -5197,23 +5212,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!70 &8847222160136322814
-CapsuleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8847222160136322754}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.04}
-  m_Size: {x: 0.35, y: 0.84}
-  m_Direction: 0
---- !u!114 &8847222160136322752
+--- !u!114 &1928648049
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5228,22 +5227,9 @@ MonoBehaviour:
   smallAsteroid: {fileID: 1239589416757620075, guid: a9acb5639645b864f9e56943f9dc4fc8, type: 3}
   mediumAsteroid: {fileID: 4542185127268315299, guid: d41d89fd98ed7f943b36098b0c502900, type: 3}
   largeAsteroid: {fileID: 6691027381410551707, guid: 4a004f3277b42f7478d5b6df64aa969b, type: 3}
-  moveSpeed: 10
+  rigid2D: {fileID: 1928648050}
+  moveSpeed: 5
   rotationSpeed: 5
---- !u!114 &4397339477279489156
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8847222160136322754}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 30b74b3126d63a94c80d02f1471793aa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  laserObject: {fileID: 1395682308}
-  laserWeapon: {fileID: 1395682312}
 --- !u!1 &8847222160360162418
 GameObject:
   m_ObjectHideFlags: 0
@@ -5316,8 +5302,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1555942171
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: a3be4bf96e5dc0b40b8d994bcd7db2cd, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

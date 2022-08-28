@@ -13,7 +13,7 @@ namespace zephkelly
     //public GameState State;
     //public static event Action<GameState> OnGameStateChanged;
 
-    public void Awake()
+    private void Awake()
     {
       if (Instance == null) 
       {
@@ -23,7 +23,7 @@ namespace zephkelly
       }
     }
 
-    public void OnApplicationQuit()
+    private void OnApplicationQuit()
     {
       GameManager.Instance = null;
     } 

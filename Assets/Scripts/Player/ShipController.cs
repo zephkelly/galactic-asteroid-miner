@@ -12,7 +12,7 @@ namespace zephkelly
     [SerializeField] GameObject mediumAsteroid;
     [SerializeField] GameObject largeAsteroid;
 
-    private Rigidbody2D rigid2D;
+    [SerializeField] Rigidbody2D rigid2D;
     private Transform shipTransform;
     private Vector2 thrustDirection;
 
@@ -22,8 +22,12 @@ namespace zephkelly
 
     public void Awake()
     {
-      rigid2D = gameObject.GetComponent<Rigidbody2D>();
+      rigid2D = GetComponent<Rigidbody2D>();
       shipTransform = gameObject.GetComponent<Transform>();
+    }
+
+    private void Start()
+    {
       inputs = InputManager.Instance;
     }
 

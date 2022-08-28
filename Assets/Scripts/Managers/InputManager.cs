@@ -21,17 +21,17 @@ namespace zephkelly
     public Vector2 MouseWorldPosition { get { return mouseWorldPosition; } }
     public Vector2 KeyboardInput { get { return keyboardInputNormalized; } }
   
-    void Awake()
+    private void Awake()
     {
       if (Instance == null)
       {
         Instance = this;
       } else {
-        Destroy(this);
+        Destroy(gameObject);
       }
     }
 
-    public void Update()
+    private void Update()
     {
       UpdateMouseInput();
       UpdateKeyboardInput();
@@ -53,7 +53,7 @@ namespace zephkelly
       keyboardInputNormalized = keyboardInput.normalized;
     }
 
-    public void OnApplicationQuit()
+    private void OnApplicationQuit()
     {
       InputManager.Instance = null;
     } 
