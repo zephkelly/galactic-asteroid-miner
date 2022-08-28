@@ -7,18 +7,18 @@ namespace zephkelly
   public class ShipShoot : MonoBehaviour
   {
     [SerializeField] GameObject laserObject; //Set in inspector
-    [SerializeField] LaserScript laserScript;
+    [SerializeField] LaserParticleFire laserWeapon;
 
     public void Start()
     {
-      laserScript = laserObject.GetComponent<LaserScript>();
+      laserWeapon = laserObject.GetComponent<LaserParticleFire>();
     }
 
     public void Update()
     {
       if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
       {
-        laserScript.Shoot();
+        laserWeapon.Shoot();
       }
     }  
   }

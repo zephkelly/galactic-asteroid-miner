@@ -5,12 +5,13 @@ using UnityEngine.Rendering.Universal;
 
 namespace zephkelly
 {
-  public class LaserScript : MonoBehaviour
+  public class LaserParticleFire : MonoBehaviour
   {
     [SerializeField] ParticleSystem laserParticleSystem;
-    [SerializeField] GameObject explosionPrefab;
-
     private List<ParticleCollisionEvent> collisonEvents;
+
+    [SerializeField] GameObject explosionPrefab;
+    [SerializeField] float explosionForce = 4f;
 
     public void Awake()
     {
@@ -30,17 +31,24 @@ namespace zephkelly
 
     private void OnParticleCollision(GameObject other)
     {
+      //Grab where our particles are colliding
       laserParticleSystem.GetCollisionEvents(other, collisonEvents);
+      Vector2 hitPoint = collisonEvents[0].intersection;
 
-      GameObject explosion = Instantiate(explosionPrefab, collisonEvents[0].intersection, Quaternion.identity);
+      //Make a prefab of the explosion and grab a reference to the light attached to its gameobject
+      GameObject explosion = Instantiate(explosionPrefab, hitPoint, Quaternion.identity);
       var explosionLight = explosion.GetComponent<Light2D>();
 
-      StartCoroutine(FadeLight(explosionLight, 0, 0.5f));
-      
+      //Add force to the object we hit
+      var directionOfForce = (hitPoint - (Vector2)transform.position).normalized;
+      other.GetComponent<Rigidbody2D>().AddForceAtPosition(directionOfForce * explosionForce, hitPoint, ForceMode2D.Impulse);
+
+      //Fade the explosion light over time and destroy when done
+      StartCoroutine(FadeExplosionLight(explosionLight, 0, 0.5f));
       Destroy(explosion, 0.5f);
     }
 
-    IEnumerator FadeLight(Light2D light, float targetIntensity, float duration)
+    IEnumerator FadeExplosionLight(Light2D light, float targetIntensity, float duration)
     {
       float startIntensity = light.intensity;
       float t = 0;
