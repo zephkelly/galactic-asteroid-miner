@@ -10,7 +10,8 @@ namespace zephkelly
 
     [SerializeField] float starOrbitSpeed = 0.2f;
     [SerializeField] float distanceSpeedModifier = 0.8f;
-    [SerializeField] float dragModifier = 1f;
+    [SerializeField] float drag = 1f;
+    [SerializeField] float gravityModifier = 0.1f;
 
     private List<Rigidbody2D> orbitingBodies = new List<Rigidbody2D>();
 
@@ -32,7 +33,11 @@ namespace zephkelly
         var rotationForce = starOrbitSpeed * (distanceToStar * distanceSpeedModifier);
 
         //Arbitrary force applied based on my weird mass formula
-        body.AddForce(perpendicularDirection * rotationForce * (body.mass / 40), ForceMode2D.Force);
+        float force = rotationForce * (body.mass / 40);
+        body.AddForce(perpendicularDirection * force, ForceMode2D.Force);
+        body.AddForce(directionToStar * (force / gravityModifier), ForceMode2D.Force);
+
+        body.drag = drag;
       }
     }
 
@@ -43,7 +48,6 @@ namespace zephkelly
       if(other.gameObject.tag == "Player") _playerDrag = other.gameObject.GetComponent<Rigidbody2D>().drag;
 
       orbitingBodies.Add(_rigid2D);
-      _rigid2D.drag = dragModifier;
     }
 
     private void OnTriggerExit2D(Collider2D other) 

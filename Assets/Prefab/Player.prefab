@@ -5151,6 +5151,7 @@ GameObject:
   - component: {fileID: 8847222160136322814}
   - component: {fileID: 1928648050}
   - component: {fileID: 1928648049}
+  - component: {fileID: 1928648051}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -5203,9 +5204,9 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 0.5
-  m_LinearDrag: 2
-  m_AngularDrag: 1
+  m_Mass: 6
+  m_LinearDrag: 0
+  m_AngularDrag: 0
   m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
@@ -5228,8 +5229,22 @@ MonoBehaviour:
   mediumAsteroid: {fileID: 4542185127268315299, guid: d41d89fd98ed7f943b36098b0c502900, type: 3}
   largeAsteroid: {fileID: 6691027381410551707, guid: 4a004f3277b42f7478d5b6df64aa969b, type: 3}
   rigid2D: {fileID: 1928648050}
-  moveSpeed: 5
-  rotationSpeed: 5
+  moveSpeed: 40
+  rotationSpeed: 0
+--- !u!114 &1928648051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8847222160136322754}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30b74b3126d63a94c80d02f1471793aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laserObject: {fileID: 1395682308}
+  laserWeapon: {fileID: 1395682312}
 --- !u!1 &8847222160360162418
 GameObject:
   m_ObjectHideFlags: 0

@@ -13,7 +13,6 @@ namespace zephkelly
     private float keyboardX;
     private float keyboardY;
 
-    [SerializeField] Vector2 mouseDirectionFromPlayer;
     private Vector2 mouseWorldPosition;
     private float mouseX;
     private float mouseY;

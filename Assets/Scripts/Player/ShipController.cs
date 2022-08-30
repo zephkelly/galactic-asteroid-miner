@@ -12,22 +12,28 @@ namespace zephkelly
     [SerializeField] GameObject mediumAsteroid;
     [SerializeField] GameObject largeAsteroid;
 
-    [SerializeField] Rigidbody2D rigid2D;
-    private Transform shipTransform;
-    private Vector2 thrustDirection;
+    //Information about the star we are orbiting
+    private OrbitingBehaviour _currentStarBehaviour;
+    private Vector2 _starAverageOrbitalVelocity;
+    private Vector2 _shipOrbitalVelocity;
+    private Vector2 _lastVelocity;
+    private bool _activateStarOrbiting;
+
+
+    private Rigidbody2D rigid2D;
+    private Vector2 mouseDirection;
 
     public float moveSpeed = 5f;
     public float rotationSpeed = 5f;
-    private bool toggleMode = false;
 
     public void Awake()
     {
       rigid2D = GetComponent<Rigidbody2D>();
-      shipTransform = gameObject.GetComponent<Transform>();
     }
 
     private void Start()
     {
+      _activateStarOrbiting = false;
       inputs = InputManager.Instance;
     }
 
@@ -35,28 +41,58 @@ namespace zephkelly
     {
       ModerationTools();
 
-      thrustDirection = inputs.MouseWorldPosition - (Vector2) shipTransform.position;
-      thrustDirection.Normalize();
-
-      transform.up = thrustDirection;
+      mouseDirection = inputs.MouseWorldPosition - (Vector2) rigid2D.position;
+      transform.up = mouseDirection;
     }
 
     public void FixedUpdate()
     {
-      if (toggleMode)
+      //Regular movement
+      rigid2D.AddForce(inputs.KeyboardInput * moveSpeed, ForceMode2D.Force);
+
+      //Movement while in orbit
+      if (_activateStarOrbiting)
       {
-        if (Input.GetKey(KeyCode.W))
-        {
-          rigid2D.AddForce(thrustDirection * moveSpeed, ForceMode2D.Force);
+        //Makes sure that we are travelling the correct speed around the star
+        _lastVelocity = _shipOrbitalVelocity;
+        _shipOrbitalVelocity = _currentStarBehaviour.GetOrbitalVelocity(rigid2D);
+
+        rigid2D.velocity -= _lastVelocity;
+        rigid2D.velocity += _shipOrbitalVelocity;
+
+        //Dragging While Orbiting
+        if (rigid2D.velocity.x > _shipOrbitalVelocity.x || rigid2D.velocity.x < _shipOrbitalVelocity.x) {
+          rigid2D.AddForce(new Vector2((_shipOrbitalVelocity.x - rigid2D.velocity.x), 0) * rigid2D.mass, ForceMode2D.Force);
         }
-        else if (Input.GetKey(KeyCode.S))
-        {
-          rigid2D.AddForce(-thrustDirection * (moveSpeed / 3), ForceMode2D.Force);
-        }
-      } else
+
+        if (rigid2D.velocity.y > _shipOrbitalVelocity.y || rigid2D.velocity.y < _shipOrbitalVelocity.y) {
+          rigid2D.AddForce(new Vector2(0, (_shipOrbitalVelocity.y - rigid2D.velocity.y)) * rigid2D.mass, ForceMode2D.Force);
+        }    
+      } 
+      else 
       {
-        rigid2D.AddForce(inputs.KeyboardInput * moveSpeed, ForceMode2D.Force);
+        //Regular drag
+        rigid2D.AddForce(-rigid2D.velocity * rigid2D.mass, ForceMode2D.Force);
       }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+      if (!other.CompareTag("Star")) return;
+
+      //Activate star behaviour
+      _activateStarOrbiting = true;
+      _currentStarBehaviour = other.GetComponent<OrbitingBehaviour>();
+      _currentStarBehaviour.ApplyInstantOrbitalVelocity(rigid2D);
+      _starAverageOrbitalVelocity = _currentStarBehaviour.GetAverageOrbitingSpeed();
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+      if (!other.CompareTag("Star")) return;
+
+      _activateStarOrbiting = false;
+      _currentStarBehaviour = null;
     }
 
     private void ModerationTools()
@@ -73,12 +109,6 @@ namespace zephkelly
       if (Input.GetKeyDown(KeyCode.Alpha3))
       {
         Instantiate(largeAsteroid, inputs.MouseWorldPosition, Quaternion.identity);
-      }
-
-      //Toggle flight modes
-      if (Input.GetKeyDown(KeyCode.Tab))
-      {
-        toggleMode = !toggleMode;
       }
     } 
   }
