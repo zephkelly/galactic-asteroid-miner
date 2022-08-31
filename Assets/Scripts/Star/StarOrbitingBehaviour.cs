@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  public class OrbitingBehaviour : MonoBehaviour
+  public class StarOrbitingBehaviour : MonoBehaviour
   {
     readonly float G = 0.2f;
     private Rigidbody2D starRigidbody;
@@ -25,6 +25,7 @@ namespace zephkelly
       
       //Set the correct orbital velocity if we arent the player
       if (c.CompareTag("Player")) return;
+      if (c.CompareTag("Star")) return;
 
       //Add to list of orbiting bodies and set velocity
       orbitingBodies.Add(newRigidbody);

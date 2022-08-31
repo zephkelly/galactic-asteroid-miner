@@ -4,11 +4,9 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  public class AsteroidBelt : MonoBehaviour
+  public class StarAsteroidBeltGenerator : MonoBehaviour
   {
     [SerializeField] GameObject asteroidPrefabM;
-
-    private StarOrbitingBehaviour starOrbitingBehaviour;
     
     [SerializeField] float beltMinumumRadius = 60f;
     [SerializeField] float beltMaximumRadius = 80f;
@@ -22,11 +20,6 @@ namespace zephkelly
     private float randomAngle;
     private float positionX;
     private float positionY;
-
-    private void Awake()
-    {
-      starOrbitingBehaviour = gameObject.GetComponent<StarOrbitingBehaviour>();
-    }
 
     private void Start()
     {
@@ -46,6 +39,7 @@ namespace zephkelly
           worldPosition = (Vector2) transform.position + localPosition;
 
           GameObject _asteroid = Instantiate(asteroidPrefabM, worldPosition, Quaternion.identity);
+          _asteroid.transform.parent = transform;
         }
         while (float.IsNaN(positionX) && float.IsNaN(positionY));
       }

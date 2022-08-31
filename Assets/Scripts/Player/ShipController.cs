@@ -13,8 +13,7 @@ namespace zephkelly
     [SerializeField] GameObject largeAsteroid;
 
     //Information about the star we are orbiting
-    private OrbitingBehaviour _currentStarBehaviour;
-    private Vector2 _starAverageOrbitalVelocity;
+    private StarOrbitingBehaviour _currentStarBehaviour;
     private Vector2 _shipOrbitalVelocity;
     private Vector2 _lastVelocity;
     private bool _activateStarOrbiting;
@@ -23,8 +22,7 @@ namespace zephkelly
     private Rigidbody2D rigid2D;
     private Vector2 mouseDirection;
 
-    public float moveSpeed = 5f;
-    public float rotationSpeed = 5f;
+    [SerializeField] float moveSpeed = 40f;
 
     public void Awake()
     {
@@ -47,10 +45,16 @@ namespace zephkelly
 
     public void FixedUpdate()
     {
-      //Regular movement
-      rigid2D.AddForce(inputs.KeyboardInput * moveSpeed, ForceMode2D.Force);
+      if (Input.GetKey(KeyCode.LeftShift))
+      {
+        rigid2D.AddForce(inputs.KeyboardInput * (moveSpeed * 3), ForceMode2D.Force);
+      }
+      else
+      {
+        rigid2D.AddForce(inputs.KeyboardInput * moveSpeed, ForceMode2D.Force);
+      }
 
-      //Movement while in orbit
+      //Extra movement while in orbit
       if (_activateStarOrbiting)
       {
         //Makes sure that we are travelling the correct speed around the star
@@ -71,7 +75,7 @@ namespace zephkelly
       } 
       else 
       {
-        //Regular drag
+        //Dragging while in space
         rigid2D.AddForce(-rigid2D.velocity * rigid2D.mass, ForceMode2D.Force);
       }
     }
@@ -82,9 +86,9 @@ namespace zephkelly
 
       //Activate star behaviour
       _activateStarOrbiting = true;
-      _currentStarBehaviour = other.GetComponent<OrbitingBehaviour>();
+
+      _currentStarBehaviour = other.GetComponent<StarOrbitingBehaviour>();
       _currentStarBehaviour.ApplyInstantOrbitalVelocity(rigid2D);
-      _starAverageOrbitalVelocity = _currentStarBehaviour.GetAverageOrbitingSpeed();
     }
 
     private void OnTriggerExit2D(Collider2D other)
