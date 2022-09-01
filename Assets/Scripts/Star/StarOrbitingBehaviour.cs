@@ -21,7 +21,6 @@ namespace zephkelly
     {
       //Grab rigidbody from entering object
       var newRigidbody = c.GetComponent<Rigidbody2D>();
-
       
       //Set the correct orbital velocity if we arent the player
       if (c.CompareTag("Player")) return;
