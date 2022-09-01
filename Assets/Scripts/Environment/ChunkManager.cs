@@ -41,7 +41,7 @@ namespace zephkelly
 
       if (playerCurrentChunkPosition != playerLastChunkPosition)
       {
-        DeactivateAndStoreChunks(playerLastChunkPosition);
+        DeactivateAndStoreChunks();
         ActivateOrGenerateChunks(playerCurrentChunkPosition);
 
         playerLastChunkPosition = playerCurrentChunkPosition;
@@ -57,30 +57,14 @@ namespace zephkelly
       );
     }
 
-    private void DeactivateAndStoreChunks(Vector2 key)
+    private void DeactivateAndStoreChunks()
     {
-      //3x3 grid around chunk position
-      Vector2Int gridAroundKey = new Vector2Int((int)key.x - 1, (int)key.y - 1);
-
-      for (int y = 0; y < 3; y++)
+      foreach (var chunk in activeChunks)
       {
-        for (int x = 0; x < 3; x++)
-        {
-          GameObject chunkToDeactivate = activeChunks[gridAroundKey];
-
-          chunkToDeactivate.SetActive(false);
-
-          activeChunks.Remove(gridAroundKey);
-          deactivatedChunks.Add(gridAroundKey, chunkToDeactivate);
-
-          print("Deactivating chunks");
-
-          gridAroundKey.x++;
-        }
-
-        gridAroundKey.y++;
-        gridAroundKey.x -= 3;   //Need to reset x axis for next row
+        deactivatedChunks.Add(chunk.Key, chunk.Value);
       }
+      
+      activeChunks.Clear();
     }
 
     private void ActivateOrGenerateChunks(Vector2 key)
