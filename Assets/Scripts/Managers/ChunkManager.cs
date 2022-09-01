@@ -6,16 +6,13 @@ namespace zephkelly
 {
   public class ChunkManager : MonoBehaviour
   {
-    //The chunk size
+    //Chunk size
     [SerializeField] int chunkDiameter = 500;
 
-    //Give our chunks original names!
-    private int _chunkNamer;
-
-    //Dictonary for deactivated chunks
+    //Deactivated chunks
     Dictionary<Vector2, GameObject> deactivatedChunks = new Dictionary<Vector2, GameObject>();
 
-    //Dictonary for activated chunks
+    //Activated chunks
     Dictionary<Vector2, GameObject> activeChunks = new Dictionary<Vector2, GameObject>();
 
     //----------------------------------------------------------------------------------------------
@@ -26,63 +23,95 @@ namespace zephkelly
 
     private Vector2 playerLastChunk;
 
+    //----------------------------------------------------------------------------------------------
+
+    private static float _quantisePositionTime = 0.1f;
+
+    private float _quantiseTimer;
+
+    private int _chunkNamer;
+
+    //----------------------------------------------------------------------------------------------
+
     private void Start()
     {
       //Get the player transform
       playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
       //Get the player position rounded to the nearest chunk
-      GenerateChunk(playerLastChunk = QuantisePosition(playerTransform.position));
+      playerLastChunk = QuantisePosition(playerTransform.position);
+
+      ActivateOrGenerateChunk(playerLastChunk);
     }
 
     private void Update()
     {
-      //Gets the players chunk through a quantised position
       playerCurrentChunk = QuantisePosition(playerTransform.position);
 
       //If we are in a new chunk, make a new chunk
       if (playerCurrentChunk != playerLastChunk)
       {
         playerLastChunk = playerCurrentChunk;
-        GenerateChunk(playerCurrentChunk);
+        ActivateOrGenerateChunk(playerCurrentChunk);
       }
     }
 
-    //Function to quantise the position to the nearest chunk
+    //Function to quantise position to the nearest chunk
     private Vector2 QuantisePosition(Vector2 position)
     {
-      //Get the player position
-      Vector2 playerPosition = playerTransform.position;
-
-      return new Vector2(
-        Mathf.Round(position.x / chunkDiameter),
-        Mathf.Round(position.y / chunkDiameter)
-      );
-    }
-
-    private void GenerateChunk(Vector2 key)
-    {  
-      if (activeChunks.ContainsKey(key)) return;
-
-      if (deactivatedChunks.ContainsKey(key))
+      if (_quantiseTimer < 0)
       {
-        //Get the chunk from the deactivated chunk dictionary
-        GameObject reactivatedChunk = deactivatedChunks[key];
-        //Activate the chunk
-        reactivatedChunk.SetActive(true);
-        //Add it to the active chunks dictionary
-        activeChunks.Add(key, reactivatedChunk);
-        //Remove it from the deactivated chunks dictionary
-        deactivatedChunks.Remove(key);
+        _quantiseTimer = _quantisePositionTime;
+
+        return new Vector2(
+          Mathf.RoundToInt(position.x / chunkDiameter),
+          Mathf.RoundToInt(position.y / chunkDiameter)
+        );
       }
       else
       {
-        Debug.Log("Generating new chunk: " + key);
-        //Create a new chunk
-        GameObject newChunk = new GameObject("Chunk " + _chunkNamer);
-        //Add it to the active chunks dictionary
-        activeChunks.Add(key, newChunk);
-        //Increase the chunk namer
-        _chunkNamer++;
+        _quantiseTimer -= Time.deltaTime;
+        return playerLastChunk;
+      }
+    }
+
+    private void ActivateOrGenerateChunk(Vector2 key)
+    { 
+      //Split the vector and minus one by both values
+      Vector2Int gridAroundKey = new Vector2Int((int)key.x - 1, (int)key.y - 1);
+
+      //Loop through the grid around the key
+      for (int y = 0; y < 3; y++)
+      {
+        for (int x = 0; x < 3; x++)
+        {
+          if (activeChunks.ContainsKey(gridAroundKey)) return;
+
+          if (deactivatedChunks.ContainsKey(gridAroundKey))
+          {
+            Debug.Log("Activating chunk: " + gridAroundKey);
+            
+            GameObject reactivatedChunk = deactivatedChunks[gridAroundKey];
+            reactivatedChunk.SetActive(true);
+
+            activeChunks.Add(gridAroundKey, reactivatedChunk);
+            deactivatedChunks.Remove(gridAroundKey);
+          }
+          else
+          {
+            Debug.Log("Generating new chunk: " + gridAroundKey);
+
+            GameObject newChunk = new GameObject("Chunk " + _chunkNamer);
+
+            activeChunks.Add(gridAroundKey, newChunk);
+            _chunkNamer++;
+          }
+
+          gridAroundKey.x++;
+        }
+
+        gridAroundKey.y++;
+        //Reset the x axis to keep it all aligned
+        gridAroundKey.x -= 3;
       }
     }
   }
