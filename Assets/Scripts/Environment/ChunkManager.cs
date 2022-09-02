@@ -41,7 +41,7 @@ namespace zephkelly
 
       if (playerCurrentChunkPosition != playerLastChunkPosition)
       {
-        DeactivateAndStoreChunks();
+        DeactivateActiveChunks();
         ActivateOrGenerateChunks(playerCurrentChunkPosition);
 
         playerLastChunkPosition = playerCurrentChunkPosition;
@@ -57,7 +57,7 @@ namespace zephkelly
       );
     }
 
-    private void DeactivateAndStoreChunks()
+    private void DeactivateActiveChunks()
     {
       foreach (var chunk in activeChunks)
       {
@@ -105,6 +105,12 @@ namespace zephkelly
 
         gridAroundKey.y++;
         gridAroundKey.x -= 3;   //Need to reset x axis for next row
+      }
+
+      //After chunks are made we 
+      foreach (var chunk in deactivatedChunks)
+      {
+        chunk.Value.SetActive(false);
       }
     }
   }
