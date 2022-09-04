@@ -6,15 +6,15 @@ namespace zephkelly
 {
   public class CameraFollow : MonoBehaviour
   {
-    public Camera mainCamera;
-    public Transform target;
     private Transform cameraTransform;
-    private Vector3 targetVector;
-    private Vector3 mousePosition;
+    private Transform target;
+    private Camera mainCamera;
 
     [SerializeField] float mouseInterpolateDistance = 2f;
+    [SerializeField] float cameraPanSpeed = 0.125f;
 
-    public float cameraPanSpeed = 0.125f;
+      private Vector3 targetVector;
+      private Vector3 mousePosition;
 
     public void Awake()
     {
@@ -33,6 +33,8 @@ namespace zephkelly
       mousePosition = mousePosition - target.position;
       mousePosition.Normalize();
       mousePosition.y = mousePosition.y * 1.4f; //beacuse the camera is wider than it is tall
+
+      //Follow();
     }
 
     public void LateUpdate()

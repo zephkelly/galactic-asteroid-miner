@@ -77,6 +77,11 @@ namespace zephkelly
       {
         //Dragging while in space
         rigid2D.AddForce(-rigid2D.velocity * rigid2D.mass, ForceMode2D.Force);
+
+        if (rigid2D.velocity.magnitude < 0.05f)
+        {
+          rigid2D.velocity = Vector2.zero;
+        }
       }
     }
 

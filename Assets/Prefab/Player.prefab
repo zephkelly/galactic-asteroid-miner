@@ -5339,7 +5339,7 @@ MonoBehaviour:
   smallAsteroid: {fileID: 1239589416757620075, guid: a9acb5639645b864f9e56943f9dc4fc8, type: 3}
   mediumAsteroid: {fileID: 4542185127268315299, guid: d41d89fd98ed7f943b36098b0c502900, type: 3}
   largeAsteroid: {fileID: 6691027381410551707, guid: 4a004f3277b42f7478d5b6df64aa969b, type: 3}
-  moveSpeed: 80
+  moveSpeed: 40
 --- !u!114 &1928648051
 MonoBehaviour:
   m_ObjectHideFlags: 0

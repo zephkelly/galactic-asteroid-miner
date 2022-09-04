@@ -50,7 +50,7 @@ MonoBehaviour:
   m_FalloffIntensity: 0.27
   m_Color: {r: 1, g: 0.9575429, b: 0.8915094, a: 1}
   m_Intensity: 1
-  m_LightVolumeIntensity: 0.03
+  m_LightVolumeIntensity: 0.06
   m_LightVolumeIntensityEnabled: 1
   m_ApplyToSortingLayers: 000000001bcbbd5c53380e59
   m_LightCookieSprite: {fileID: 0}
@@ -184,7 +184,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 138
+  m_Radius: 140
 --- !u!114 &9212592379821787369
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -83,8 +83,6 @@ namespace zephkelly
 
             activeChunks.Add(gridAroundKey, reactivatedChunk);
             deactivatedChunks.Remove(gridAroundKey);
-
-            print("Reactivating chunks");
           }
           else   //Make a new chunk
           {
@@ -96,8 +94,6 @@ namespace zephkelly
             
             activeChunks.Add(gridAroundKey, newChunk);
             _chunkNamer++;
-
-            print("Generating chunks");
           }
 
           gridAroundKey.x++;
