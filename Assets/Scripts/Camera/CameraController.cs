@@ -4,60 +4,56 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  public class CameraFollow : MonoBehaviour
+  public class CameraController : MonoBehaviour
   {
+    private InputManager inputs;
     private Camera mainCamera;
     private Transform cameraTransform;
-    [SerializeField] ParallaxStarfield[] parallaxStarfield;
 
     //----------------------------------------------------------------------------------------------
 
+    [SerializeField] ParallaxStarfield[] parallaxStarfield;
     [SerializeField] float mouseInterpolateDistance = 2f;
     [SerializeField] float cameraPanSpeed = 0.125f;
 
     private Transform target;
-    private Vector3 targetVector;
-    private Vector3 mousePosition;
-    private Vector3 cameraLastPosition;
+    private Vector3 mouseLerpPosition;
 
     //----------------------------------------------------------------------------------------------
 
-    public void Awake()
+    private void Awake()
     {
       mainCamera = Camera.main;
       cameraTransform = mainCamera.transform;
     }
 
-    public void Start()
+    private void Start()
     {
       target = GameObject.Find("Player").transform;
+      inputs = InputManager.Instance;
     }
 
     private void Update()
     {
-      mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-      mousePosition = mousePosition - target.position;
-      mousePosition.Normalize();
-      //beacuse the camera is wider than it is tall
-      mousePosition.y = mousePosition.y * 1.4f;
+      mouseLerpPosition = (mainCamera.ScreenToWorldPoint(Input.mousePosition) - target.position).normalized;
+      mouseLerpPosition.y = mouseLerpPosition.y * 1.4f;   //beacuse the camera is wider than it is tall
     }
 
-    public void LateUpdate()
+    private void FixedUpdate()
     {
       if (target == null) return;
-      
-      targetVector = target.position + (mousePosition * mouseInterpolateDistance);
-      targetVector.z = -10;
+
+      Vector3 targetVector = target.position + (mouseLerpPosition * mouseInterpolateDistance);
+      targetVector.z = cameraTransform.position.z;
 
       Vector3 cameraLastPosition = cameraTransform.position;
 
-      Vector3 newCameraPosition = Vector3.Lerp(cameraTransform.position, targetVector, cameraPanSpeed);
-      cameraTransform.position = newCameraPosition;
+      cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetVector, cameraPanSpeed);
 
       //Parallax starfield layers
-      foreach (ParallaxStarfield starfield in parallaxStarfield)
+      for (int i = 0; i < parallaxStarfield.Length; i++)
       {
-        starfield.Parallax(cameraLastPosition);
+        parallaxStarfield[i].Parallax(cameraLastPosition);
       }
     }
 

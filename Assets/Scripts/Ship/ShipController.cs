@@ -7,64 +7,41 @@ namespace zephkelly
   public class ShipController : MonoBehaviour
   {
     private InputManager inputs;
+    private Rigidbody2D rigid2D;
 
-    [SerializeField] GameObject smallAsteroid;
-    [SerializeField] GameObject mediumAsteroid;
-    [SerializeField] GameObject largeAsteroid;
+    //----------------------------------------------------------------------------------------------
 
-    //Information about the star we are orbiting
+    [SerializeField] float moveSpeed = 60f;
+    [SerializeField] bool lookAtMouse;
+
+    private Vector2 mouseDirection;
+
+    //Star-Orbiting-Behaviour-----------------------------------------------------------------------
+
     private StarOrbitingBehaviour _currentStarBehaviour;
     private Vector2 _shipOrbitalVelocity;
     private Vector2 _lastVelocity;
     private bool _activateStarOrbiting;
 
+    //----------------------------------------------------------------------------------------------
 
-    private Rigidbody2D rigid2D;
-    private Vector2 mouseDirection;
-
-    [SerializeField] float moveSpeed = 40f;
-
-    public void Awake()
+    private void Awake()
     {
       rigid2D = GetComponent<Rigidbody2D>();
+      _activateStarOrbiting = false;
     }
 
     private void Start()
     {
-      _activateStarOrbiting = false;
       inputs = InputManager.Instance;
     }
 
-    public void Update()
+    private void Update()
     {
-      ModerationTools();
-      
-      LookAtMouse();
+      if (lookAtMouse) LookAtMouse();
     }
 
-    private void LookAtMouse()
-    {
-      Vector3 mouseDirection = (Vector3)inputs.MouseWorldPosition - transform.position;
-      float angle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg;
-      transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
-    }
-
-    public void FixedUpdate()
-    {
-      PlayerMovement();
-      
-      if (_activateStarOrbiting)
-      {
-        OrbitingBehaviour();
-      } 
-      else
-      {
-        //Dragging in space
-        rigid2D.AddForce(-rigid2D.velocity * rigid2D.mass, ForceMode2D.Force);
-      }
-    }
-
-    private void PlayerMovement()
+    private void FixedUpdate()
     {
       if (Input.GetKey(KeyCode.LeftShift))
       {
@@ -74,9 +51,24 @@ namespace zephkelly
       {
         rigid2D.AddForce(inputs.KeyboardInput * moveSpeed, ForceMode2D.Force);
       }
+
+      if (_activateStarOrbiting) 
+      {
+        StarOrbitingBehaviour();
+      }
+      else 
+      {
+        //Linear dragging while in space
+        rigid2D.AddForce(-rigid2D.velocity * rigid2D.mass, ForceMode2D.Force);
+
+        if (rigid2D.velocity.magnitude < 0.1f)
+        {
+          rigid2D.velocity = Vector2.zero;
+        }
+      }
     }
 
-    private void OrbitingBehaviour()
+    private void StarOrbitingBehaviour()
     {
       //Makes sure that we are travelling the correct speed around the star
       _lastVelocity = _shipOrbitalVelocity;
@@ -92,7 +84,14 @@ namespace zephkelly
 
       if (rigid2D.velocity.y > _shipOrbitalVelocity.y || rigid2D.velocity.y < _shipOrbitalVelocity.y) {
         rigid2D.AddForce(new Vector2(0, (_shipOrbitalVelocity.y - rigid2D.velocity.y)) * rigid2D.mass, ForceMode2D.Force);
-      }
+      }  
+    }
+
+    private void LookAtMouse()
+    {
+      Vector3 mouseDirection = (Vector3)inputs.MouseWorldPosition - transform.position;
+      float angle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg;
+      transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -101,7 +100,6 @@ namespace zephkelly
 
       //Activate star behaviour
       _activateStarOrbiting = true;
-
       _currentStarBehaviour = other.GetComponent<StarOrbitingBehaviour>();
       _currentStarBehaviour.ApplyInstantOrbitalVelocity(rigid2D);
     }
@@ -113,22 +111,5 @@ namespace zephkelly
       _activateStarOrbiting = false;
       _currentStarBehaviour = null;
     }
-
-    private void ModerationTools()
-    {
-      //Spawn different asteroids
-      if (Input.GetKeyDown(KeyCode.Alpha1))
-      {
-        Instantiate(smallAsteroid, inputs.MouseWorldPosition, Quaternion.identity);
-      }
-      else if (Input.GetKeyDown(KeyCode.Alpha2))
-      {
-        Instantiate(mediumAsteroid, inputs.MouseWorldPosition, Quaternion.identity);
-      }
-      if (Input.GetKeyDown(KeyCode.Alpha3))
-      {
-        Instantiate(largeAsteroid, inputs.MouseWorldPosition, Quaternion.identity);
-      }
-    } 
   }
 }

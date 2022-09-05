@@ -136,6 +136,7 @@ GameObject:
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
   - component: {fileID: 519420034}
+  - component: {fileID: 519420035}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -211,7 +212,7 @@ Camera:
   far clip plane: 1000
   field of view: 120
   orthographic: 1
-  orthographic size: 16
+  orthographic size: 16.375
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -251,7 +252,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 519420028}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a589fe4cac39d44b95b794b8802e70b, type: 3}
+  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ComponentVersion: 1
+  m_AssetsPPU: 16
+  m_RefResolutionX: 768
+  m_RefResolutionY: 432
+  m_CropFrame: 0
+  m_GridSnapping: 2
+  m_UpscaleRT: 0
+  m_PixelSnapping: 0
+  m_CropFrameX: 0
+  m_CropFrameY: 0
+  m_StretchFill: 0
+--- !u!114 &519420035
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f8964478960fb44ebb315eba97a4684, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxStarfield:
@@ -259,8 +283,8 @@ MonoBehaviour:
   - {fileID: 818486905}
   - {fileID: 1663101733}
   - {fileID: 1513829206}
-  mouseInterpolateDistance: 1.4
-  cameraPanSpeed: 1
+  mouseInterpolateDistance: 2
+  cameraPanSpeed: 0.125
 --- !u!1 &818486901
 GameObject:
   m_ObjectHideFlags: 0
@@ -5087,11 +5111,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 818486902}
-  starsMax: 100
+  starsMax: 80
   starSizeMin: 0.05
   starSizeMax: 0.2
-  starSpawnRadius: 35
-  parallaxFactor: 50
+  starSpawnRadius: 40
+  parallaxFactor: 40
 --- !u!1 &1119855913
 GameObject:
   m_ObjectHideFlags: 0
@@ -5174,11 +5198,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1513829205}
-  starsMax: 100
+  starsMax: 80
   starSizeMin: 0.05
   starSizeMax: 0.2
-  starSpawnRadius: 35
-  parallaxFactor: 100
+  starSpawnRadius: 40
+  parallaxFactor: 60
 --- !u!199 &1513829207
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -10054,11 +10078,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1663101732}
-  starsMax: 100
+  starsMax: 80
   starSizeMin: 0.05
   starSizeMax: 0.2
-  starSpawnRadius: 35
-  parallaxFactor: 80
+  starSpawnRadius: 40
+  parallaxFactor: 48
 --- !u!199 &1663101734
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -15027,7 +15051,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 728a0d299b6686a42a69c18f9bc38e1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkDiameter: 100
+  chunkDiameter: 150
 --- !u!4 &1930855596
 Transform:
   m_ObjectHideFlags: 0
@@ -19869,10 +19893,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1976971262}
-  starsMax: 20
+  starsMax: 40
   starSizeMin: 0.05
   starSizeMax: 0.1
-  starSpawnRadius: 35
+  starSpawnRadius: 40
   parallaxFactor: 0
 --- !u!1001 &8847222161297726559
 PrefabInstance:
@@ -19881,10 +19905,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1928648049, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: moveSpeed
-      value: 60
-      objectReference: {fileID: 0}
     - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_RootOrder
       value: 1
