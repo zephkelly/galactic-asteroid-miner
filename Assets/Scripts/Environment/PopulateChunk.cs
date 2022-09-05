@@ -10,7 +10,7 @@ namespace zephkelly
 
     [SerializeField] GameObject starPrefab;
 
-    private int generateStarChance = 10; 
+    private int generateStarChance = 2; 
     
     private int minAsteroids;
 
@@ -53,8 +53,8 @@ namespace zephkelly
       chunkBounds = new Bounds(chunkWorldPosition, Vector2.one * chunkDiameter);
 
       //Get the number of asteroids to generate
-      minAsteroids = Random.Range(15, 30);
-      maxAsteroids = Random.Range(100, 150);
+      minAsteroids = Random.Range(5, 20);
+      maxAsteroids = Random.Range(80, 130);
 
       int asteroidCount = Random.Range(minAsteroids, maxAsteroids);
 
