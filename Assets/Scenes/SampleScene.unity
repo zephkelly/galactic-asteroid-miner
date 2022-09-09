@@ -123,6 +123,23 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &499435830 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8847222160136322754, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+  m_PrefabInstance: {fileID: 8847222161297726559}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &499435836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 499435830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dcd6464d3706e44aaf3d455fd0049a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -204,15 +221,15 @@ Camera:
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0
-    width: 1
-    height: 1
+    x: 0.00056369783
+    y: 0.001002004
+    width: 0.9988726
+    height: 0.99799603
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 120
   orthographic: 1
-  orthographic size: 16.375
+  orthographic size: 16.78125
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -250,7 +267,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
   m_Name: 
@@ -5115,7 +5132,7 @@ MonoBehaviour:
   starSizeMin: 0.05
   starSizeMax: 0.2
   starSpawnRadius: 40
-  parallaxFactor: 40
+  parallaxFactor: 44
 --- !u!1 &1119855913
 GameObject:
   m_ObjectHideFlags: 0
@@ -5202,7 +5219,7 @@ MonoBehaviour:
   starSizeMin: 0.05
   starSizeMax: 0.2
   starSpawnRadius: 40
-  parallaxFactor: 60
+  parallaxFactor: 49.5
 --- !u!199 &1513829207
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -10082,7 +10099,7 @@ MonoBehaviour:
   starSizeMin: 0.05
   starSizeMax: 0.2
   starSpawnRadius: 40
-  parallaxFactor: 48
+  parallaxFactor: 47
 --- !u!199 &1663101734
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -15051,7 +15068,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 728a0d299b6686a42a69c18f9bc38e1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkDiameter: 150
+  chunkDiameter: 200
+  starCount: 0
 --- !u!4 &1930855596
 Transform:
   m_ObjectHideFlags: 0
@@ -19897,7 +19915,7 @@ MonoBehaviour:
   starSizeMin: 0.05
   starSizeMax: 0.1
   starSpawnRadius: 40
-  parallaxFactor: 0
+  parallaxFactor: 20
 --- !u!1001 &8847222161297726559
 PrefabInstance:
   m_ObjectHideFlags: 0

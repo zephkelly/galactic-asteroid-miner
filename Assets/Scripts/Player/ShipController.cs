@@ -34,6 +34,7 @@ namespace zephkelly
     private void Start()
     {
       inputs = InputManager.Instance;
+      rigid2D.centerOfMass = Vector2.zero;
     }
 
     private void Update()

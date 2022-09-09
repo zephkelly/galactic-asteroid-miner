@@ -6,17 +6,62 @@ namespace zephkelly
 {
   public class AsteroidPickup : MonoBehaviour
   {
-    [SerializeField] AsteroidStatistics asteroidStats;
+    public Rigidbody2D rigid2D;
 
-    [SerializeField] float asteroidValue;
+    [SerializeField] AsteroidType asteroidType;
+    [SerializeField] int asteroidAmount;
 
-    public void Start()
+    public int Amount { get { return asteroidAmount; } }
+    public AsteroidType Type { get { return asteroidType; } }
+
+    public void CreatePickup(AsteroidType type)
     {
-      //A way to randomly assign an asteroid type
-      //asteroidType = (AsteroidType)Random.Range(0, System.Enum.GetValues(typeof(AsteroidType)).Length);
+      asteroidType = type;
+      rigid2D = GetComponent<Rigidbody2D>();
 
-      asteroidStats.Configure();
-      asteroidValue = asteroidStats.Value();
+      DeterminAmount();
+
+      switch (type)
+      {
+        case AsteroidType.Iron:
+          IronAsteroid();
+          break;
+        case AsteroidType.Cobalt:
+          CobaltAsteroid();
+          break;
+        case AsteroidType.Gold:
+          GoldAsteroid();
+          break;
+      }
+    }
+
+    private void DeterminAmount()
+    {
+      var randomNumber = Random.Range(1, 5);
+
+      if (randomNumber == 1 )
+      {
+        asteroidAmount = 2;
+      }
+      else
+      {
+        asteroidAmount = 1;
+      }
+    }
+
+    private void IronAsteroid()
+    {
+      gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+    }
+
+    private void CobaltAsteroid()
+    {
+      gameObject.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.5f, 1f, 1f);
+    }
+
+    private void GoldAsteroid()
+    {
+      gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 0.8f, 0.3f, 1f);
     }
   }
 }

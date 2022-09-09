@@ -35,6 +35,8 @@ namespace zephkelly
 
     private void Update()
     {
+      if (target == null) return;
+
       mouseLerpPosition = (mainCamera.ScreenToWorldPoint(Input.mousePosition) - target.position).normalized;
       mouseLerpPosition.y = mouseLerpPosition.y * 1.4f;   //beacuse the camera is wider than it is tall
     }

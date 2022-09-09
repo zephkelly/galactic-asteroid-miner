@@ -6,7 +6,7 @@ namespace zephkelly
 {
   public class ChunkManager : MonoBehaviour
   {
-    [SerializeField] int chunkDiameter = 500;
+    public static ChunkManager Instance;
 
     //Deactivated chunks
     Dictionary<Vector2, GameObject> deactivatedChunks = new Dictionary<Vector2, GameObject>();
@@ -15,6 +15,8 @@ namespace zephkelly
     Dictionary<Vector2, GameObject> activeChunks = new Dictionary<Vector2, GameObject>();
 
     //----------------------------------------------------------------------------------------------
+
+    [SerializeField] int chunkDiameter = 200;
 
     private Transform playerTransform;
 
@@ -25,6 +27,22 @@ namespace zephkelly
     private int _chunkNamer;
 
     //----------------------------------------------------------------------------------------------
+
+    [SerializeField] int starCount;
+
+    public int StarCount { get => starCount; set => starCount = value; }
+
+    private void Awake()
+    {
+      if (Instance == null)
+      {
+        Instance = this;
+      }
+      else
+      {
+        Destroy(gameObject);
+      }
+    }
 
     private void Start()
     {
@@ -37,6 +55,8 @@ namespace zephkelly
 
     private void Update()
     {
+      if (playerTransform == null) return;
+
       playerCurrentChunkPosition = QuantisePosition(playerTransform.position);
 
       if (playerCurrentChunkPosition != playerLastChunkPosition)
@@ -70,11 +90,11 @@ namespace zephkelly
     private void ActivateOrGenerateChunks(Vector2 key)
     { 
       //3x3 grid around chunk position
-      Vector2Int gridAroundKey = new Vector2Int((int)key.x - 1, (int)key.y - 1);
+      Vector2Int gridAroundKey = new Vector2Int((int)key.x - 2, (int)key.y - 2);
 
-      for (int y = 0; y < 3; y++)
+      for (int y = 0; y < 5; y++)
       {
-        for (int x = 0; x < 3; x++)
+        for (int x = 0; x < 5; x++)
         {
           if (deactivatedChunks.ContainsKey(gridAroundKey))
           {
@@ -82,6 +102,7 @@ namespace zephkelly
             reactivatedChunk.SetActive(true);
 
             activeChunks.Add(gridAroundKey, reactivatedChunk);
+
             deactivatedChunks.Remove(gridAroundKey);
           }
           else   //Make a new chunk
@@ -100,7 +121,7 @@ namespace zephkelly
         }
 
         gridAroundKey.y++;
-        gridAroundKey.x -= 3;   //Need to reset x axis for next row
+        gridAroundKey.x -= 5;   //Need to reset x axis for next row
       }
 
       //After chunks are made we 
@@ -108,6 +129,11 @@ namespace zephkelly
       {
         chunk.Value.SetActive(false);
       }
+    }
+
+    private void OnApplicationQuit()
+    {
+      ChunkManager.Instance = null;
     }
   }
 }

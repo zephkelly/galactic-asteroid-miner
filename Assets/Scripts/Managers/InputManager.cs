@@ -55,6 +55,6 @@ namespace zephkelly
     private void OnApplicationQuit()
     {
       InputManager.Instance = null;
-    } 
+    }
   }
 }

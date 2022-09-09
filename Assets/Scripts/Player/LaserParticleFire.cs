@@ -29,10 +29,10 @@ namespace zephkelly
       laserParticleSystem.Play();
     }
 
-    private void OnParticleCollision(GameObject other)
+    private void OnParticleCollision(GameObject hitObject)
     {
       //Grab where our particles are colliding
-      laserParticleSystem.GetCollisionEvents(other, collisonEvents);
+      laserParticleSystem.GetCollisionEvents(hitObject, collisonEvents);
       Vector2 hitPoint = collisonEvents[0].intersection;
 
       //Make a prefab of the explosion and grab a reference to the light attached to its gameobject
@@ -41,7 +41,12 @@ namespace zephkelly
 
       //Add force to the object we hit
       var directionOfForce = (hitPoint - (Vector2)transform.position).normalized;
-      other.GetComponent<Rigidbody2D>().AddForceAtPosition(directionOfForce * explosionForce, hitPoint, ForceMode2D.Impulse);
+      hitObject.GetComponent<Rigidbody2D>().AddForceAtPosition(directionOfForce * explosionForce, hitPoint, ForceMode2D.Impulse);
+
+      if (hitObject.CompareTag("Asteroid"))
+      {
+        hitObject.GetComponent<AsteroidBehaviour>().TakeDamage(1, hitPoint);
+      }
 
       //Fade the explosion light over time and destroy when done
       StartCoroutine(FadeExplosionLight(explosionLight, 0, 0.5f));
