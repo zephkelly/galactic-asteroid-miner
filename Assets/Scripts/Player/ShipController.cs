@@ -12,8 +12,7 @@ namespace zephkelly
     //----------------------------------------------------------------------------------------------
 
     [SerializeField] float moveSpeed = 60f;
-    [SerializeField] bool lookAtMouse;
-
+    [SerializeField] bool moveToMouse;
     private Vector2 mouseDirection;
 
     //Star-Orbiting-Behaviour-----------------------------------------------------------------------
@@ -39,20 +38,18 @@ namespace zephkelly
 
     private void Update()
     {
-      if (lookAtMouse) LookAtMouse();
+      mouseDirection = inputs.MouseWorldPosition - (Vector2) transform.position;
+      mouseDirection.Normalize();
+
+      if (Input.GetKeyDown(KeyCode.Tab)) moveToMouse = !moveToMouse;
+      
+      LookAtMouse();
     }
 
     private void FixedUpdate()
     {
-      if (Input.GetKey(KeyCode.LeftShift))
-      {
-        rigid2D.AddForce(inputs.KeyboardInput * (moveSpeed * 3), ForceMode2D.Force);
-      }
-      else
-      {
-        rigid2D.AddForce(inputs.KeyboardInput * moveSpeed, ForceMode2D.Force);
-      }
-
+      ControlBehaviour();
+      
       if (_activateStarOrbiting) 
       {
         StarOrbitingBehaviour();
@@ -65,6 +62,32 @@ namespace zephkelly
         if (rigid2D.velocity.magnitude < 0.1f)
         {
           rigid2D.velocity = Vector2.zero;
+        }
+      }
+    }
+
+    private void ControlBehaviour()
+    {
+      if (moveToMouse)
+      {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+          rigid2D.AddForce(mouseDirection * (moveSpeed * 3), ForceMode2D.Force);
+        }
+        else
+        {
+          rigid2D.AddForce(mouseDirection * moveSpeed, ForceMode2D.Force);
+        }
+      }
+      else
+      {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+          rigid2D.AddForce(inputs.KeyboardInput * (moveSpeed * 3), ForceMode2D.Force);
+        }
+        else
+        {
+          rigid2D.AddForce(inputs.KeyboardInput * moveSpeed, ForceMode2D.Force);
         }
       }
     }
@@ -90,7 +113,6 @@ namespace zephkelly
 
     private void LookAtMouse()
     {
-      Vector3 mouseDirection = (Vector3)inputs.MouseWorldPosition - transform.position;
       float angle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg;
       transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
     }

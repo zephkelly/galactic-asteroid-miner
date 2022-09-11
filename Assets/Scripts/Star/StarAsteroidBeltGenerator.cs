@@ -6,7 +6,7 @@ namespace zephkelly
 {
   public class StarAsteroidBeltGenerator : MonoBehaviour
   {
-    [SerializeField] GameObject asteroidPrefabM;
+    private GameObject mediumAsteroidPrefab;
     
     [SerializeField] float beltMinumumRadius = 60f;
     [SerializeField] float beltMaximumRadius = 80f;
@@ -21,10 +21,15 @@ namespace zephkelly
     private float positionX;
     private float positionY;
 
-    private void Start()
+    private void Awake()
     {
       Random.InitState(System.DateTime.Now.Millisecond);
 
+      mediumAsteroidPrefab = Resources.Load("Prefabs/Asteroid-M") as GameObject;
+    }
+
+    private void Start()
+    {
       for (int i = 0; i < beltDensity; i++)
       {
         do
@@ -38,8 +43,8 @@ namespace zephkelly
           localPosition = new Vector2(positionX, positionY);
           worldPosition = (Vector2) transform.position + localPosition;
 
-          GameObject _asteroid = Instantiate(asteroidPrefabM, worldPosition, Quaternion.identity);
-          _asteroid.GetComponent<AsteroidBehaviour>().SetAsteroid(AsteroidType.Iron, AsteroidSize.Medium);
+          GameObject _asteroid = Instantiate(mediumAsteroidPrefab, worldPosition, Quaternion.identity);
+          _asteroid.GetComponent<AsteroidController>().Init(AsteroidType.Iron, AsteroidSize.Medium);
           _asteroid.transform.parent = transform;
         }
         while (float.IsNaN(positionX) && float.IsNaN(positionY));

@@ -45,7 +45,7 @@ namespace zephkelly
 
       if (hitObject.CompareTag("Asteroid"))
       {
-        hitObject.GetComponent<AsteroidBehaviour>().TakeDamage(1, hitPoint);
+        hitObject.GetComponent<AsteroidController>().TakeDamage(1, hitPoint);
       }
 
       //Fade the explosion light over time and destroy when done

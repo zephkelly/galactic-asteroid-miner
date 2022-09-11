@@ -9,11 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3038497058306479868}
-  - component: {fileID: 8874523443404751}
   - component: {fileID: 106398923809917211}
   - component: {fileID: 8310338067648253354}
   - component: {fileID: 8934573022475736109}
+  - component: {fileID: 8874523443404751}
   - component: {fileID: 959705903440140600}
+  - component: {fileID: 7943300297583722401}
   m_Layer: 3
   m_Name: AsteroidPickup
   m_TagString: AsteroidPickup
@@ -36,20 +37,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8874523443404751
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1239589416757620075}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae16ea05702597a49bfeb0eeae18f044, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxRotation: 0.1
-  rotationMultiplier: 1
 --- !u!50 &106398923809917211
 Rigidbody2D:
   serializedVersion: 4
@@ -157,6 +144,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &8874523443404751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239589416757620075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae16ea05702597a49bfeb0eeae18f044, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxRotation: 0.1
+  rotationMultiplier: 1
 --- !u!114 &959705903440140600
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -169,6 +170,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd1d715020512654192ba0197bab9d9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 0
-  weight: 0
-  size: 0
+  rigid2D: {fileID: 0}
+  asteroidType: 0
+  asteroidAmount: 0
+--- !u!114 &7943300297583722401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239589416757620075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42c6446d827f32a43923470964abb152, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  asteroidSpriteRenderer: {fileID: 8934573022475736109}
+  asteroidRigid2D: {fileID: 106398923809917211}

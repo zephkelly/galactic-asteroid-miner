@@ -83,7 +83,7 @@ namespace zephkelly
         );
 
         var asteroid = Instantiate(asteroidSmallPrefab, randomPosition, Quaternion.identity, this.transform);
-        asteroid.GetComponent<AsteroidBehaviour>().SetAsteroid(AsteroidType.Iron, AsteroidSize.Small);
+        asteroid.GetComponent<AsteroidController>().Init(AsteroidType.Iron, AsteroidSize.Small);
       }
 
       //Medium asteroids
@@ -96,7 +96,7 @@ namespace zephkelly
         );
 
         var asteroid = Instantiate(asteroidMediumPrefab, randomPosition, Quaternion.identity, this.transform);
-        asteroid.GetComponent<AsteroidBehaviour>().SetAsteroid(AsteroidType.Cobalt, AsteroidSize.Medium);
+        asteroid.GetComponent<AsteroidController>().Init(AsteroidType.Cobalt, AsteroidSize.Medium);
       }
 
       //Large asteroids
@@ -109,7 +109,7 @@ namespace zephkelly
         );
 
         var asteroid = Instantiate(asteroidLargePrefab, randomPosition, Quaternion.identity, this.transform);
-        asteroid.GetComponent<AsteroidBehaviour>().SetAsteroid(AsteroidType.Gold, AsteroidSize.Large);
+        asteroid.GetComponent<AsteroidController>().Init(AsteroidType.Iron, AsteroidSize.Large);
 
       }
 
@@ -123,7 +123,7 @@ namespace zephkelly
         );
 
         var asteroid = Instantiate(asteroidExtraLargePrefab, randomPosition, Quaternion.identity, this.transform);
-        asteroid.GetComponent<AsteroidBehaviour>().SetAsteroid(AsteroidType.Cobalt, AsteroidSize.ExtraLarge);
+        asteroid.GetComponent<AsteroidController>().Init(AsteroidType.Gold, AsteroidSize.ExtraLarge);
       }
     }
 
@@ -133,6 +133,8 @@ namespace zephkelly
 
       if(ChunkManager.Instance.StarCount < 2)
       {
+        if(chunkKey == Vector2.zero) return;
+
         //Generate binary star
         if (Random.Range(0f, 100f) < generateStarChance)
         {

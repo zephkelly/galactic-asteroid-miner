@@ -221,10 +221,10 @@ Camera:
   m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.00056369783
-    y: 0.001002004
-    width: 0.9988726
-    height: 0.99799603
+    x: 0
+    y: 0
+    width: 1
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 120
@@ -15068,8 +15068,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 728a0d299b6686a42a69c18f9bc38e1a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkDiameter: 200
-  starCount: 0
+  chunkDiameter: 300
 --- !u!4 &1930855596
 Transform:
   m_ObjectHideFlags: 0
@@ -19923,6 +19922,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1395682312, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: explosionForce
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_RootOrder
       value: 1

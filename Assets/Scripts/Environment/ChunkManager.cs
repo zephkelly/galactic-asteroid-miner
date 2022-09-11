@@ -24,11 +24,11 @@ namespace zephkelly
 
     private Vector2 playerLastChunkPosition;
 
-    private int _chunkNamer;
+    internal int chunkNumber;
 
     //----------------------------------------------------------------------------------------------
 
-    [SerializeField] int starCount;
+    internal int starCount;
 
     public int StarCount { get => starCount; set => starCount = value; }
 
@@ -107,14 +107,14 @@ namespace zephkelly
           }
           else   //Make a new chunk
           {
-            GameObject newChunk = new GameObject("Chunk " + _chunkNamer);
+            GameObject newChunk = new GameObject("Chunk " + chunkNumber);
             newChunk.transform.SetParent(this.transform);
 
             //Populate the chunk
             newChunk.AddComponent<PopulateChunk>().Populate(gridAroundKey, chunkDiameter);
             
             activeChunks.Add(gridAroundKey, newChunk);
-            _chunkNamer++;
+            chunkNumber++;
           }
 
           gridAroundKey.x++;
@@ -129,11 +129,6 @@ namespace zephkelly
       {
         chunk.Value.SetActive(false);
       }
-    }
-
-    private void OnApplicationQuit()
-    {
-      ChunkManager.Instance = null;
     }
   }
 }

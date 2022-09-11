@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -16,187 +17,294 @@ namespace zephkelly
   public enum AsteroidType
   {
     Iron,
-    Cobalt,
-    Gold
+    Platinum,
+    Gold,
+    Palladium,
+    Stellarite,
+    Darkore,
+    Cobalt
   }
 
-  public class AsteroidBehaviour : MonoBehaviour
+  [CreateAssetMenu(fileName = "AsteroidBehaviour", menuName = "ScriptableObjects/AsteroidBehaviour", order = 1)]
+  public class AsteroidBehaviour : ScriptableObject
   {
-    public Rigidbody2D rigid2D;
-    
-    private GameObject asteroidPickup;
-    private GameObject smallAsteroid;
-    private GameObject mediumAsteroid;
-    private GameObject largeAsteroid;
-    private GameObject extraLargeAsteroid;
+    private Tuple<AsteroidType, AsteroidSize, int> thisAsteroidProperties;
 
-    private AsteroidSize asteroidSize;
+    //----------------------------------------------------------------------------------------------
+  
+    //Prefabs with variants
+    private GameObject asteroidPickupPrefab;
+    private GameObject smallAsteroidPrefab;
+    private GameObject mediumAsteroidPrefab;
+    private GameObject largeAsteroidPrefab;
+    private GameObject extraLargeAsteroidPrefab;
 
-    [SerializeField] AsteroidType asteroidType;
-    [SerializeField] int health;
+    //Array of sprites we randmly assign
+    private Sprite[] asteroidPickupSprites = new Sprite[2];
+    private Sprite[] smallAsteroidSprites = new Sprite[2];
+    private Sprite[] mediumAsteroidSprites = new Sprite[2];
+    private Sprite[] largeAsteroidSprites = new Sprite[2];
+    private Sprite[] extraLargeAsteroidSprites = new Sprite[2];
 
-    public void Awake()
+    //----------------------------------------------------------------------------------------------
+
+    private void Awake()
     {
-      rigid2D = GetComponent<Rigidbody2D>();
-
       //Grab our prefabs from resources folder
-      asteroidPickup = Resources.Load("Prefabs/AsteroidPickup") as GameObject;
+      smallAsteroidPrefab = Resources.Load("Prefabs/Asteroid-S") as GameObject;
+      smallAsteroidSprites[0] = Resources.Load("Sprites/Asteroid-S-Sprite1") as Sprite;
+      smallAsteroidSprites[1] = Resources.Load("Sprites/Asteroid-S-Sprite1") as Sprite;
 
-      smallAsteroid = Resources.Load("Prefabs/Asteroid-S") as GameObject;
-      mediumAsteroid = Resources.Load("Prefabs/Asteroid-M") as GameObject;
-      largeAsteroid = Resources.Load("Prefabs/Asteroid-L") as GameObject;
-      extraLargeAsteroid = Resources.Load("Prefabs/Asteroid-XL") as GameObject;
+      mediumAsteroidPrefab = Resources.Load("Prefabs/Asteroid-M") as GameObject;
+      mediumAsteroidSprites[0] = Resources.Load("Sprites/Asteroid-S-Sprite1") as Sprite;
+      mediumAsteroidSprites[1] = Resources.Load("Sprites/Asteroid-S-Sprite1") as Sprite;
+
+      largeAsteroidPrefab = Resources.Load("Prefabs/Asteroid-L") as GameObject;
+      largeAsteroidSprites[0] = Resources.Load("Sprites/Asteroid-S-Sprite1") as Sprite;
+      largeAsteroidSprites[1] = Resources.Load("Sprites/Asteroid-S-Sprite1") as Sprite;
+
+      extraLargeAsteroidPrefab = Resources.Load("Prefabs/Asteroid-XL") as GameObject; 
+      extraLargeAsteroidSprites[0] = Resources.Load("Sprites/Asteroid-S-Sprite1") as Sprite;
+      extraLargeAsteroidSprites[1] = Resources.Load("Sprites/Asteroid-S-Sprite1") as Sprite;
+
+      asteroidPickupPrefab = Resources.Load("Prefabs/AsteroidPickup") as GameObject;
+      asteroidPickupSprites[0] = Resources.Load("Sprites/Asteroid-S-Sprite1") as Sprite;
+      asteroidPickupSprites[1] = Resources.Load("Sprites/Asteroid-S-Sprite1") as Sprite;
     }
 
-    public void SetAsteroid(AsteroidType type, AsteroidSize size)
+    public Tuple<AsteroidType, AsteroidSize, int> SetProperties(AsteroidType type, AsteroidSize size, GameObject newAsteroid, SpriteRenderer asteroidSpriteRenderer, Rigidbody2D asteroidRigid2D)
     {
-      asteroidType = type;
-      asteroidSize = size;
+      int health = 0;
 
-      //Set our health based on the size of asteroid
+      //int randomSpriteInt = UnityEngine.Random.Range(0, 2);
+
       switch (size)
       {
+        case AsteroidSize.ExtraLarge:
+          health = 5; 
+          size = AsteroidSize.ExtraLarge;
+          //thisSpriteRenderer.sprite = largeAsteroidSprites[randomSpriteInt];
+          break;
+        case AsteroidSize.Large:
+          health = 4;
+          size = AsteroidSize.Large;
+          //thisSpriteRenderer.sprite = mediumAsteroidSprites[randomSpriteInt];
+          break;
+        case AsteroidSize.Medium:
+          health = 3;
+          size = AsteroidSize.Medium;
+          //thisSpriteRenderer.sprite = smallAsteroidSprites[randomSpriteInt];
+          break;
         case AsteroidSize.Small:
           health = 2;
-          break; 
-        case AsteroidSize.Medium:
-          health = 4;
+          size = AsteroidSize.Small;
+          //thisSpriteRenderer.sprite = asteroidPickupSprites[randomSpriteInt];
           break;
-        case AsteroidSize.Large:
-          health = 6;
-          break;
-        case AsteroidSize.ExtraLarge:
-          health = 8;
+        case AsteroidSize.Pickup:
+          health = 1;
+          size = AsteroidSize.Pickup;
+          //thisSpriteRenderer.sprite = asteroidPickupSprites[randomSpriteInt];
           break;
       }
 
-      switch (type)
+      thisAsteroidProperties = new Tuple<AsteroidType, AsteroidSize, int>(type, size, health);
+      return thisAsteroidProperties;
+    }
+
+    public int TakeDamage(GameObject asteroidObject, AsteroidType type, AsteroidSize size, int health, int damage, Vector2 hitVector)
+    {
+      int asteroidHealth = health;
+      asteroidHealth -= damage;
+
+      if (asteroidHealth <= 0)
       {
-        case AsteroidType.Iron:
-          gameObject.GetComponent<SpriteRenderer>().color = Color.white;
-          break;
-        case AsteroidType.Cobalt:
-          gameObject.GetComponent<SpriteRenderer>().color = new Color(0.3f, 0.5f, 1f, 1f);
-          break;
-        case AsteroidType.Gold:
-          gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 0.8f, 0.3f, 1f);
-          break;
+        SplitAsteroid(asteroidObject, type, size);
+        return asteroidHealth;
+      }
+
+      CreateRubbleOnDamage(asteroidObject, type, size, hitVector);
+      return asteroidHealth;
+    }
+
+    private void SplitAsteroid(GameObject parentAsteroid, AsteroidType parentType, AsteroidSize parentSize)
+    {
+      //If we're a pickup, ignore
+      if (parentSize == AsteroidSize.Pickup) return;
+
+      AsteroidController newAsteroidController;
+      GameObject newAsteroid;
+      SpriteRenderer spriteRenderer;
+      Rigidbody2D rigid2D;
+
+      //Spawn 2 children
+      for (int i = 0; i < 2; i++)
+      {
+        switch (parentSize)
+        {
+          case AsteroidSize.ExtraLarge:
+            newAsteroid = Instantiate(largeAsteroidPrefab, parentAsteroid.transform.position, Quaternion.identity);
+            newAsteroidController = newAsteroid.GetComponent<AsteroidController>();
+            newAsteroidController.Init(parentType, AsteroidSize.Large);
+
+            rigid2D = newAsteroidController.AsteroidRigid2D;
+            spriteRenderer = newAsteroidController.AsteroidSpriteRenderer;
+
+            rigid2D.AddForce(new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)), ForceMode2D.Impulse);
+            rigid2D.AddTorque(UnityEngine.Random.Range(-1f, 1f), ForceMode2D.Impulse);
+            break;
+
+          case AsteroidSize.Large:
+            newAsteroid = Instantiate(mediumAsteroidPrefab, parentAsteroid.transform.position, Quaternion.identity);
+            newAsteroidController = newAsteroid.GetComponent<AsteroidController>();
+            newAsteroidController.Init(parentType, AsteroidSize.Medium);
+
+            rigid2D = newAsteroidController.AsteroidRigid2D;
+            spriteRenderer = newAsteroidController.AsteroidSpriteRenderer;
+
+            rigid2D.AddForce(new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)), ForceMode2D.Impulse);
+            rigid2D.AddTorque(UnityEngine.Random.Range(-1f, 1f), ForceMode2D.Impulse);
+            break;
+
+          case AsteroidSize.Medium:
+            newAsteroid = Instantiate(smallAsteroidPrefab, parentAsteroid.transform.position, Quaternion.identity);
+            newAsteroidController = newAsteroid.GetComponent<AsteroidController>();
+            newAsteroidController.Init(parentType, AsteroidSize.Small);
+
+            rigid2D = newAsteroidController.AsteroidRigid2D;
+            spriteRenderer = newAsteroidController.AsteroidSpriteRenderer;
+
+            rigid2D.AddForce(new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)), ForceMode2D.Impulse);
+            rigid2D.AddTorque(UnityEngine.Random.Range(-1f, 1f), ForceMode2D.Impulse);
+            break;
+
+          case AsteroidSize.Small:
+            newAsteroid = Instantiate(asteroidPickupPrefab, parentAsteroid.transform.position, Quaternion.identity);
+            newAsteroidController = newAsteroid.GetComponent<AsteroidController>();
+            newAsteroidController.Init(parentType, AsteroidSize.Pickup);
+
+            rigid2D = newAsteroidController.AsteroidRigid2D;
+            spriteRenderer = newAsteroidController.AsteroidSpriteRenderer;
+
+            rigid2D.AddForce(new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)), ForceMode2D.Impulse);
+            rigid2D.AddTorque(UnityEngine.Random.Range(-1f, 1f), ForceMode2D.Impulse);
+            break;
+        }
       }
     }
 
-    public void TakeDamage(int damage, Vector3 hitPoint)
+    private void CreateRubbleOnDamage(GameObject parentAsteroid, AsteroidType parentType, AsteroidSize parentSize, Vector2 hitVector)
     {
-      health -= damage;
-
-      if (health <= 0)
-      {
-        //Either make a pickup or split asteroid into two
-        if (asteroidSize == AsteroidSize.Small)
-        {
-          var numberOfSmallerAsteroids = Random.Range(1, 4);
-
-          for (int i = 0; i < numberOfSmallerAsteroids; i++)
-          {
-            CreateAsteroidPickup(asteroidType, hitPoint);
-          }
-          Destroy(gameObject);
-        }
-        else
-        {
-          //Make explosion first
-          SplitAsteroidIntoSmaller(asteroidSize, hitPoint);
-          Destroy(gameObject);
-          return;
-        }
-      }
-      else
-      {
-        //If we arent dead we do normal behaviour
-        DamageBehaviourFromSize(hitPoint);
-      }
-    }
-
-    //When the asteroid is hit we change behaviour based on size
-    private void DamageBehaviourFromSize(Vector3 _hitPoint)
-    {
-      switch (asteroidSize)
+      //Create rubble based on size
+      switch (parentSize)
       {
         case AsteroidSize.Small:
-          var small = Random.Range(1, 6); 
-          if (small == 1) CreateAsteroidPickup(asteroidType, _hitPoint);
+          SmallAsteroidRubble(parentAsteroid, parentType, hitVector);
           break;
         case AsteroidSize.Medium:
-          var medium = Random.Range(1, 8);
-          if (medium == 1) CreateAsteroidPickup(asteroidType, _hitPoint);
+          MediumAsteroidRubble(parentAsteroid, parentType, hitVector);
           break;
         case AsteroidSize.Large:
-          var large = Random.Range(1, 10);
-          if (large == 1) CreateSmallerAsteroid(AsteroidSize.Small, _hitPoint);
+          LargeAsteroidRubble(parentAsteroid, parentType, hitVector);
           break;
         case AsteroidSize.ExtraLarge:
-          var extraLarge = Random.Range(1, 12);
-          if (extraLarge == 1) CreateSmallerAsteroid(AsteroidSize.Medium, _hitPoint);
+          ExtraLargeAsteroidRubble(parentAsteroid, parentType, hitVector);
           break;
       }
     }
 
-    private void CreateAsteroidPickup(AsteroidType _asteroidType, Vector2 _hitPoint)
+    private void SmallAsteroidRubble(GameObject parentAsteroid, AsteroidType parentType, Vector2 hitVector)
     {
-      //Instantiate asteroid pickup
-      var pickup = Instantiate(asteroidPickup, _hitPoint, Quaternion.identity);
-      var behaviour = pickup.GetComponent<AsteroidPickup>();
-      
-      behaviour.CreatePickup(_asteroidType);
-      behaviour.rigid2D.AddForce(new Vector2(Random.Range(-2f, 2f), Random.Range(-2f, 2f)));
-    }
+      //Asteroid pickup chance
+      int pickupChance = UnityEngine.Random.Range(0, 6);
+      if(pickupChance == 0) return;
 
-    private void CreateSmallerAsteroid(AsteroidSize _asteroidSize, Vector2 _spawnPoint)
-    {
-      switch (_asteroidSize)
+      //Number of pickups chance
+      for (int i = 0; i < UnityEngine.Random.Range(0, 3); i++)
       {
-        case AsteroidSize.ExtraLarge:
-          InstantiateNewAsteroid(largeAsteroid, AsteroidSize.Medium, _spawnPoint);
-          break;
-        case AsteroidSize.Large:
-          InstantiateNewAsteroid(mediumAsteroid, AsteroidSize.Small, _spawnPoint);
-          break;
-        case AsteroidSize.Medium:
-          InstantiateNewAsteroid(smallAsteroid, AsteroidSize.Small, _spawnPoint);
-          break;
-        default:
-          break;
+        var pickup = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
+        pickup.GetComponent<AsteroidController>().Init(parentType, AsteroidSize.Pickup);
       }
     }
 
-    private void SplitAsteroidIntoSmaller(AsteroidSize _asteroidSize, Vector2 _spawnPoint)
+    private void MediumAsteroidRubble(GameObject parentAsteroid, AsteroidType parentType, Vector2 hitVector)
     {
-      switch (_asteroidSize)
+      //Asteroid pickup chance
+      int pickupChance = UnityEngine.Random.Range(0, 6);
+      if (pickupChance == 0)
       {
-        case AsteroidSize.ExtraLarge:
-          InstantiateNewAsteroid(largeAsteroid, AsteroidSize.Large, _spawnPoint);
-          InstantiateNewAsteroid(largeAsteroid, AsteroidSize.Large, _spawnPoint);
-          break;
-        case AsteroidSize.Large:
-          InstantiateNewAsteroid(mediumAsteroid, AsteroidSize.Medium, _spawnPoint);
-          InstantiateNewAsteroid(mediumAsteroid, AsteroidSize.Medium, _spawnPoint);
-          break;
-        case AsteroidSize.Medium:
-          InstantiateNewAsteroid(smallAsteroid, AsteroidSize.Small, _spawnPoint);
-          InstantiateNewAsteroid(smallAsteroid, AsteroidSize.Small, _spawnPoint);
-          break;
-        default:
-          break;
+        //Number of pickups chance
+        for (int i = 0; i < UnityEngine.Random.Range(0, 2); i++)
+        {
+          var pickup = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
+          pickup.GetComponent<AsteroidController>().Init(parentType, AsteroidSize.Pickup);
+        }
       }
     }
 
-    public void InstantiateNewAsteroid(GameObject _type, AsteroidSize _size, Vector2 _hitPoint)
+    private void LargeAsteroidRubble(GameObject parentAsteroid, AsteroidType parentType, Vector2 hitVector)
     {
-      //Instantiate asteroid pickup
-      var asteroid = Instantiate(_type, _hitPoint, Quaternion.identity);
-      var behaviour = asteroid.GetComponent<AsteroidBehaviour>();
+      //Asteroid pickup chance
+      int pickupChance = UnityEngine.Random.Range(0, 6);
+      if (pickupChance == 0)
+      {
+        //Number of pickups chance
+        for (int i = 0; i < UnityEngine.Random.Range(0, 2); i++)
+        {
+          var pickup = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
+          pickup.GetComponent<AsteroidController>().Init(parentType, AsteroidSize.Pickup);
+        }
+      }
 
-      behaviour.SetAsteroid(asteroidType, _size);
-      behaviour.rigid2D.AddForce(new Vector2(Random.Range(-2f, 2f), Random.Range(-2f, 2f)));
+      //Small asteroids chance
+      int smallAsteroidChance = UnityEngine.Random.Range(0, 6);
+      if (smallAsteroidChance == 0)
+      {
+        //Number of small asteroids chance
+        for (int i = 0; i < UnityEngine.Random.Range(0, 2); i++)
+        {
+          var smallAsteroid = Instantiate(smallAsteroidPrefab, hitVector, Quaternion.identity);
+          smallAsteroid.GetComponent<AsteroidController>().Init(parentType, AsteroidSize.Small);
+        }
+      }
+    }
+
+    private void ExtraLargeAsteroidRubble(GameObject parentAsteroid, AsteroidType parentType, Vector2 hitVector)
+    {
+      //Asteroid pickup chance
+      int pickupChance = UnityEngine.Random.Range(0, 6);
+      if (pickupChance == 0)
+      {
+        //Number of pickups chance
+        for (int i = 0; i < UnityEngine.Random.Range(0, 2); i++)
+        {
+          var pickup = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
+          pickup.GetComponent<AsteroidController>().Init(parentType, AsteroidSize.Pickup);
+        }
+      }
+
+      //Small asteroids chance
+      int smallAsteroidChance = UnityEngine.Random.Range(0, 6);
+      if (smallAsteroidChance == 0)
+      {
+        //Number of small asteroids chance
+        for (int i = 0; i < UnityEngine.Random.Range(0, 2); i++)
+        {
+          var smallAsteroid = Instantiate(smallAsteroidPrefab, hitVector, Quaternion.identity);
+          smallAsteroid.GetComponent<AsteroidController>().Init(parentType, AsteroidSize.Small);
+        }
+      }
+
+      //Medium asteroids chance
+      int mediumAsteroidChance = UnityEngine.Random.Range(0, 6);
+      if (mediumAsteroidChance == 0)
+      {
+        //Number of medium asteroids chance
+        for (int i = 0; i < UnityEngine.Random.Range(0, 2); i++)
+        {
+          var mediumAsteroid = Instantiate(mediumAsteroidPrefab, hitVector, Quaternion.identity);
+          mediumAsteroid.GetComponent<AsteroidController>().Init(parentType, AsteroidSize.Medium);
+        }
+      }
     }
   }
-}
+} 
