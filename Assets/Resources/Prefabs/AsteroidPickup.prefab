@@ -202,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42c6446d827f32a43923470964abb152, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  asteroidSpriteRenderer: {fileID: 0}
+  asteroidSpriteRenderer: {fileID: 735372372295908565}
   asteroidRigid2D: {fileID: 106398923809917211}
   asteroidHealth: 0
 --- !u!1 &3446632944053043848

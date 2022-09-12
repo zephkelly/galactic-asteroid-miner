@@ -25,6 +25,7 @@ namespace zephkelly
     private void Awake()
     {
       asteroidBehaviour = Resources.Load("ScriptableObjects/AsteroidBehaviour") as AsteroidBehaviour;
+      asteroidRigid2D = GetComponent<Rigidbody2D>();
     }
 
     public void Init(AsteroidType type, AsteroidSize size)

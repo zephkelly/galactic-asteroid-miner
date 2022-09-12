@@ -19,22 +19,19 @@ namespace zephkelly
 
     private void OnTriggerEnter2D(Collider2D c) 
     {
-      //Grab rigidbody from entering object
-      var newRigidbody = c.GetComponent<Rigidbody2D>();
+      if (!c.CompareTag("Asteroid")) return;
       
-      //Ignore our pickup trigger on ship
-      if (c.CompareTag("PickupMagnet")) return;
-      if (c.CompareTag("Star")) return;
-
       //Add to list of orbiting bodies and set velocity
+      var newRigidbody = c.GetComponent<Rigidbody2D>();
       orbitingBodies.Add(newRigidbody);
       ApplyInstantOrbitalVelocity(newRigidbody);
     }
 
     private void OnTriggerExit2D(Collider2D c) 
     {
-      var exitingRigidbody = c.GetComponent<Rigidbody2D>();
+      if (!c.CompareTag("Asteroid")) return;
 
+      var exitingRigidbody = c.GetComponent<Rigidbody2D>();
       orbitingBodies.Remove(exitingRigidbody);
     }
 
@@ -45,8 +42,10 @@ namespace zephkelly
 
     private void Gravity()
     {
-      foreach(Rigidbody2D body in orbitingBodies)
+      for (int i = 0; i < orbitingBodies.Count; i++)
       {
+        Rigidbody2D body = orbitingBodies[i];
+
         float bodyMass = body.mass;
         float starMass = starRigidbody.mass;
         float distanceToStar = Vector2.Distance(starRigidbody.position, body.position);
@@ -80,18 +79,6 @@ namespace zephkelly
       Vector2 perpendicularDirection = Vector2.Perpendicular(directionToStar);
 
       return perpendicularDirection * Mathf.Sqrt((G * starMass) / distanceToStar);
-    }
-
-    public Vector2 GetAverageOrbitingSpeed()
-    {
-      Vector2 sumOfOrbitingVectors = Vector2.zero;
-
-      foreach(Rigidbody2D body in orbitingBodies)
-      {
-        sumOfOrbitingVectors += GetOrbitalVelocity(body);
-      }
-
-      return sumOfOrbitingVectors / orbitingBodies.Count;
     }
   }
 }

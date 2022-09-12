@@ -56,7 +56,7 @@ namespace zephkelly
       
       if (_activateStarOrbiting) 
       {
-        StarOrbitingBehaviour();
+        StarOrbiting();
       }
       else 
       {
@@ -96,8 +96,14 @@ namespace zephkelly
       }
     }
 
-    private void StarOrbitingBehaviour()
+    private void StarOrbiting()
     {
+      if (_currentStarBehaviour == null) 
+      {
+        print("Error: StarOrbiting() called but no StarOrbiting behaviour found on player");
+        return;
+      }
+
       //Makes sure that we are travelling the correct speed around the star
       _lastVelocity = _shipOrbitalVelocity;
       _shipOrbitalVelocity = _currentStarBehaviour.GetOrbitalVelocity(rigid2D);
@@ -126,17 +132,17 @@ namespace zephkelly
       if (!other.CompareTag("Star")) return;
 
       //Activate star behaviour
-      _activateStarOrbiting = true;
       _currentStarBehaviour = other.GetComponent<StarOrbitingBehaviour>();
       _currentStarBehaviour.ApplyInstantOrbitalVelocity(rigid2D);
+      _activateStarOrbiting = true;
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
       if (!other.CompareTag("Star")) return;
 
-      _activateStarOrbiting = false;
       _currentStarBehaviour = null;
+      _activateStarOrbiting = false;
     }
   }
 }
