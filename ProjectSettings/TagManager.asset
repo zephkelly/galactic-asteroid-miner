@@ -8,6 +8,7 @@ TagManager:
   - Star
   - ParallaxStarfield
   - AsteroidPickup
+  - PickupMagnet
   layers:
   - Default
   - TransparentFX

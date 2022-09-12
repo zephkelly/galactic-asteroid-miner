@@ -48,7 +48,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 40
+  m_Mass: 230
   m_LinearDrag: 0
   m_AngularDrag: 0
   m_GravityScale: 0
@@ -119,6 +119,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   asteroidSpriteRenderer: {fileID: 4179776488643482051}
   asteroidRigid2D: {fileID: 3785719556351337997}
+  asteroidHealth: 0
 --- !u!1 &5904528131540670529
 GameObject:
   m_ObjectHideFlags: 0

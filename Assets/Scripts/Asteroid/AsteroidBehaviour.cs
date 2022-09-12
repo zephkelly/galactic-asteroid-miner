@@ -149,7 +149,11 @@ namespace zephkelly
             rigid2D = newAsteroidController.AsteroidRigid2D;
             spriteRenderer = newAsteroidController.AsteroidSpriteRenderer;
 
-            rigid2D.AddForce(new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)), ForceMode2D.Impulse);
+            rigid2D.AddForce(new Vector2(
+              UnityEngine.Random.Range(-1f, 1f),
+              UnityEngine.Random.Range(-1f, 1f)),
+              ForceMode2D.Impulse);
+
             rigid2D.AddTorque(UnityEngine.Random.Range(-1f, 1f), ForceMode2D.Impulse);
             break;
 
@@ -161,7 +165,11 @@ namespace zephkelly
             rigid2D = newAsteroidController.AsteroidRigid2D;
             spriteRenderer = newAsteroidController.AsteroidSpriteRenderer;
 
-            rigid2D.AddForce(new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)), ForceMode2D.Impulse);
+            rigid2D.AddForce(new Vector2(
+              UnityEngine.Random.Range(-1f, 1f),
+              UnityEngine.Random.Range(-1f, 1f)),
+              ForceMode2D.Impulse);
+
             rigid2D.AddTorque(UnityEngine.Random.Range(-1f, 1f), ForceMode2D.Impulse);
             break;
 
@@ -173,7 +181,11 @@ namespace zephkelly
             rigid2D = newAsteroidController.AsteroidRigid2D;
             spriteRenderer = newAsteroidController.AsteroidSpriteRenderer;
 
-            rigid2D.AddForce(new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)), ForceMode2D.Impulse);
+            rigid2D.AddForce(new Vector2(
+              UnityEngine.Random.Range(-1f, 1f),
+              UnityEngine.Random.Range(-1f, 1f)),
+              ForceMode2D.Impulse);
+
             rigid2D.AddTorque(UnityEngine.Random.Range(-1f, 1f), ForceMode2D.Impulse);
             break;
 
@@ -185,7 +197,11 @@ namespace zephkelly
             rigid2D = newAsteroidController.AsteroidRigid2D;
             spriteRenderer = newAsteroidController.AsteroidSpriteRenderer;
 
-            rigid2D.AddForce(new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)), ForceMode2D.Impulse);
+            rigid2D.AddForce(new Vector2(
+              UnityEngine.Random.Range(-1f, 1f),
+              UnityEngine.Random.Range(-1f, 1f)),
+              ForceMode2D.Impulse);
+
             rigid2D.AddTorque(UnityEngine.Random.Range(-1f, 1f), ForceMode2D.Impulse);
             break;
         }

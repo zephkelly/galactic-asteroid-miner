@@ -18,6 +18,7 @@ namespace zephkelly
 
     [SerializeField] int asteroidHealth;
 
+    public AsteroidType AsteroidType { get => asteroidType; set => asteroidType = value; }
     public SpriteRenderer AsteroidSpriteRenderer { get => asteroidSpriteRenderer; set => asteroidSpriteRenderer = value; }
     public Rigidbody2D AsteroidRigid2D { get => asteroidRigid2D; set => asteroidRigid2D = value; }
 
@@ -36,7 +37,7 @@ namespace zephkelly
 
     public void TakeDamage(int damage, Vector2 hitVector)
     {
-      if (GetSize() == AsteroidSize.Pickup) return;
+      //if (GetSize() == AsteroidSize.Pickup) return;
 
       asteroidHealth = asteroidBehaviour.TakeDamage(this.gameObject, asteroidType, asteroidSize, asteroidHealth, damage, hitVector);
 

@@ -5,11 +5,11 @@ using UnityEngine;
 namespace zephkelly
 {
   [CreateAssetMenu(fileName = "Inventory", menuName = "ScriptableObjects/Inventory", order = 0)]
-  public class InventoryScriptable : ScriptableObject
+  public class Inventory : ScriptableObject
   {
     //public event System.Action OnInventoryChanged;
     
-    private Dictionary <string, int> inventory = new Dictionary<string, int>();
+    [SerializeField] Dictionary <string, int> inventory = new Dictionary<string, int>();
 
     public void AddItem(string item, int amount)
     {

@@ -7,6 +7,7 @@ namespace zephkelly
   public class ShipController : MonoBehaviour
   {
     private InputManager inputs;
+    private Inventory inventory;
     private Rigidbody2D rigid2D;
 
     //----------------------------------------------------------------------------------------------
@@ -24,14 +25,17 @@ namespace zephkelly
 
     //----------------------------------------------------------------------------------------------
 
+    public Inventory Inventory => inventory;
+
     private void Awake()
     {
       rigid2D = GetComponent<Rigidbody2D>();
-      _activateStarOrbiting = false;
+      inventory = Resources.Load("ScriptableObjects/PlayerInventory") as Inventory;
     }
 
     private void Start()
     {
+      _activateStarOrbiting = false;
       inputs = InputManager.Instance;
       rigid2D.centerOfMass = Vector2.zero;
     }

@@ -22,8 +22,8 @@ namespace zephkelly
       //Grab rigidbody from entering object
       var newRigidbody = c.GetComponent<Rigidbody2D>();
       
-      //Set the correct orbital velocity if we arent the player
-      if (c.CompareTag("Player")) return;
+      //Ignore our pickup trigger on ship
+      if (c.CompareTag("PickupMagnet")) return;
       if (c.CompareTag("Star")) return;
 
       //Add to list of orbiting bodies and set velocity
