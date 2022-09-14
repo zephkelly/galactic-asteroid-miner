@@ -18,6 +18,7 @@ namespace zephkelly
 
     private void OnTriggerEnter2D(Collider2D otherCollider)
     {
+      if (otherCollider == null) return;
       if (!otherCollider.CompareTag("AsteroidPickup")) return;
 
       var asteroidType = otherCollider.GetComponent<AsteroidController>().AsteroidType;

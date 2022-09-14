@@ -19905,6 +19905,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1395682311, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: CollisionModule.collidesWith.m_Bits
+      value: 136
+      objectReference: {fileID: 0}
     - target: {fileID: 1019796804800047149, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_TagString
       value: Player

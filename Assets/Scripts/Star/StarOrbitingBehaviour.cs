@@ -19,7 +19,7 @@ namespace zephkelly
 
     private void OnTriggerEnter2D(Collider2D c) 
     {
-      if (!c.CompareTag("Asteroid")) return;
+      if (!(c.CompareTag("Asteroid") || c.CompareTag("AsteroidPickup"))) return;
       
       //Add to list of orbiting bodies and set velocity
       var newRigidbody = c.GetComponent<Rigidbody2D>();
@@ -29,7 +29,7 @@ namespace zephkelly
 
     private void OnTriggerExit2D(Collider2D c) 
     {
-      if (!c.CompareTag("Asteroid")) return;
+      if (!(c.CompareTag("Asteroid") || c.CompareTag("AsteroidPickup"))) return;
 
       var exitingRigidbody = c.GetComponent<Rigidbody2D>();
       orbitingBodies.Remove(exitingRigidbody);

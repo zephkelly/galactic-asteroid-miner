@@ -183,7 +183,7 @@ namespace zephkelly
           newRigid2D = newAsteroidController.AsteroidRigid2D;
 
           //newRigid2D.velocity = parentVelocity;
-          
+
           newRigid2D.AddForce(new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)),
             ForceMode2D.Impulse);
           newRigid2D.AddTorque(UnityEngine.Random.Range(-1f, 1f), ForceMode2D.Impulse);
@@ -191,7 +191,7 @@ namespace zephkelly
 
         if (i == 1) return;   //Save some cpu cycles
 
-        //Avoid clipping by getting new position if asteroids intersect
+        //Avoid clipping by getting new position if new asteroids intersect
         int giveUpCounter = 0;   //If we can't find a position, give up
         do
         {

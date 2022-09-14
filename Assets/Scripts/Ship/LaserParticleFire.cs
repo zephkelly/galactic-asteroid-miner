@@ -8,15 +8,15 @@ namespace zephkelly
   public class LaserParticleFire : MonoBehaviour
   {
     [SerializeField] ParticleSystem laserParticleSystem;
-    List<ParticleCollisionEvent> collisonEvents;
     [SerializeField] GameObject explosionPrefab;
 
     [SerializeField] float explosionForce = 4f;
+    List<ParticleCollisionEvent> collisonEvents = new List<ParticleCollisionEvent>();
+
 
     public void Awake()
     {
       laserParticleSystem = gameObject.GetComponent<ParticleSystem>();
-      collisonEvents = new List<ParticleCollisionEvent>();
     }
 
     public void Start()
@@ -49,7 +49,7 @@ namespace zephkelly
       }
       else if (hitObject.CompareTag("AsteroidPickup"))
       {
-        Destroy(hitObject.gameObject);
+        Destroy(hitObject);
       }
 
       //Fade the explosion light over time and destroy when done

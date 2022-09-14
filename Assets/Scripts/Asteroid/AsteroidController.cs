@@ -41,7 +41,7 @@ namespace zephkelly
 
     public void TakeDamage(int damage, Vector2 hitVector)
     {
-      //if (GetSize() == AsteroidSize.Pickup) return;
+      if (GetSize() == AsteroidSize.Pickup) return;
 
       asteroidHealth = asteroidBehaviour.TakeDamage(this, asteroidType, asteroidSize, asteroidHealth, damage, hitVector);
 
