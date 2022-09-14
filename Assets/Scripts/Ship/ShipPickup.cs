@@ -22,6 +22,7 @@ namespace zephkelly
     private async void OnTriggerEnter2D(Collider2D otherCollider)
     {
       if (!otherCollider.CompareTag("AsteroidPickup")) return;
+      if (otherCollider == null) return;
 
       otherCollider.isTrigger = true;
       var asteroidType = otherCollider.GetComponent<AsteroidController>().AsteroidType;
@@ -66,7 +67,6 @@ namespace zephkelly
         await Task.Yield();
       }
       while (distanceToPlayer > 0.1f);
-
     }
   }
 }
