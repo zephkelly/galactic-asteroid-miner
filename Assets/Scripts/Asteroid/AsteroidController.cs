@@ -14,18 +14,21 @@ namespace zephkelly
     private AsteroidSize asteroidSize;
 
     [SerializeField] SpriteRenderer asteroidSpriteRenderer;
-    [SerializeField] Rigidbody2D asteroidRigid2D;
+    private Rigidbody2D asteroidRigid2D;
+    private Collider2D asteroidCollider;
 
     [SerializeField] int asteroidHealth;
 
-    public AsteroidType AsteroidType { get => asteroidType; set => asteroidType = value; }
-    public SpriteRenderer AsteroidSpriteRenderer { get => asteroidSpriteRenderer; set => asteroidSpriteRenderer = value; }
-    public Rigidbody2D AsteroidRigid2D { get => asteroidRigid2D; set => asteroidRigid2D = value; }
+    public AsteroidType AsteroidType { get => asteroidType; }
+    public SpriteRenderer AsteroidSpriteRenderer { get => asteroidSpriteRenderer; }
+    public Rigidbody2D AsteroidRigid2D { get => asteroidRigid2D; }
+    public Collider2D AsteroidCollider { get => asteroidCollider; }
 
     private void Awake()
     {
       asteroidBehaviour = Resources.Load("ScriptableObjects/AsteroidBehaviour") as AsteroidBehaviour;
       asteroidRigid2D = GetComponent<Rigidbody2D>();
+      asteroidCollider = GetComponent<Collider2D>();
     }
 
     public void Init(AsteroidType type, AsteroidSize size)
@@ -40,7 +43,7 @@ namespace zephkelly
     {
       //if (GetSize() == AsteroidSize.Pickup) return;
 
-      asteroidHealth = asteroidBehaviour.TakeDamage(this.gameObject, asteroidType, asteroidSize, asteroidHealth, damage, hitVector);
+      asteroidHealth = asteroidBehaviour.TakeDamage(this, asteroidType, asteroidSize, asteroidHealth, damage, hitVector);
 
       if(asteroidHealth <= 0) Destroy(this.gameObject);
     }

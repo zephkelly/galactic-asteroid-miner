@@ -124,7 +124,6 @@ namespace zephkelly
         gridAroundKey.x -= 5;   //Need to reset x axis for next row
       }
 
-      //After chunks are made we 
       foreach (var chunk in deactivatedChunks)
       {
         chunk.Value.SetActive(false);
