@@ -25,7 +25,7 @@ namespace zephkelly
         return;
       }
 
-      if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
+      if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
       {
         _fireTimer = fireTime;
         laserWeapon.Shoot();

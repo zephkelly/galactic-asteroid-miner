@@ -209,10 +209,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43455577f3c2f8240a43025a8b6886bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  asteroidPrefabM: {fileID: 4542185127268315299, guid: d41d89fd98ed7f943b36098b0c502900, type: 3}
   beltMinumumRadius: 60
   beltMaximumRadius: 80
-  beltDensity: 400
+  beltDensity: 180
 --- !u!1 &4268589948934644068
 GameObject:
   m_ObjectHideFlags: 0

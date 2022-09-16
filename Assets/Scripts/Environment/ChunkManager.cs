@@ -8,6 +8,7 @@ namespace zephkelly
   public class ChunkManager : MonoBehaviour
   {
     public static ChunkManager Instance;
+    private PopulateChunk populateChunk;
 
     //Deactivated chunks
     private Dictionary<Vector2Int, GameObject> deactivatedChunks = 
@@ -38,12 +39,13 @@ namespace zephkelly
 
     private void Awake()
     {
-      if (Instance == null)
-      {
+      populateChunk = Resources.Load("ScriptableObjects/PopulateChunkManager") 
+        as PopulateChunk;
+
+      //Singleton pattern
+      if (Instance == null) {
         Instance = this;
-      }
-      else
-      {
+      } else {
         Destroy(gameObject);
       }
     }
@@ -130,8 +132,10 @@ namespace zephkelly
               newChunk.transform.SetParent(this.transform);
 
               //Populate the chunk
-              newChunk.AddComponent<PopulateChunk>()
-                .Populate(lazyGridKey, chunkDiameter);
+              //newChunk.AddComponent<PopulateChunk>()
+                //.Populate(lazyGridKey, chunkDiameter);
+
+              populateChunk.Populate(lazyGridKey, chunkDiameter, newChunk.transform);
               
               lazyChunks.Add(lazyGridKey, newChunk);
               chunkNumberNamer++;

@@ -4,14 +4,15 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  public class PopulateChunk : MonoBehaviour
+  [CreateAssetMenu(fileName = "PopulateChunkManager",menuName = "ScriptableObjects/PopulateChunkManager", order = 2)]
+  public class PopulateChunk : ScriptableObject
   {
-    private GameObject asteroidSmallPrefab;
-    private GameObject asteroidMediumPrefab;
-    private GameObject asteroidLargePrefab;
-    private GameObject asteroidExtraLargePrefab;
-    private GameObject starOrangePrefab;
-    private GameObject starWhitePrefab;
+    [SerializeField] GameObject asteroidSmallPrefab;
+    [SerializeField] GameObject asteroidMediumPrefab;
+    [SerializeField] GameObject asteroidLargePrefab;
+    [SerializeField] GameObject asteroidExtraLPrefab;
+    [SerializeField] GameObject starOrangePrefab;
+    [SerializeField] GameObject starWhitePrefab;
 
     //------------------------------------------------------------------------------
 
@@ -36,29 +37,17 @@ namespace zephkelly
 
     //------------------------------------------------------------------------------
 
-    public void Awake()
-    {
-      //Grab our prefabs from resources folder
-      asteroidSmallPrefab = Resources.Load("Prefabs/Asteroid-S") as GameObject;
-      asteroidMediumPrefab = Resources.Load("Prefabs/Asteroid-M") as GameObject;
-      asteroidLargePrefab = Resources.Load("Prefabs/Asteroid-L") as GameObject;
-      asteroidExtraLargePrefab = Resources.Load("Prefabs/Asteroid-XL") as GameObject;
-
-      starOrangePrefab = Resources.Load("Prefabs/StarOrange") as GameObject;
-      starWhitePrefab = Resources.Load("Prefabs/StarWhite") as GameObject;
-    }
-
-    public void Populate(Vector2 key, int chunkSize)
+    public void Populate(Vector2 key, int chunkSize, Transform chunkTransform)
     {
       chunkKey = key;
       chunkDiameter = chunkSize;
 
-      GenerateAsteroids();
+      GenerateAsteroids(chunkTransform);
 
-      GenerateStar();
+      GenerateStar(chunkTransform);
     }
 
-    private void GenerateAsteroids()
+    private void GenerateAsteroids(Transform chunkTransform)
     {
       //Get the chunk's position in world space
       Vector2 chunkWorldPosition = chunkKey * chunkDiameter;
@@ -91,7 +80,8 @@ namespace zephkelly
           Random.Range(chunkBounds.min.y, chunkBounds.max.y)
         );
 
-        var asteroid = Instantiate(asteroidSmallPrefab, randomPosition, Quaternion.identity, this.transform);
+        var asteroid = Instantiate(
+          asteroidSmallPrefab, randomPosition, Quaternion.identity, chunkTransform);
 
         var asteroidInformation = new AsteroidInformation();
         asteroidInformation.Type = AsteroidType.Iron;
@@ -111,7 +101,8 @@ namespace zephkelly
           Random.Range(chunkBounds.min.y, chunkBounds.max.y)
         );
 
-        var asteroid = Instantiate(asteroidMediumPrefab, randomPosition, Quaternion.identity, this.transform);
+        var asteroid = Instantiate(
+          asteroidMediumPrefab, randomPosition, Quaternion.identity, chunkTransform);
         
         var asteroidInformation = new AsteroidInformation();
         asteroidInformation.Type = AsteroidType.Cobalt;
@@ -131,7 +122,8 @@ namespace zephkelly
           Random.Range(chunkBounds.min.y, chunkBounds.max.y)
         );
 
-        var asteroid = Instantiate(asteroidLargePrefab, randomPosition, Quaternion.identity, this.transform);
+        var asteroid = Instantiate(
+          asteroidLargePrefab, randomPosition, Quaternion.identity, chunkTransform);
         
         var asteroidInformation = new AsteroidInformation();
         asteroidInformation.Type = AsteroidType.Iron;
@@ -151,7 +143,8 @@ namespace zephkelly
           Random.Range(chunkBounds.min.y, chunkBounds.max.y)
         );
 
-        var asteroid = Instantiate(asteroidExtraLargePrefab, randomPosition, Quaternion.identity, this.transform);
+        var asteroid = Instantiate(
+          asteroidExtraLPrefab, randomPosition, Quaternion.identity, chunkTransform);
         
         var asteroidInformation = new AsteroidInformation();
         asteroidInformation.Type = AsteroidType.Gold;
@@ -163,7 +156,7 @@ namespace zephkelly
       }
     }
 
-    private void GenerateStar()
+    private void GenerateStar(Transform chunkTransform)
     {
       hasStar = false;
 
@@ -174,7 +167,8 @@ namespace zephkelly
         //Generate binary star
         if (Random.Range(0f, 100f) < generateStarChance)
         {
-          var star = Instantiate(starOrangePrefab, chunkBounds.center, Quaternion.identity, this.transform);
+          var star = Instantiate(
+            starOrangePrefab, chunkBounds.center, Quaternion.identity, chunkTransform);
           starSpawnPoint = star.transform.position;
 
           hasStar = true;
@@ -182,7 +176,8 @@ namespace zephkelly
         }
         else if (Random.Range(0f, 100f) < generateBinaryStarChance)
         {
-          var star = Instantiate(starWhitePrefab, chunkBounds.center, Quaternion.identity, this.transform);
+          var star = Instantiate(
+            starWhitePrefab, chunkBounds.center, Quaternion.identity, chunkTransform);
           starSpawnPoint = star.transform.position;
 
           hasStar = true;

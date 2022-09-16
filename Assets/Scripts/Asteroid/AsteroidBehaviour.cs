@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,10 +27,6 @@ namespace zephkelly
   [CreateAssetMenu(fileName = "AsteroidBehaviour", menuName = "ScriptableObjects/AsteroidBehaviour", order = 1)]
   public class AsteroidBehaviour : ScriptableObject
   {
-    private Tuple<AsteroidType, AsteroidSize, int> thisAsteroidProperties;
-
-    //----------------------------------------------------------------------------------------------
-  
     //Prefabs with variants
     private GameObject asteroidPickupPrefab;
     private GameObject smallAsteroidPrefab;
@@ -117,8 +112,8 @@ namespace zephkelly
       {
         //Get a random position in the parent asteroid bounds
         newRandomBoundsPosition = new Vector2(
-            UnityEngine.Random.Range(parentAsteroidBounds.min.x, parentAsteroidBounds.max.x),
-            UnityEngine.Random.Range(parentAsteroidBounds.min.y, parentAsteroidBounds.max.y));
+            Random.Range(parentAsteroidBounds.min.x, parentAsteroidBounds.max.x),
+            Random.Range(parentAsteroidBounds.min.y, parentAsteroidBounds.max.y));
             
         lastRandomBoundsPoistion = newRandomBoundsPosition;
 
