@@ -46,33 +46,33 @@ namespace zephkelly
       asteroidPickupPrefab = Resources.Load("Prefabs/AsteroidPickup") as GameObject;
     }
 
-    public AsteroidInformation SetHealth(AsteroidInformation initAsteroidInformation)
+    public Asteroid SetHealth(Asteroid initAsteroidInfo)
     {
-      var newAsteroidInformation = initAsteroidInformation;
+      var newAsteroidInfo = initAsteroidInfo;
 
-      switch (initAsteroidInformation.Size)
+      switch (initAsteroidInfo.Size)
       {
         case AsteroidSize.ExtraLarge:
-          newAsteroidInformation.Health = 5; 
+          newAsteroidInfo.Health = 5; 
           break;
         case AsteroidSize.Large:
-          newAsteroidInformation.Health = 4;
+          newAsteroidInfo.Health = 4;
           break;
         case AsteroidSize.Medium:
-          newAsteroidInformation.Health = 3;
+          newAsteroidInfo.Health = 3;
           break;
         case AsteroidSize.Small:
-          newAsteroidInformation.Health = 2;
+          newAsteroidInfo.Health = 2;
           break;
         case AsteroidSize.Pickup:
-          newAsteroidInformation.Health = 1;
+          newAsteroidInfo.Health = 1;
           break;
       }
 
-      return newAsteroidInformation;
+      return newAsteroidInfo;
     }
 
-    public int TakeDamage(AsteroidInformation asteroidInfo, int damage, Vector2 hitVector)
+    public int TakeDamage(Asteroid asteroidInfo, int damage, Vector2 hitVector)
     {
       var health = asteroidInfo.Health - damage;
 
@@ -86,7 +86,7 @@ namespace zephkelly
       return health;
     }
 
-    private void SplitAsteroid(AsteroidInformation asteroidInfo)
+    private void SplitAsteroid(Asteroid asteroidInfo)
     {
       //If we're a pickup, ignore
       if (asteroidInfo.Size == AsteroidSize.Pickup) return;
@@ -117,9 +117,9 @@ namespace zephkelly
             
         lastRandomBoundsPoistion = newRandomBoundsPosition;
 
-        var newAsteroidInformation = new AsteroidInformation();
-        newAsteroidInformation.Type = parentType;
-        newAsteroidInformation.Position = newRandomBoundsPosition;
+        var newAsteroidInfo = new Asteroid();
+        newAsteroidInfo.Type = parentType;
+        newAsteroidInfo.Position = newRandomBoundsPosition;
 
         switch (parentSize)
         {
@@ -127,8 +127,8 @@ namespace zephkelly
             newAsteroid = Instantiate(largeAsteroidPrefab, newRandomBoundsPosition, Quaternion.identity);
             newAsteroidController = newAsteroid.GetComponent<AsteroidController>();
 
-            newAsteroidInformation.Size = AsteroidSize.Large; 
-            newAsteroidController.Init(newAsteroidInformation);
+            newAsteroidInfo.Size = AsteroidSize.Large; 
+            newAsteroidController.Init(newAsteroidInfo);
 
             SetRandomVelocity();
             break;
@@ -137,8 +137,8 @@ namespace zephkelly
             newAsteroid = Instantiate(mediumAsteroidPrefab, newRandomBoundsPosition, Quaternion.identity);
             newAsteroidController = newAsteroid.GetComponent<AsteroidController>();
             
-            newAsteroidInformation.Size = AsteroidSize.Medium; 
-            newAsteroidController.Init(newAsteroidInformation);
+            newAsteroidInfo.Size = AsteroidSize.Medium; 
+            newAsteroidController.Init(newAsteroidInfo);
 
             SetRandomVelocity();
             break;
@@ -147,8 +147,8 @@ namespace zephkelly
             newAsteroid = Instantiate(smallAsteroidPrefab, newRandomBoundsPosition, Quaternion.identity);
             newAsteroidController = newAsteroid.GetComponent<AsteroidController>();
             
-            newAsteroidInformation.Size = AsteroidSize.Small; 
-            newAsteroidController.Init(newAsteroidInformation);
+            newAsteroidInfo.Size = AsteroidSize.Small; 
+            newAsteroidController.Init(newAsteroidInfo);
 
             SetRandomVelocity();
             break;
@@ -157,8 +157,8 @@ namespace zephkelly
             newAsteroid = Instantiate(asteroidPickupPrefab, newRandomBoundsPosition, Quaternion.identity);
             newAsteroidController = newAsteroid.GetComponent<AsteroidController>();
             
-            newAsteroidInformation.Size = AsteroidSize.Pickup; 
-            newAsteroidController.Init(newAsteroidInformation);
+            newAsteroidInfo.Size = AsteroidSize.Pickup; 
+            newAsteroidController.Init(newAsteroidInfo);
 
             SetRandomVelocity();
             break;
@@ -178,7 +178,7 @@ namespace zephkelly
       }
     }
 
-    private void CreateRubbleOnDamage(AsteroidInformation parentAsteroidInfo, Vector2 hitVector)
+    private void CreateRubbleOnDamage(Asteroid parentAsteroidInfo, Vector2 hitVector)
     {
       //Create rubble based on size
       switch (parentAsteroidInfo.Size)
@@ -209,7 +209,7 @@ namespace zephkelly
       {
         var pickup = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
 
-        var asteroidRubbleInfo = new AsteroidInformation();
+        var asteroidRubbleInfo = new Asteroid();
         asteroidRubbleInfo.Type = parentType;
         asteroidRubbleInfo.Size = AsteroidSize.Medium;
         asteroidRubbleInfo.Position = hitVector;
@@ -229,7 +229,7 @@ namespace zephkelly
         {
           var pickup = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
           
-          var asteroidRubbleInfo = new AsteroidInformation();
+          var asteroidRubbleInfo = new Asteroid();
           asteroidRubbleInfo.Type = parentType;
           asteroidRubbleInfo.Size = AsteroidSize.Medium;
           asteroidRubbleInfo.Position = hitVector;
@@ -250,7 +250,7 @@ namespace zephkelly
         {
           var pickup = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
           
-          var asteroidRubbleInfo = new AsteroidInformation();
+          var asteroidRubbleInfo = new Asteroid();
           asteroidRubbleInfo.Type = parentType;
           asteroidRubbleInfo.Size = AsteroidSize.Medium;
           asteroidRubbleInfo.Position = hitVector;
@@ -268,7 +268,7 @@ namespace zephkelly
         {
           var smallAsteroid = Instantiate(smallAsteroidPrefab, hitVector, Quaternion.identity);
           
-          var asteroidRubbleInfo = new AsteroidInformation();
+          var asteroidRubbleInfo = new Asteroid();
           asteroidRubbleInfo.Type = parentType;
           asteroidRubbleInfo.Size = AsteroidSize.Small;
           asteroidRubbleInfo.Position = hitVector;
@@ -289,7 +289,7 @@ namespace zephkelly
         {
           var pickup = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
           
-          var asteroidRubbleInfo = new AsteroidInformation();
+          var asteroidRubbleInfo = new Asteroid();
           asteroidRubbleInfo.Type = parentType;
           asteroidRubbleInfo.Size = AsteroidSize.Pickup;
           asteroidRubbleInfo.Position = hitVector;
@@ -307,7 +307,7 @@ namespace zephkelly
         {
           var smallAsteroid = Instantiate(smallAsteroidPrefab, hitVector, Quaternion.identity);
           
-          var asteroidRubbleInfo = new AsteroidInformation();
+          var asteroidRubbleInfo = new Asteroid();
           asteroidRubbleInfo.Type = parentType;
           asteroidRubbleInfo.Size = AsteroidSize.Small;
           asteroidRubbleInfo.Position = hitVector;
@@ -325,7 +325,7 @@ namespace zephkelly
         {
           var mediumAsteroid = Instantiate(mediumAsteroidPrefab, hitVector, Quaternion.identity);
           
-          var asteroidRubbleInfo = new AsteroidInformation();
+          var asteroidRubbleInfo = new Asteroid();
           asteroidRubbleInfo.Type = parentType;
           asteroidRubbleInfo.Size = AsteroidSize.Medium;
           asteroidRubbleInfo.Position = hitVector;

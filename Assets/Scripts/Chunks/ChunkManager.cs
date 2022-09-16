@@ -8,19 +8,19 @@ namespace zephkelly
   public class ChunkManager : MonoBehaviour
   {
     public static ChunkManager Instance;
-    private PopulateChunk populateChunk;
+    private ChunkPopulator chunkPopulator;
 
     //Deactivated chunks
-    private Dictionary<Vector2Int, GameObject> deactivatedChunks = 
-      new Dictionary<Vector2Int, GameObject>();
+    private Dictionary<Vector2Int, Chunk> deactivatedChunks = 
+      new Dictionary<Vector2Int, Chunk>();
 
     //Lazy chunks
-    private Dictionary<Vector2Int, GameObject> lazyChunks = 
-      new Dictionary<Vector2Int, GameObject>();
+    private Dictionary<Vector2Int, Chunk> lazyChunks = 
+      new Dictionary<Vector2Int, Chunk>();
 
     //Active chunks
-    private Dictionary<Vector2Int, GameObject> activeChunks = 
-      new Dictionary<Vector2Int, GameObject>();
+    private Dictionary<Vector2Int, Chunk> activeChunks = 
+      new Dictionary<Vector2Int, Chunk>();
 
     //------------------------------------------------------------------------------
 
@@ -35,12 +35,27 @@ namespace zephkelly
 
     internal int starCount;
 
+    public Dictionary <Vector2Int, Chunk> ActiveChunks { 
+      get => activeChunks;
+      set => activeChunks = value;
+    }
+
+    public Dictionary <Vector2Int, Chunk> LazyChunks { 
+      get => deactivatedChunks;
+      set => deactivatedChunks = value;
+    }
+
+    public Dictionary <Vector2Int, Chunk> DeactivatedChunks { 
+      get => deactivatedChunks;
+      set => deactivatedChunks = value;
+    }
+
     public int StarCount { get => starCount; set => starCount = value; }
 
     private void Awake()
     {
-      populateChunk = Resources.Load("ScriptableObjects/PopulateChunkManager") 
-        as PopulateChunk;
+      chunkPopulator = Resources.Load("ScriptableObjects/ChunkPopulator") 
+        as ChunkPopulator;
 
       //Singleton pattern
       if (Instance == null) {
@@ -71,7 +86,7 @@ namespace zephkelly
         ActivateOrGenerateChunks(playerCurrentChunkPosition);
 
         playerLastChunkPosition = playerCurrentChunkPosition;
-      }
+      } 
     }
 
     //Quantise position to nearest chunk
@@ -120,7 +135,7 @@ namespace zephkelly
           {
             if (deactivatedChunks.ContainsKey(lazyGridKey))
             {
-              GameObject lazyChunk = deactivatedChunks[lazyGridKey];
+              Chunk lazyChunk = deactivatedChunks[lazyGridKey];
 
               lazyChunks.Add(lazyGridKey, lazyChunk);
 
@@ -128,16 +143,16 @@ namespace zephkelly
             }
             else   //Make a new chunk
             {
-              GameObject newChunk = new GameObject("Chunk " + chunkNumberNamer);
-              newChunk.transform.SetParent(this.transform);
+              GameObject newChunkObject = new GameObject("Chunk " + chunkNumberNamer);
+              newChunkObject.transform.SetParent(this.transform);
 
-              //Populate the chunk
-              //newChunk.AddComponent<PopulateChunk>()
-                //.Populate(lazyGridKey, chunkDiameter);
-
-              populateChunk.Populate(lazyGridKey, chunkDiameter, newChunk.transform);
+              //Create chunk class with gameobject references
+              Chunk newChunkInfo = new Chunk();
+              newChunkInfo.SetChunkObject(lazyGridKey, newChunkObject);
               
-              lazyChunks.Add(lazyGridKey, newChunk);
+              chunkPopulator.Populate(lazyGridKey, chunkDiameter, newChunkInfo);
+
+              lazyChunks.Add(lazyGridKey, newChunkInfo);
               chunkNumberNamer++;
             }
 
@@ -155,8 +170,8 @@ namespace zephkelly
         {
           for (int x = 0; x < 3; x++)
           {
-            GameObject activeChunk = lazyChunks[activeGridKey];
-            activeChunk.SetActive(true);
+            Chunk activeChunk = lazyChunks[activeGridKey];
+            activeChunk.ChunkObject.SetActive(true);
 
             activeChunks.Add(activeGridKey, activeChunk);
 
@@ -172,7 +187,12 @@ namespace zephkelly
       
       foreach (var chunk in deactivatedChunks)
       {
-        chunk.Value.SetActive(false);
+        chunk.Value.ChunkObject.SetActive(false);
+      }
+
+      foreach (var chunk in lazyChunks)
+      {
+        chunk.Value.ChunkObject.SetActive(false);
       }
     }
   }

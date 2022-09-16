@@ -5,12 +5,11 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  public class AsteroidInformation
+  public class Asteroid
   {
     public AsteroidType Type { get; set; }
     public AsteroidSize Size { get; set; }
 
-    public GameObject GameObject { get; set; }
     public Collider2D Collider { get; set; }
     public Rigidbody2D Rigid2D { get; set; }
     public SpriteRenderer Renderer { get; set; }

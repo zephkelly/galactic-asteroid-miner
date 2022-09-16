@@ -45,12 +45,12 @@ namespace zephkelly
 
           GameObject _asteroid = Instantiate(mediumAsteroidPrefab, worldPosition, Quaternion.identity);
 
-          var newAsteroidInformation = new AsteroidInformation();
-          newAsteroidInformation.Type = AsteroidType.Cobalt;
-          newAsteroidInformation.Size = AsteroidSize.Medium;
-          newAsteroidInformation.Position = worldPosition;
+          var newAsteroidInfo = new Asteroid();
+          newAsteroidInfo.Type = AsteroidType.Cobalt;
+          newAsteroidInfo.Size = AsteroidSize.Medium;
+          newAsteroidInfo.Position = worldPosition;
 
-          _asteroid.GetComponent<AsteroidController>().Init(newAsteroidInformation);
+          _asteroid.GetComponent<AsteroidController>().Init(newAsteroidInfo);
           _asteroid.transform.parent = transform;
         }
         while (float.IsNaN(positionX) && float.IsNaN(positionY));

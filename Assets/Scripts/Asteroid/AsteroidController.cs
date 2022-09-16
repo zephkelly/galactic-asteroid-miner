@@ -8,8 +8,9 @@ namespace zephkelly
   public class AsteroidController : MonoBehaviour
   {
     private AsteroidBehaviour asteroidBehaviour;
-    private AsteroidInformation asteroidInfo;
+    private Asteroid asteroidInfo;
 
+    private Transform asteroidTransform;
     [SerializeField] SpriteRenderer asteroidSpriteRenderer;   //In inspector
 
     //------------------------------------------------------------------------------
@@ -23,13 +24,14 @@ namespace zephkelly
     {
       asteroidBehaviour = Resources.Load("ScriptableObjects/AsteroidBehaviour")
         as AsteroidBehaviour;
+
+      asteroidTransform = transform;
     }
 
-    public void Init(AsteroidInformation _asteroidInformation)
+    public void Init(Asteroid _asteroidInfo)
     {
-      asteroidInfo = _asteroidInformation;
+      asteroidInfo = _asteroidInfo;
 
-      asteroidInfo.GameObject = this.gameObject;
       asteroidInfo.Rigid2D = GetComponent<Rigidbody2D>();
       asteroidInfo.Collider = GetComponent<Collider2D>();
       asteroidInfo.Renderer = asteroidSpriteRenderer;
@@ -39,7 +41,7 @@ namespace zephkelly
 
     private void Update()
     {
-      asteroidInfo.Position = transform.position;
+      asteroidInfo.Position = asteroidTransform.position;
     }
 
     public void TakeDamage(int damage, Vector2 hitVector)

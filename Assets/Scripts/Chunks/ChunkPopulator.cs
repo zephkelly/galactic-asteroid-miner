@@ -4,8 +4,8 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  [CreateAssetMenu(fileName = "PopulateChunkManager",menuName = "ScriptableObjects/PopulateChunkManager", order = 2)]
-  public class PopulateChunk : ScriptableObject
+  [CreateAssetMenu(fileName = "ChunkPopulator",menuName = "ScriptableObjects/ChunkPopulator")]
+  public class ChunkPopulator : ScriptableObject
   {
     [SerializeField] GameObject asteroidSmallPrefab;
     [SerializeField] GameObject asteroidMediumPrefab;
@@ -14,12 +14,13 @@ namespace zephkelly
     [SerializeField] GameObject starOrangePrefab;
     [SerializeField] GameObject starWhitePrefab;
 
-    //------------------------------------------------------------------------------
-
-    private Dictionary<Vector2, AsteroidInformation> asteroidSpawnPoints = 
-      new Dictionary<Vector2, AsteroidInformation>();
-
-    private Vector2 starSpawnPoint;
+    private List<GameObject> pickupAsteroidPool = new List<GameObject>();
+    private List<GameObject> smallAsteroidPool = new List<GameObject>();
+    private List<GameObject> mediumAsteroidPool = new List<GameObject>();
+    private List<GameObject> largeAsteroidPool = new List<GameObject>();
+    private List<GameObject> xLargeAsteroidPool = new List<GameObject>();
+    private List<GameObject> starOrangePool = new List<GameObject>();
+    private List<GameObject> starWhitePool = new List<GameObject>();
 
     //------------------------------------------------------------------------------
     
@@ -37,17 +38,79 @@ namespace zephkelly
 
     //------------------------------------------------------------------------------
 
-    public void Populate(Vector2 key, int chunkSize, Transform chunkTransform)
+    private void Start()
+    {
+      //Create asteroid pools
+      for (int i = 0; i < 100; i++)
+      {
+        var smallAsteroid = Instantiate(asteroidSmallPrefab);
+        smallAsteroid.SetActive(false);
+        pickupAsteroidPool.Add(smallAsteroid);
+      }
+      for (int i = 0; i < 20; i++)
+      {
+        var mediumAsteroid = Instantiate(asteroidMediumPrefab);
+        mediumAsteroid.SetActive(false);
+        mediumAsteroidPool.Add(mediumAsteroid);
+      }
+      for (int i = 0; i < 15; i++)
+      {
+        var largeAsteroid = Instantiate(asteroidLargePrefab);
+        largeAsteroid.SetActive(false);
+        largeAsteroidPool.Add(largeAsteroid);
+      }
+      for (int i = 0; i < 5; i++)
+      {
+        var xLargeAsteroid = Instantiate(asteroidExtraLPrefab);
+        xLargeAsteroid.SetActive(false);
+        largeAsteroidPool.Add(xLargeAsteroid);
+      }
+
+      //Create star pools
+      for (int i = 0; i < 2; i++)
+      {
+        starOrangePool.Add(Instantiate(starOrangePrefab));
+        starOrangePool[i].SetActive(false);
+        starWhitePool.Add(Instantiate(starWhitePrefab));
+        starWhitePool[i].SetActive(false);
+      }
+    }
+
+    public void AddToAsteroidPool(GameObject asteroid, AsteroidSize size)
+    {
+      switch (size)
+      {
+        case AsteroidSize.Pickup:
+          pickupAsteroidPool.Add(asteroid);
+          break;
+        case AsteroidSize.Small:
+          smallAsteroidPool.Add(asteroid);
+          break;
+        case AsteroidSize.Medium:
+          mediumAsteroidPool.Add(asteroid);
+          break;
+        case AsteroidSize.Large:
+          largeAsteroidPool.Add(asteroid);
+          break;
+        case AsteroidSize.ExtraLarge:
+          xLargeAsteroidPool.Add(asteroid);
+          break;
+        default: Debug.Log("Error: size not recognised");
+          break;
+      }
+    }
+
+    public void Populate(Vector2 key, int chunkSize, Chunk newChunkInfo)
     {
       chunkKey = key;
       chunkDiameter = chunkSize;
 
-      GenerateAsteroids(chunkTransform);
+      GenerateAsteroids(newChunkInfo);
 
-      GenerateStar(chunkTransform);
+      GenerateStar(newChunkInfo);
     }
 
-    private void GenerateAsteroids(Transform chunkTransform)
+    private void GenerateAsteroids(Chunk chunkInfo)
     {
       //Get the chunk's position in world space
       Vector2 chunkWorldPosition = chunkKey * chunkDiameter;
@@ -80,16 +143,12 @@ namespace zephkelly
           Random.Range(chunkBounds.min.y, chunkBounds.max.y)
         );
 
-        var asteroid = Instantiate(
-          asteroidSmallPrefab, randomPosition, Quaternion.identity, chunkTransform);
-
-        var asteroidInformation = new AsteroidInformation();
+        var asteroidInformation = new Asteroid();
         asteroidInformation.Type = AsteroidType.Iron;
         asteroidInformation.Size = AsteroidSize.Small;
         asteroidInformation.Position = randomPosition;
 
-        asteroid.GetComponent<AsteroidController>().Init(asteroidInformation);
-        asteroidSpawnPoints.Add(randomPosition, asteroidInformation);
+        chunkInfo.AddAsteroid(randomPosition, asteroidInformation);
       }
 
       //Medium asteroids
@@ -100,17 +159,13 @@ namespace zephkelly
           Random.Range(chunkBounds.min.x, chunkBounds.max.x),
           Random.Range(chunkBounds.min.y, chunkBounds.max.y)
         );
-
-        var asteroid = Instantiate(
-          asteroidMediumPrefab, randomPosition, Quaternion.identity, chunkTransform);
         
-        var asteroidInformation = new AsteroidInformation();
+        var asteroidInformation = new Asteroid();
         asteroidInformation.Type = AsteroidType.Cobalt;
         asteroidInformation.Size = AsteroidSize.Medium;
         asteroidInformation.Position = randomPosition;
 
-        asteroid.GetComponent<AsteroidController>().Init(asteroidInformation);
-        asteroidSpawnPoints.Add(randomPosition, asteroidInformation);
+        chunkInfo.AddAsteroid(randomPosition, asteroidInformation);
       }
 
       //Large asteroids
@@ -122,16 +177,12 @@ namespace zephkelly
           Random.Range(chunkBounds.min.y, chunkBounds.max.y)
         );
 
-        var asteroid = Instantiate(
-          asteroidLargePrefab, randomPosition, Quaternion.identity, chunkTransform);
-        
-        var asteroidInformation = new AsteroidInformation();
+        var asteroidInformation = new Asteroid();
         asteroidInformation.Type = AsteroidType.Iron;
         asteroidInformation.Size = AsteroidSize.Large;
         asteroidInformation.Position = randomPosition;
 
-        asteroid.GetComponent<AsteroidController>().Init(asteroidInformation);
-        asteroidSpawnPoints.Add(randomPosition, asteroidInformation);
+        chunkInfo.AddAsteroid(randomPosition, asteroidInformation);
       }
 
       //Extra Large asteroids
@@ -143,22 +194,19 @@ namespace zephkelly
           Random.Range(chunkBounds.min.y, chunkBounds.max.y)
         );
 
-        var asteroid = Instantiate(
-          asteroidExtraLPrefab, randomPosition, Quaternion.identity, chunkTransform);
-        
-        var asteroidInformation = new AsteroidInformation();
+        var asteroidInformation = new Asteroid();
         asteroidInformation.Type = AsteroidType.Gold;
         asteroidInformation.Size = AsteroidSize.ExtraLarge;
         asteroidInformation.Position = randomPosition;
 
-        asteroid.GetComponent<AsteroidController>().Init(asteroidInformation);
-        asteroidSpawnPoints.Add(randomPosition, asteroidInformation);
+        chunkInfo.AddAsteroid(randomPosition, asteroidInformation);
       }
     }
 
-    private void GenerateStar(Transform chunkTransform)
+    private void GenerateStar(Chunk chunkInfo)
     {
       hasStar = false;
+      var chunkTransform = chunkInfo.ChunkObject.transform;
 
       if(ChunkManager.Instance.StarCount < 2)
       {
@@ -169,7 +217,6 @@ namespace zephkelly
         {
           var star = Instantiate(
             starOrangePrefab, chunkBounds.center, Quaternion.identity, chunkTransform);
-          starSpawnPoint = star.transform.position;
 
           hasStar = true;
           ChunkManager.Instance.StarCount++;
@@ -178,7 +225,6 @@ namespace zephkelly
         {
           var star = Instantiate(
             starWhitePrefab, chunkBounds.center, Quaternion.identity, chunkTransform);
-          starSpawnPoint = star.transform.position;
 
           hasStar = true;
           ChunkManager.Instance.StarCount++;
