@@ -9,6 +9,9 @@ namespace zephkelly
     [SerializeField] GameObject laserObject; //Set in inspector
     [SerializeField] LaserParticleFire laserWeapon;
 
+    private const float fireTime = 0.15f;
+    private float _fireTimer; 
+
     public void Start()
     {
       laserWeapon = laserObject.GetComponent<LaserParticleFire>();
@@ -16,8 +19,15 @@ namespace zephkelly
 
     public void Update()
     {
+      if (_fireTimer > 0)
+      {
+        _fireTimer -= Time.deltaTime;
+        return;
+      }
+
       if (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))
       {
+        _fireTimer = fireTime;
         laserWeapon.Shoot();
       }
     }  

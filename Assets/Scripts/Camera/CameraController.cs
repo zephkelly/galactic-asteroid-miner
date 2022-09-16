@@ -17,6 +17,7 @@ namespace zephkelly
     [SerializeField] float cameraPanSpeed = 0.125f;
 
     private Transform target;
+    private Rigidbody2D targetRigid2D;
     private Vector3 mouseLerpPosition;
 
     //----------------------------------------------------------------------------------------------
@@ -30,6 +31,7 @@ namespace zephkelly
     private void Start()
     {
       target = GameObject.Find("Player").transform;
+      targetRigid2D = target.GetComponent<Rigidbody2D>();
       inputs = InputManager.Instance;
     }
 
@@ -39,6 +41,27 @@ namespace zephkelly
 
       mouseLerpPosition = (mainCamera.ScreenToWorldPoint(Input.mousePosition) - target.position).normalized;
       mouseLerpPosition.y = mouseLerpPosition.y * 1.4f;   //beacuse the camera is wider than it is tall
+
+      cameraPanSpeed = 0.125f;
+
+      /*
+      if (Input.GetKey(KeyCode.LeftShift)) 
+      {
+        //lerp the lerp position
+        mouseLerpPosition = (mainCamera.ScreenToWorldPoint(Input.mousePosition) - target.position).normalized;
+        mouseLerpPosition.y = mouseLerpPosition.y * 1.4f;   //beacuse the camera is wider than it is tall
+
+        mouseLerpPosition *= 2f;
+        cameraPanSpeed = 0.25f;
+      }
+      else 
+      {
+        mouseLerpPosition = (mainCamera.ScreenToWorldPoint(Input.mousePosition) - target.position).normalized;
+        mouseLerpPosition.y = mouseLerpPosition.y * 1.4f;   //beacuse the camera is wider than it is tall
+
+        cameraPanSpeed = 0.125f;
+      }
+      */
     }
 
     private void FixedUpdate()

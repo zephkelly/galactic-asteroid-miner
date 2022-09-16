@@ -13,25 +13,28 @@ namespace zephkelly
     private GameObject starOrangePrefab;
     private GameObject starWhitePrefab;
 
-    private float generateStarChance = 3f;
+    //------------------------------------------------------------------------------
 
-    private float generateBinaryStarChance = 3f;
+    private Dictionary<Vector2, AsteroidInformation> asteroidSpawnPoints = 
+      new Dictionary<Vector2, AsteroidInformation>();
+
+    private Vector2 starSpawnPoint;
+
+    //------------------------------------------------------------------------------
     
+    private float generateStarChance = 3f;
+    private float generateBinaryStarChance = 3f;
     private int minAsteroids;
-
     private int maxAsteroids;
 
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------
 
     private Bounds chunkBounds;
-
     private Vector2 chunkKey;
-
     private int chunkDiameter;
-
     private bool hasStar;
 
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------
 
     public void Awake()
     {
@@ -66,12 +69,18 @@ namespace zephkelly
       //Get the number of asteroids to generate
       minAsteroids = Random.Range(40, 60);
       maxAsteroids = Random.Range(90, 120);
-      int totalAsteroidCount = Random.Range(minAsteroids, maxAsteroids);
+      int asteroidBaseCount = Random.Range(minAsteroids, maxAsteroids);
 
-      int smallAsteroidCount = totalAsteroidCount;
-      int mediumAsteroidCount = totalAsteroidCount / 8;
-      int extraLargeAsteroidCount = totalAsteroidCount / 14;
-      int largeAsteroidCount = totalAsteroidCount / 16;
+      int smallAsteroidCount = asteroidBaseCount;
+      int mediumAsteroidCount = asteroidBaseCount / 8;
+      int extraLargeAsteroidCount = asteroidBaseCount / 14;
+      int largeAsteroidCount = asteroidBaseCount / 16;
+
+      var totalAsteroidCount = 
+        smallAsteroidCount + 
+        mediumAsteroidCount + 
+        largeAsteroidCount + 
+        extraLargeAsteroidCount;
 
       //Small asteroids
       for (int i = 0; i < smallAsteroidCount; i++)
@@ -83,7 +92,14 @@ namespace zephkelly
         );
 
         var asteroid = Instantiate(asteroidSmallPrefab, randomPosition, Quaternion.identity, this.transform);
-        asteroid.GetComponent<AsteroidController>().Init(AsteroidType.Iron, AsteroidSize.Small);
+
+        var asteroidInformation = new AsteroidInformation();
+        asteroidInformation.Type = AsteroidType.Iron;
+        asteroidInformation.Size = AsteroidSize.Small;
+        asteroidInformation.Position = randomPosition;
+
+        asteroid.GetComponent<AsteroidController>().Init(asteroidInformation);
+        asteroidSpawnPoints.Add(randomPosition, asteroidInformation);
       }
 
       //Medium asteroids
@@ -96,7 +112,14 @@ namespace zephkelly
         );
 
         var asteroid = Instantiate(asteroidMediumPrefab, randomPosition, Quaternion.identity, this.transform);
-        asteroid.GetComponent<AsteroidController>().Init(AsteroidType.Cobalt, AsteroidSize.Medium);
+        
+        var asteroidInformation = new AsteroidInformation();
+        asteroidInformation.Type = AsteroidType.Cobalt;
+        asteroidInformation.Size = AsteroidSize.Medium;
+        asteroidInformation.Position = randomPosition;
+
+        asteroid.GetComponent<AsteroidController>().Init(asteroidInformation);
+        asteroidSpawnPoints.Add(randomPosition, asteroidInformation);
       }
 
       //Large asteroids
@@ -109,8 +132,14 @@ namespace zephkelly
         );
 
         var asteroid = Instantiate(asteroidLargePrefab, randomPosition, Quaternion.identity, this.transform);
-        asteroid.GetComponent<AsteroidController>().Init(AsteroidType.Iron, AsteroidSize.Large);
+        
+        var asteroidInformation = new AsteroidInformation();
+        asteroidInformation.Type = AsteroidType.Iron;
+        asteroidInformation.Size = AsteroidSize.Large;
+        asteroidInformation.Position = randomPosition;
 
+        asteroid.GetComponent<AsteroidController>().Init(asteroidInformation);
+        asteroidSpawnPoints.Add(randomPosition, asteroidInformation);
       }
 
       //Extra Large asteroids
@@ -123,7 +152,14 @@ namespace zephkelly
         );
 
         var asteroid = Instantiate(asteroidExtraLargePrefab, randomPosition, Quaternion.identity, this.transform);
-        asteroid.GetComponent<AsteroidController>().Init(AsteroidType.Gold, AsteroidSize.ExtraLarge);
+        
+        var asteroidInformation = new AsteroidInformation();
+        asteroidInformation.Type = AsteroidType.Gold;
+        asteroidInformation.Size = AsteroidSize.ExtraLarge;
+        asteroidInformation.Position = randomPosition;
+
+        asteroid.GetComponent<AsteroidController>().Init(asteroidInformation);
+        asteroidSpawnPoints.Add(randomPosition, asteroidInformation);
       }
     }
 
@@ -138,14 +174,16 @@ namespace zephkelly
         //Generate binary star
         if (Random.Range(0f, 100f) < generateStarChance)
         {
-          Instantiate(starOrangePrefab, chunkBounds.center, Quaternion.identity, this.transform);
+          var star = Instantiate(starOrangePrefab, chunkBounds.center, Quaternion.identity, this.transform);
+          starSpawnPoint = star.transform.position;
 
           hasStar = true;
           ChunkManager.Instance.StarCount++;
         }
         else if (Random.Range(0f, 100f) < generateBinaryStarChance)
         {
-          Instantiate(starWhitePrefab, chunkBounds.center, Quaternion.identity, this.transform);
+          var star = Instantiate(starWhitePrefab, chunkBounds.center, Quaternion.identity, this.transform);
+          starSpawnPoint = star.transform.position;
 
           hasStar = true;
           ChunkManager.Instance.StarCount++;

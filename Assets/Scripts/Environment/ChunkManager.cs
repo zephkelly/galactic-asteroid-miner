@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,24 +10,27 @@ namespace zephkelly
     public static ChunkManager Instance;
 
     //Deactivated chunks
-    Dictionary<Vector2, GameObject> deactivatedChunks = new Dictionary<Vector2, GameObject>();
+    private Dictionary<Vector2Int, GameObject> deactivatedChunks = 
+      new Dictionary<Vector2Int, GameObject>();
 
-    //Activated chunks
-    Dictionary<Vector2, GameObject> activeChunks = new Dictionary<Vector2, GameObject>();
+    //Lazy chunks
+    private Dictionary<Vector2Int, GameObject> lazyChunks = 
+      new Dictionary<Vector2Int, GameObject>();
 
-    //----------------------------------------------------------------------------------------------
+    //Active chunks
+    private Dictionary<Vector2Int, GameObject> activeChunks = 
+      new Dictionary<Vector2Int, GameObject>();
+
+    //------------------------------------------------------------------------------
 
     [SerializeField] int chunkDiameter = 200;
+    internal int chunkNumberNamer;
 
     private Transform playerTransform;
-
     private Vector2 playerCurrentChunkPosition;
-
     private Vector2 playerLastChunkPosition;
 
-    internal int chunkNumber;
-
-    //----------------------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------
 
     internal int starCount;
 
@@ -79,51 +83,89 @@ namespace zephkelly
 
     private void DeactivateActiveChunks()
     {
+      foreach (var chunk in lazyChunks)
+      {
+        deactivatedChunks.Add(chunk.Key, chunk.Value);
+      }
+
       foreach (var chunk in activeChunks)
       {
         deactivatedChunks.Add(chunk.Key, chunk.Value);
       }
       
+      lazyChunks.Clear();
       activeChunks.Clear();
     }
 
-    private void ActivateOrGenerateChunks(Vector2 key)
+    private void ActivateOrGenerateChunks(Vector2 playerGridKey)
     { 
+      //5x5 grid around chunk position
+      Vector2Int lazyGridKey = new Vector2Int(
+        (int)playerGridKey.x - 2, (int)playerGridKey.y - 2);
       //3x3 grid around chunk position
-      Vector2Int gridAroundKey = new Vector2Int((int)key.x - 2, (int)key.y - 2);
+      Vector2Int activeGridKey = new Vector2Int(
+        (int)playerGridKey.x - 1, (int)playerGridKey.y - 1);
 
-      for (int y = 0; y < 5; y++)
+      LoadLazyChunks();
+
+      LoadActiveChunks();
+
+      void LoadLazyChunks()
       {
-        for (int x = 0; x < 5; x++)
+        for (int y = 0; y < 5; y++)
         {
-          if (deactivatedChunks.ContainsKey(gridAroundKey))
+          for (int x = 0; x < 5; x++)
           {
-            GameObject reactivatedChunk = deactivatedChunks[gridAroundKey];
-            reactivatedChunk.SetActive(true);
+            if (deactivatedChunks.ContainsKey(lazyGridKey))
+            {
+              GameObject lazyChunk = deactivatedChunks[lazyGridKey];
 
-            activeChunks.Add(gridAroundKey, reactivatedChunk);
+              lazyChunks.Add(lazyGridKey, lazyChunk);
 
-            deactivatedChunks.Remove(gridAroundKey);
+              deactivatedChunks.Remove(lazyGridKey);
+            }
+            else   //Make a new chunk
+            {
+              GameObject newChunk = new GameObject("Chunk " + chunkNumberNamer);
+              newChunk.transform.SetParent(this.transform);
+
+              //Populate the chunk
+              newChunk.AddComponent<PopulateChunk>()
+                .Populate(lazyGridKey, chunkDiameter);
+              
+              lazyChunks.Add(lazyGridKey, newChunk);
+              chunkNumberNamer++;
+            }
+
+            lazyGridKey.x++;
           }
-          else   //Make a new chunk
-          {
-            GameObject newChunk = new GameObject("Chunk " + chunkNumber);
-            newChunk.transform.SetParent(this.transform);
 
-            //Populate the chunk
-            newChunk.AddComponent<PopulateChunk>().Populate(gridAroundKey, chunkDiameter);
-            
-            activeChunks.Add(gridAroundKey, newChunk);
-            chunkNumber++;
-          }
-
-          gridAroundKey.x++;
+          lazyGridKey.y++;
+          lazyGridKey.x -= 5;   //Need to reset x axis for next row
         }
-
-        gridAroundKey.y++;
-        gridAroundKey.x -= 5;   //Need to reset x axis for next row
       }
 
+      void LoadActiveChunks()
+      {
+        for (int y = 0; y < 3; y++)
+        {
+          for (int x = 0; x < 3; x++)
+          {
+            GameObject activeChunk = lazyChunks[activeGridKey];
+            activeChunk.SetActive(true);
+
+            activeChunks.Add(activeGridKey, activeChunk);
+
+            lazyChunks.Remove(activeGridKey);
+
+            activeGridKey.x++;
+          }
+
+          activeGridKey.y++;
+          activeGridKey.x -= 3;   //Need to reset x axis for next row
+        }
+      }
+      
       foreach (var chunk in deactivatedChunks)
       {
         chunk.Value.SetActive(false);
