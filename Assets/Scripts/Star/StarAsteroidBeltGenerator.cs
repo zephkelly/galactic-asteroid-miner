@@ -48,7 +48,7 @@ namespace zephkelly
           var newAsteroidInfo = new Asteroid();
           newAsteroidInfo.Type = AsteroidType.Cobalt;
           newAsteroidInfo.Size = AsteroidSize.Medium;
-          newAsteroidInfo.SpawnPosition = worldPosition;
+          newAsteroidInfo.SetNewSpawn(worldPosition);
 
           _asteroid.GetComponent<AsteroidController>().SetAsteroid(newAsteroidInfo, new Chunk());
           _asteroid.transform.parent = transform;

@@ -11,18 +11,19 @@ namespace zephkelly
     private Asteroid asteroidInfo;
 
     [SerializeField] SpriteRenderer asteroidSpriteRenderer;   //In inspector
+    private Rigidbody2D asteroidRigid2D;
 
     //------------------------------------------------------------------------------
 
-    public AsteroidType AsteroidType { get => asteroidInfo.Type; }
-    public Rigidbody2D AsteroidRigid2D { get => asteroidInfo.Rigid2D; }
-    public Collider2D AsteroidCollider { get => asteroidInfo.Collider; }
-    public SpriteRenderer AsteroidSpriteRenderer { get => asteroidInfo.Renderer; }
+    public Rigidbody2D AsteroidRigid2D { get => asteroidRigid2D; }
+    public Asteroid AsteroidInfo { get => asteroidInfo; }
 
     private void Awake()
     {
       asteroidBehaviour = Resources.Load("ScriptableObjects/AsteroidBehaviour")
         as AsteroidBehaviour;
+
+      asteroidRigid2D = GetComponent<Rigidbody2D>();
     }
 
     public void SetAsteroid(Asteroid _asteroidInfo, Chunk asteroidChunk)
@@ -32,17 +33,22 @@ namespace zephkelly
 
       asteroidInfo.AsteroidObject = gameObject;
       asteroidInfo.AsteroidTransform = transform;
-      asteroidInfo.Rigid2D = GetComponent<Rigidbody2D>();
+      asteroidInfo.Rigid2D = asteroidRigid2D;
       asteroidInfo.Collider = GetComponent<Collider2D>();
       asteroidInfo.Renderer = asteroidSpriteRenderer;
 
       asteroidInfo = asteroidBehaviour.SetHealth(asteroidInfo);
-      asteroidInfo.HasBeenActive = true;
     }
 
     private void Update()
     {
-      asteroidInfo.CurrentPosition = asteroidInfo.AsteroidTransform.position;
+      if (asteroidInfo.AsteroidTransform == null)
+      {
+        Debug.LogError("AsteroidController: Update: AsteroidTransform is null");
+        return;
+      }
+
+      asteroidInfo.UpdatePosition();
     }
 
     public void TakeDamage(int damage, Vector2 hitVector)
@@ -52,7 +58,6 @@ namespace zephkelly
       if(asteroidInfo.Health <= 0)
       {
         ChunkManager.Instance.OcclusionManager.RemoveAsteroid(asteroidInfo);
-        Destroy(gameObject);
       }
     }
   }

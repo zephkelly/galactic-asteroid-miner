@@ -22,10 +22,9 @@ namespace zephkelly
     private async void OnTriggerEnter2D(Collider2D otherCollider)
     {
       if (!otherCollider.CompareTag("AsteroidPickup")) return;
-      if (otherCollider == null) return;
 
       otherCollider.isTrigger = true;
-      var asteroidType = otherCollider.GetComponent<AsteroidController>().AsteroidType;
+      var asteroidType = otherCollider.GetComponent<AsteroidController>().AsteroidInfo.Type;
 
       //Wait for the pickup to get in range
       Task lerpTask = PickupLerp(otherCollider.transform, asteroidType);

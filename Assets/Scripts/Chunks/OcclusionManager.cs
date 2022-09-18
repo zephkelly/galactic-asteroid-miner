@@ -9,6 +9,8 @@ namespace zephkelly
     private ChunkManager chunkManager;
     private ChunkPopulator chunkPopulator;
 
+    private Transform playerTransform;
+
     [SerializeField] GameObject asteroidPickupPrefab;
     [SerializeField] GameObject asteroidSmallPrefab;
     [SerializeField] GameObject asteroidMediumPrefab;
@@ -16,6 +18,7 @@ namespace zephkelly
     [SerializeField] GameObject asteroidExtraLPrefab;
 
     [SerializeField] int occlusionDistance = 50;
+    [SerializeField] float destructionTimer = 10f;
 
     //------------------------------------------------------------------------------
 
@@ -25,20 +28,31 @@ namespace zephkelly
     private Dictionary<Vector2, Asteroid> lazyAsteroids = 
       new Dictionary<Vector2, Asteroid>();
 
+    private Dictionary<Vector2, float> deactivationTimer =
+      new Dictionary<Vector2, float>();
+
     private Dictionary<Vector2, Asteroid> deactivatedAsteroids =
       new Dictionary<Vector2, Asteroid>();
 
     private void Start()
     {
       chunkManager = ChunkManager.Instance;
+      playerTransform = chunkManager.PlayerTransform;
     }
 
     private void Update()
     {
       foreach (var chunk in chunkManager.ActiveChunks)
       {
-        CheckAsteroidOcclusion(chunk.Value, chunkManager.PlayerTransform.position);
+        CheckAsteroidOcclusion(chunk.Value, playerTransform.position);
       }
+
+      foreach (var asteroid in deactivatedAsteroids)
+      {
+        Destroy(asteroid.Value.AsteroidObject);
+      }
+
+      deactivatedAsteroids.Clear();
     }
 
     //Checking occlusion of all asteroids in chunk
@@ -47,105 +61,97 @@ namespace zephkelly
       foreach (var asteroid in currentChunk.Asteroids)
       {
         Asteroid currentAsteroid = asteroid.Value;
+        Vector2 currentSpawn = currentAsteroid.SpawnPosition;
+        Vector2 currentPosition = currentAsteroid.CurrentPosition;
 
+        //Check if active
         if (activeAsteroids.ContainsKey(asteroid.Key))
         {
-          if (Vector2.Distance(playerPosition, currentAsteroid.CurrentPosition) > occlusionDistance)
-          { 
+          if (Vector2.Distance(playerPosition, currentPosition) > occlusionDistance)
+          {
             if(currentAsteroid.AsteroidObject == null)
             {
+              Debug.LogError("Asteroid object is null");
               currentChunk.Asteroids.Remove(asteroid.Key);
               return;
             }
             
+            var lazyKey = currentAsteroid.SetLazyKey();
             currentAsteroid.AsteroidObject.SetActive(false);
 
             activeAsteroids.Remove(asteroid.Key);
-            lazyAsteroids.Add(asteroid.Key, currentAsteroid);
-
+            lazyAsteroids.Add(lazyKey, currentAsteroid);
+            deactivationTimer.Add(lazyKey, destructionTimer);
             return;
-            //Destroy(asteroid.Value.AsteroidObject);   //need to pool object here
           }
         }
-        else if (lazyAsteroids.ContainsKey(asteroid.Key))
+
+        //Check if lazy
+        else if (lazyAsteroids.ContainsKey(currentAsteroid.LazyKey))
         {
-          if (Vector2.Distance(playerPosition, currentAsteroid.SpawnPosition) < occlusionDistance)
+          if (Vector2.Distance(playerPosition, currentPosition) < occlusionDistance)
           {
             currentAsteroid.AsteroidObject.SetActive(true);
+            currentAsteroid.IsLazy = false;
 
-            lazyAsteroids.Remove(asteroid.Key);
             activeAsteroids.Add(asteroid.Key, currentAsteroid);
-          }
-        }
-        else if (Vector2.Distance(playerPosition, asteroid.Value.SpawnPosition) < occlusionDistance)
-        {
-          if (asteroid.Value.HasBeenActive == true)
-          {
-            //reactivate from pool with the new spawn position as the key
+            lazyAsteroids.Remove(currentAsteroid.LazyKey);
+            deactivationTimer.Remove(currentAsteroid.LazyKey);
           }
           else
           {
-            switch (currentAsteroid.Size)
+            deactivationTimer[currentAsteroid.LazyKey] -= Time.deltaTime;
+
+            if (deactivationTimer[currentAsteroid.LazyKey] <= 0)
             {
-              case AsteroidSize.Pickup:
-                
-                var _asteroidP = Instantiate(asteroidPickupPrefab);
-                _asteroidP.GetComponent<AsteroidController>()
-                  .SetAsteroid(currentAsteroid, currentChunk);
-                _asteroidP.transform.parent = currentChunk.ChunkObject.transform;
-                _asteroidP.transform.position = asteroid.Key;
+              Destroy(currentAsteroid.AsteroidObject);
 
-                activeAsteroids.Add(asteroid.Key, asteroid.Value);
-                break;
-
-              case AsteroidSize.Small:
-                if (activeAsteroids.ContainsKey(asteroid.Key) == true) return;
-
-                var _asteroidS = Instantiate(asteroidSmallPrefab);
-                _asteroidS.GetComponent<AsteroidController>()
-                  .SetAsteroid(currentAsteroid, currentChunk);
-                _asteroidS.transform.parent = currentChunk.ChunkObject.transform;
-                _asteroidS.transform.position = asteroid.Key;
-
-                activeAsteroids.Add(asteroid.Key, asteroid.Value);
-                break;
-
-              case AsteroidSize.Medium:
-                if (activeAsteroids.ContainsKey(asteroid.Key) == true) return;
-
-                var _asteroidM = Instantiate(asteroidMediumPrefab);
-                _asteroidM.GetComponent<AsteroidController>()
-                  .SetAsteroid(currentAsteroid, currentChunk);
-                _asteroidM.transform.parent = currentChunk.ChunkObject.transform;
-                _asteroidM.transform.position = asteroid.Key;
-
-                activeAsteroids.Add(asteroid.Key, asteroid.Value);
-                break;
-
-              case AsteroidSize.Large:
-                if (activeAsteroids.ContainsKey(asteroid.Key) == true) return;
-
-                var _asteroidL = Instantiate(asteroidLargePrefab);
-                _asteroidL.GetComponent<AsteroidController>()
-                  .SetAsteroid(currentAsteroid, currentChunk);
-                _asteroidL.transform.parent = currentChunk.ChunkObject.transform;
-                _asteroidL.transform.position = asteroid.Key;
-
-                activeAsteroids.Add(asteroid.Key, asteroid.Value);
-                break;
-
-              case AsteroidSize.ExtraLarge:
-                if (activeAsteroids.ContainsKey(asteroid.Key) == true) return;
-
-                var _asteroidXL = Instantiate(asteroidLargePrefab);
-                _asteroidXL.GetComponent<AsteroidController>()
-                  .SetAsteroid(currentAsteroid, currentChunk);
-                _asteroidXL.transform.parent = currentChunk.ChunkObject.transform;
-                _asteroidXL.transform.position = asteroid.Key;
-
-                activeAsteroids.Add(asteroid.Key, asteroid.Value);
-                break;
+              deactivatedAsteroids.Add(currentAsteroid.LazyKey, currentAsteroid);
+              lazyAsteroids.Remove(currentAsteroid.LazyKey);
+              deactivationTimer.Remove(currentAsteroid.LazyKey);
             }
+          }
+        }
+
+        //New asteroid
+        else if (Vector2.Distance(playerPosition, asteroid.Value.SpawnPosition) < occlusionDistance)
+        {
+          switch (currentAsteroid.Size)
+          {
+            case AsteroidSize.Pickup:
+              var pickupAsteroid = Instantiate(asteroidPickupPrefab);
+              SetAsteroid(pickupAsteroid);
+              break;
+
+            case AsteroidSize.Small:
+              var smallAsteroid = Instantiate(asteroidSmallPrefab);
+              SetAsteroid(smallAsteroid);
+              break;
+
+            case AsteroidSize.Medium:
+              var mediumAsteroid = Instantiate(asteroidMediumPrefab);
+              SetAsteroid(mediumAsteroid);
+              break;
+
+            case AsteroidSize.Large:
+              var largeAsteroid = Instantiate(asteroidLargePrefab);
+              SetAsteroid(largeAsteroid);
+              break;
+
+            case AsteroidSize.ExtraLarge:
+              var extraLargeAsteroid = Instantiate(asteroidExtraLPrefab);
+              SetAsteroid(extraLargeAsteroid);
+              break;
+          }
+
+          void SetAsteroid(GameObject newAsteroid)
+          {
+            newAsteroid.GetComponent<AsteroidController>()
+              .SetAsteroid(currentAsteroid, currentChunk);
+            newAsteroid.transform.parent = currentChunk.ChunkObject.transform;  //Remove get component transform
+            newAsteroid.transform.position = asteroid.Key;
+
+            activeAsteroids.Add(asteroid.Key, asteroid.Value);
           }
         }
       }

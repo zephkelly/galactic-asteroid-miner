@@ -109,7 +109,7 @@ namespace zephkelly
     {
       var asteroid = new Asteroid();
       asteroid.Type = GetRandomType();
-      asteroid.SpawnPosition = GetRandomPosition();
+      asteroid.SetNewSpawn(GetRandomPosition());
 
       return asteroid;
     }

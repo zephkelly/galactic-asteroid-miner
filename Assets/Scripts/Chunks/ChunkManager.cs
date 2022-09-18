@@ -53,6 +53,8 @@ namespace zephkelly
     {
       chunkPopulator = Resources.Load("ScriptableObjects/ChunkPopulator") 
         as ChunkPopulator;
+
+      playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
   
       //Singleton pattern
       if (Instance == null) {
@@ -64,8 +66,6 @@ namespace zephkelly
 
     private void Start()
     {
-      playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-
       occlusionManager = GetComponent<OcclusionManager>();
 
       playerLastChunkPosition = QuantisePosition(playerTransform.position);

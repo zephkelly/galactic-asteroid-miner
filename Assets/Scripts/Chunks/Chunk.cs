@@ -13,10 +13,7 @@ namespace zephkelly
     private Dictionary<Vector2, Asteroid> asteroids = 
       new Dictionary<Vector2, Asteroid>();
 
-    public Dictionary<Vector2, Asteroid> Asteroids { 
-      get => asteroids;
-      set => asteroids = value;
-    }
+    public Dictionary<Vector2, Asteroid> Asteroids { get => asteroids; set => asteroids = value; }
 
     public void SetChunkObject(Vector2Int _position, GameObject _chunkObject)
     {
@@ -24,9 +21,21 @@ namespace zephkelly
       ChunkObject = _chunkObject;
     }
 
-    public void AddAsteroid(Asteroid _asteroid)
+    public void AddAsteroid(Asteroid asteroid)
     {
-      asteroids.Add(_asteroid.SpawnPosition, _asteroid);
+      asteroids.Add(asteroid.SpawnPosition, asteroid);
+    }
+
+    /*
+    public void UpdateAsteroid(Asteroid asteroid)
+    {
+      asteroids[asteroid.SpawnPosition].UpdateSpawn();
+    }
+    */
+
+    public void DestroyAsteroid(Asteroid asteroid)
+    {
+      asteroids.Remove(asteroid.SpawnPosition);
     }
   }
 }

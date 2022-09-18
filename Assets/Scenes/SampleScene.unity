@@ -212,7 +212,7 @@ Camera:
   far clip plane: 1000
   field of view: 120
   orthographic: 1
-  orthographic size: 17
+  orthographic size: 13.625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
   m_Name: 
@@ -283,7 +283,7 @@ MonoBehaviour:
   - {fileID: 818486905}
   - {fileID: 1663101733}
   - {fileID: 1513829206}
-  mouseInterpolateDistance: 2
+  mouseInterpolateDistance: 4
   cameraPanSpeed: 0.125
 --- !u!1 &818486901
 GameObject:
@@ -15079,7 +15079,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71db21444f1f211458142d48a1b8ce39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  asteroidPickupPrefab: {fileID: 1239589416757620075, guid: a9acb5639645b864f9e56943f9dc4fc8, type: 3}
+  asteroidSmallPrefab: {fileID: 7148545707391969480, guid: d41d89fd98ed7f943b36098b0c502900, type: 3}
+  asteroidMediumPrefab: {fileID: 7449075690971117738, guid: 9af7e7b59f90d4844994d13eabfbc799, type: 3}
+  asteroidLargePrefab: {fileID: 1569315732157470149, guid: 372a956db4a028e4da290616127737a3, type: 3}
+  asteroidExtraLPrefab: {fileID: 1965551383653535333, guid: 4a004f3277b42f7478d5b6df64aa969b, type: 3}
   occlusionDistance: 100
+  destructionTimer: 10
 --- !u!1 &1976971261
 GameObject:
   m_ObjectHideFlags: 0
