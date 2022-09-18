@@ -43,25 +43,6 @@ namespace zephkelly
       mouseLerpPosition.y = mouseLerpPosition.y * 1.4f;   //beacuse the camera is wider than it is tall
 
       cameraPanSpeed = 0.125f;
-
-      /*
-      if (Input.GetKey(KeyCode.LeftShift)) 
-      {
-        //lerp the lerp position
-        mouseLerpPosition = (mainCamera.ScreenToWorldPoint(Input.mousePosition) - target.position).normalized;
-        mouseLerpPosition.y = mouseLerpPosition.y * 1.4f;   //beacuse the camera is wider than it is tall
-
-        mouseLerpPosition *= 2f;
-        cameraPanSpeed = 0.25f;
-      }
-      else 
-      {
-        mouseLerpPosition = (mainCamera.ScreenToWorldPoint(Input.mousePosition) - target.position).normalized;
-        mouseLerpPosition.y = mouseLerpPosition.y * 1.4f;   //beacuse the camera is wider than it is tall
-
-        cameraPanSpeed = 0.125f;
-      }
-      */
     }
 
     private void FixedUpdate()

@@ -10,7 +10,6 @@ namespace zephkelly
     private AsteroidBehaviour asteroidBehaviour;
     private Asteroid asteroidInfo;
 
-    private Transform asteroidTransform;
     [SerializeField] SpriteRenderer asteroidSpriteRenderer;   //In inspector
 
     //------------------------------------------------------------------------------
@@ -24,48 +23,37 @@ namespace zephkelly
     {
       asteroidBehaviour = Resources.Load("ScriptableObjects/AsteroidBehaviour")
         as AsteroidBehaviour;
-
-      asteroidTransform = transform;
     }
 
-    public void Init(Asteroid _asteroidInfo)
+    public void SetAsteroid(Asteroid _asteroidInfo, Chunk asteroidChunk)
     {
       asteroidInfo = _asteroidInfo;
+      asteroidInfo.ParentChunk = asteroidChunk;
 
+      asteroidInfo.AsteroidObject = gameObject;
+      asteroidInfo.AsteroidTransform = transform;
       asteroidInfo.Rigid2D = GetComponent<Rigidbody2D>();
       asteroidInfo.Collider = GetComponent<Collider2D>();
       asteroidInfo.Renderer = asteroidSpriteRenderer;
 
-      asteroidInfo = asteroidBehaviour.SetHealth(asteroidInfo);;
+      asteroidInfo = asteroidBehaviour.SetHealth(asteroidInfo);
+      asteroidInfo.HasBeenActive = true;
     }
 
     private void Update()
     {
-      asteroidInfo.Position = asteroidTransform.position;
+      asteroidInfo.CurrentPosition = asteroidInfo.AsteroidTransform.position;
     }
 
     public void TakeDamage(int damage, Vector2 hitVector)
     {
-      if (GetSize() == AsteroidSize.Pickup) return;
-
       asteroidInfo.Health = asteroidBehaviour.TakeDamage(asteroidInfo, damage, hitVector);
 
-      if(asteroidInfo.Health <= 0) Destroy(this.gameObject);
-    }
-
-    public AsteroidType GetAsteroidType()
-    {
-      return asteroidInfo.Type;
-    }
-
-    public AsteroidSize GetSize()
-    {
-      return asteroidInfo.Size;
-    }
-
-    public int GetHealth()
-    {
-      return asteroidInfo.Health;
+      if(asteroidInfo.Health <= 0)
+      {
+        ChunkManager.Instance.OcclusionManager.RemoveAsteroid(asteroidInfo);
+        Destroy(gameObject);
+      }
     }
   }
 }

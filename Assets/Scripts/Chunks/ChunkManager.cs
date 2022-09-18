@@ -9,13 +9,10 @@ namespace zephkelly
   {
     public static ChunkManager Instance;
     private ChunkPopulator chunkPopulator;
+    private OcclusionManager occlusionManager;
 
     //Deactivated chunks
     private Dictionary<Vector2Int, Chunk> deactivatedChunks = 
-      new Dictionary<Vector2Int, Chunk>();
-
-    //Lazy chunks
-    private Dictionary<Vector2Int, Chunk> lazyChunks = 
       new Dictionary<Vector2Int, Chunk>();
 
     //Active chunks
@@ -28,26 +25,26 @@ namespace zephkelly
     internal int chunkNumberNamer;
 
     private Transform playerTransform;
-    private Vector2 playerCurrentChunkPosition;
-    private Vector2 playerLastChunkPosition;
+    private Vector2Int playerCurrentChunkPosition;
+    private Vector2Int playerLastChunkPosition;
 
     //------------------------------------------------------------------------------
 
     internal int starCount;
 
+    public OcclusionManager OcclusionManager { get => occlusionManager; }
+    public Transform PlayerTransform { get => playerTransform; }
+
     public Dictionary <Vector2Int, Chunk> ActiveChunks { 
       get => activeChunks;
-      set => activeChunks = value;
     }
 
     public Dictionary <Vector2Int, Chunk> LazyChunks { 
       get => deactivatedChunks;
-      set => deactivatedChunks = value;
     }
 
     public Dictionary <Vector2Int, Chunk> DeactivatedChunks { 
       get => deactivatedChunks;
-      set => deactivatedChunks = value;
     }
 
     public int StarCount { get => starCount; set => starCount = value; }
@@ -56,7 +53,7 @@ namespace zephkelly
     {
       chunkPopulator = Resources.Load("ScriptableObjects/ChunkPopulator") 
         as ChunkPopulator;
-
+  
       //Singleton pattern
       if (Instance == null) {
         Instance = this;
@@ -68,6 +65,8 @@ namespace zephkelly
     private void Start()
     {
       playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+
+      occlusionManager = GetComponent<OcclusionManager>();
 
       playerLastChunkPosition = QuantisePosition(playerTransform.position);
 
@@ -86,13 +85,13 @@ namespace zephkelly
         ActivateOrGenerateChunks(playerCurrentChunkPosition);
 
         playerLastChunkPosition = playerCurrentChunkPosition;
-      } 
+      }
     }
 
     //Quantise position to nearest chunk
-    private Vector2 QuantisePosition(Vector2 position)
+    private Vector2Int QuantisePosition(Vector2 position)
     {
-      return new Vector2(
+      return new Vector2Int(
         Mathf.RoundToInt(position.x / chunkDiameter),
         Mathf.RoundToInt(position.y / chunkDiameter)
       );
@@ -100,97 +99,53 @@ namespace zephkelly
 
     private void DeactivateActiveChunks()
     {
-      foreach (var chunk in lazyChunks)
-      {
-        deactivatedChunks.Add(chunk.Key, chunk.Value);
-      }
-
       foreach (var chunk in activeChunks)
       {
         deactivatedChunks.Add(chunk.Key, chunk.Value);
       }
-      
-      lazyChunks.Clear();
-      activeChunks.Clear();
     }
 
-    private void ActivateOrGenerateChunks(Vector2 playerGridKey)
+    private void ActivateOrGenerateChunks(Vector2Int playerGridKey)
     { 
-      //5x5 grid around chunk position
-      Vector2Int lazyGridKey = new Vector2Int(
-        (int)playerGridKey.x - 2, (int)playerGridKey.y - 2);
-      //3x3 grid around chunk position
       Vector2Int activeGridKey = new Vector2Int(
-        (int)playerGridKey.x - 1, (int)playerGridKey.y - 1);
+        playerGridKey.x - 1, playerGridKey.y - 1);
 
-      LoadLazyChunks();
+      activeChunks.Clear();
 
-      LoadActiveChunks();
-
-      void LoadLazyChunks()
+      for (int y = 0; y < 3; y++)
       {
-        for (int y = 0; y < 5; y++)
+        for (int x = 0; x < 3; x++)
         {
-          for (int x = 0; x < 5; x++)
+          if (deactivatedChunks.ContainsKey(activeGridKey))
           {
-            if (deactivatedChunks.ContainsKey(lazyGridKey))
-            {
-              Chunk lazyChunk = deactivatedChunks[lazyGridKey];
-
-              lazyChunks.Add(lazyGridKey, lazyChunk);
-
-              deactivatedChunks.Remove(lazyGridKey);
-            }
-            else   //Make a new chunk
-            {
-              GameObject newChunkObject = new GameObject("Chunk " + chunkNumberNamer);
-              newChunkObject.transform.SetParent(this.transform);
-
-              //Create chunk class with gameobject references
-              Chunk newChunkInfo = new Chunk();
-              newChunkInfo.SetChunkObject(lazyGridKey, newChunkObject);
-              
-              chunkPopulator.Populate(lazyGridKey, chunkDiameter, newChunkInfo);
-
-              lazyChunks.Add(lazyGridKey, newChunkInfo);
-              chunkNumberNamer++;
-            }
-
-            lazyGridKey.x++;
-          }
-
-          lazyGridKey.y++;
-          lazyGridKey.x -= 5;   //Need to reset x axis for next row
-        }
-      }
-
-      void LoadActiveChunks()
-      {
-        for (int y = 0; y < 3; y++)
-        {
-          for (int x = 0; x < 3; x++)
-          {
-            Chunk activeChunk = lazyChunks[activeGridKey];
+            Chunk activeChunk = deactivatedChunks[activeGridKey];
             activeChunk.ChunkObject.SetActive(true);
 
             activeChunks.Add(activeGridKey, activeChunk);
+            deactivatedChunks.Remove(activeGridKey);
+          }
+          else   //Make a new chunk
+          {
+            GameObject newChunkObject = new GameObject("Chunk " + chunkNumberNamer);
+            newChunkObject.transform.SetParent(this.transform);
 
-            lazyChunks.Remove(activeGridKey);
+            Chunk newChunkInfo = new Chunk();
+            newChunkInfo.SetChunkObject(activeGridKey, newChunkObject);
+            
+            chunkPopulator.Populate(activeGridKey, chunkDiameter, newChunkInfo);
 
-            activeGridKey.x++;
+            activeChunks.Add(activeGridKey, newChunkInfo);
+            chunkNumberNamer++;
           }
 
-          activeGridKey.y++;
-          activeGridKey.x -= 3;   //Need to reset x axis for next row
+          activeGridKey.x++;
         }
+
+        activeGridKey.y++;
+        activeGridKey.x -= 3;   //Need to reset x axis for next row
       }
       
       foreach (var chunk in deactivatedChunks)
-      {
-        chunk.Value.ChunkObject.SetActive(false);
-      }
-
-      foreach (var chunk in lazyChunks)
       {
         chunk.Value.ChunkObject.SetActive(false);
       }

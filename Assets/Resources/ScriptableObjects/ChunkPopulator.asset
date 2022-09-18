@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e1031006e6b9c1a4ba892bc4a23ce9ce, type: 3}
   m_Name: ChunkPopulator
   m_EditorClassIdentifier: 
-  asteroidSmallPrefab: {fileID: 0}
-  asteroidMediumPrefab: {fileID: 0}
-  asteroidLargePrefab: {fileID: 0}
-  asteroidExtraLPrefab: {fileID: 0}
-  starOrangePrefab: {fileID: 0}
-  starWhitePrefab: {fileID: 0}
+  asteroidPickupPrefab: {fileID: 1239589416757620075, guid: a9acb5639645b864f9e56943f9dc4fc8, type: 3}
+  asteroidSmallPrefab: {fileID: 7148545707391969480, guid: d41d89fd98ed7f943b36098b0c502900, type: 3}
+  asteroidMediumPrefab: {fileID: 7449075690971117738, guid: 9af7e7b59f90d4844994d13eabfbc799, type: 3}
+  asteroidLargePrefab: {fileID: 1569315732157470149, guid: 372a956db4a028e4da290616127737a3, type: 3}
+  asteroidExtraLPrefab: {fileID: 1965551383653535333, guid: 4a004f3277b42f7478d5b6df64aa969b, type: 3}
+  starOrangePrefab: {fileID: 4268589947771861370, guid: 5a9517e2cf528034ea45092a09fe552f, type: 3}
+  starWhitePrefab: {fileID: 4268589947771861370, guid: 709f4ef2bd75b2a44b6a82c60db0b3ed, type: 3}

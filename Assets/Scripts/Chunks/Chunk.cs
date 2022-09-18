@@ -7,7 +7,7 @@ namespace zephkelly
 {
   public class Chunk
   {
-    public Vector2Int Position { get; set; }
+    public Vector2 Position { get; set; }
     public GameObject ChunkObject { get; set; }
 
     private Dictionary<Vector2, Asteroid> asteroids = 
@@ -24,9 +24,9 @@ namespace zephkelly
       ChunkObject = _chunkObject;
     }
 
-    public void AddAsteroid(Vector2 _position, Asteroid _asteroid)
+    public void AddAsteroid(Asteroid _asteroid)
     {
-      asteroids.Add(_position, _asteroid);
+      asteroids.Add(_asteroid.SpawnPosition, _asteroid);
     }
   }
 }
