@@ -9,6 +9,7 @@ namespace zephkelly
   {
     public Vector2 Position { get; set; }
     public GameObject ChunkObject { get; set; }
+    public Transform ChunkTransform { get; set; }
 
     private Dictionary<Vector2, Asteroid> asteroids = 
       new Dictionary<Vector2, Asteroid>();
@@ -19,6 +20,7 @@ namespace zephkelly
     {
       Position = _position;
       ChunkObject = _chunkObject;
+      ChunkTransform = ChunkObject.transform;
     }
 
     public void AddAsteroid(Asteroid asteroid)
@@ -26,14 +28,19 @@ namespace zephkelly
       asteroids.Add(asteroid.SpawnPosition, asteroid);
     }
 
-    /*
-    public void UpdateAsteroid(Asteroid asteroid)
+    public void AddForiegnAsteroid(Asteroid asteroid)
     {
-      asteroids[asteroid.SpawnPosition].UpdateSpawn();
+      asteroid.ParentChunk = this;
+      asteroid.SetNewSpawn(asteroid.CurrentPosition);
+      asteroids.Add(asteroid.SpawnPosition, asteroid);
     }
-    */
 
-    public void DestroyAsteroid(Asteroid asteroid)
+    public void DestroyAsteroidFromLazy(Asteroid asteroid)
+    {
+      asteroids.Remove(asteroid.LazyKey);
+    }
+
+    public void DestroyAsteroidFromSpawn(Asteroid asteroid)
     {
       asteroids.Remove(asteroid.SpawnPosition);
     }

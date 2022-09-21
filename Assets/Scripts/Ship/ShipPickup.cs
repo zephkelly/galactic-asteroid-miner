@@ -7,10 +7,11 @@ namespace zephkelly
 {
   public class ShipPickup : MonoBehaviour
   {
+    private OcclusionManager2 occlusionManager;
     [SerializeField] ShipController shipController;
+
     private Collider2D shipPickupTrigger;
     private Rigidbody2D rigid2D;
-
     private const float pickupSpeed = 0.8f;
 
     private void Awake()
@@ -19,21 +20,30 @@ namespace zephkelly
       rigid2D = shipPickupTrigger.attachedRigidbody;
     }
 
+    private void Start()
+    {
+      occlusionManager = ChunkManager2.Instance.OcclusionManager;
+    }
+
     private async void OnTriggerEnter2D(Collider2D otherCollider)
     {
       if (!otherCollider.CompareTag("AsteroidPickup")) return;
 
       otherCollider.isTrigger = true;
-      var asteroidType = otherCollider.GetComponent<AsteroidController>().AsteroidInfo.Type;
+      var asteroidInfo = otherCollider.GetComponent<AsteroidController>().AsteroidInfo;
 
       //Wait for the pickup to get in range
-      Task lerpTask = PickupLerp(otherCollider.transform, asteroidType);
+      Task lerpTask = PickupLerp(otherCollider.transform, asteroidInfo.Type);
       await Task.WhenAll(lerpTask);
 
+      if (asteroidInfo.Collider == null) return;
       //Add to inventory and destroy
-      shipController.Inventory.AddItem(asteroidType.ToString(), 1);
+      shipController.Inventory.AddItem(asteroidInfo.ToString(), 1);
       shipController.Inventory.PrintInventory();
 
+      Debug.Log("Picked up " + asteroidInfo.SpawnPosition);
+      //occlusionManager.RemoveAsteroid(asteroidInfo);
+    
       Destroy(otherCollider.gameObject);
     }
 

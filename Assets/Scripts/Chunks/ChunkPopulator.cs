@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  [CreateAssetMenu(fileName = "ChunkPopulator",menuName = "ScriptableObjects/ChunkPopulator")]
+  [CreateAssetMenu(menuName = "ScriptableObjects/ChunkPopulator")]
   public class ChunkPopulator : ScriptableObject
   {
     [SerializeField] GameObject starOrangePrefab;
@@ -34,7 +34,7 @@ namespace zephkelly
       //Get the chunk's position in world space
       Vector2 chunkWorldPosition = chunkKey * chunkDiameter;
 
-      chunkBounds = new Bounds(chunkWorldPosition, Vector2.one * chunkDiameter);
+      chunkBounds = new Bounds(chunkWorldPosition, Vector2.one * chunkDiameter);  
 
       //Get the number of asteroids to generate
       int minAsteroids = Random.Range(40, 60);

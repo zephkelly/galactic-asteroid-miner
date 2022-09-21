@@ -212,7 +212,7 @@ Camera:
   far clip plane: 1000
   field of view: 120
   orthographic: 1
-  orthographic size: 13.625
+  orthographic size: 14.5625
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
   m_Name: 
@@ -5149,7 +5149,7 @@ Transform:
   - {fileID: 1663101732}
   - {fileID: 1513829205}
   m_Father: {fileID: 1669991865}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1513829204
 GameObject:
@@ -10029,7 +10029,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1669991865}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1663101731
 GameObject:
@@ -14891,6 +14891,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1930855596}
   - {fileID: 1119855914}
   - {fileID: 1560126800}
   - {fileID: 1788404360}
@@ -15019,7 +15020,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1669991865}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1930855594
 GameObject:
@@ -15030,7 +15031,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1930855596}
-  - component: {fileID: 1930855595}
   - component: {fileID: 1930855597}
   m_Layer: 0
   m_Name: ChunkManager
@@ -15039,19 +15039,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1930855595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1930855594}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24c0383512c6679489251dd50e548dd6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  chunkDiameter: 300
 --- !u!4 &1930855596
 Transform:
   m_ObjectHideFlags: 0
@@ -15064,8 +15051,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_Father: {fileID: 1669991865}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1930855597
 MonoBehaviour:
@@ -15076,16 +15063,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1930855594}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 71db21444f1f211458142d48a1b8ce39, type: 3}
+  m_Script: {fileID: 11500000, guid: 5757880dd24470f48bcfe9b798eb37fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  asteroidPickupPrefab: {fileID: 1239589416757620075, guid: a9acb5639645b864f9e56943f9dc4fc8, type: 3}
-  asteroidSmallPrefab: {fileID: 7148545707391969480, guid: d41d89fd98ed7f943b36098b0c502900, type: 3}
-  asteroidMediumPrefab: {fileID: 7449075690971117738, guid: 9af7e7b59f90d4844994d13eabfbc799, type: 3}
-  asteroidLargePrefab: {fileID: 1569315732157470149, guid: 372a956db4a028e4da290616127737a3, type: 3}
-  asteroidExtraLPrefab: {fileID: 1965551383653535333, guid: 4a004f3277b42f7478d5b6df64aa969b, type: 3}
-  occlusionDistance: 100
-  destructionTimer: 10
+  chunkDiameter: 100
 --- !u!1 &1976971261
 GameObject:
   m_ObjectHideFlags: 0

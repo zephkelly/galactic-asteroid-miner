@@ -39,10 +39,6 @@ namespace zephkelly
       get => activeChunks;
     }
 
-    public Dictionary <Vector2Int, Chunk> LazyChunks { 
-      get => deactivatedChunks;
-    }
-
     public Dictionary <Vector2Int, Chunk> DeactivatedChunks { 
       get => deactivatedChunks;
     }
@@ -54,6 +50,7 @@ namespace zephkelly
       chunkPopulator = Resources.Load("ScriptableObjects/ChunkPopulator") 
         as ChunkPopulator;
 
+      occlusionManager = GetComponent<OcclusionManager>();
       playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
   
       //Singleton pattern
@@ -66,8 +63,6 @@ namespace zephkelly
 
     private void Start()
     {
-      occlusionManager = GetComponent<OcclusionManager>();
-
       playerLastChunkPosition = QuantisePosition(playerTransform.position);
 
       ActivateOrGenerateChunks(playerLastChunkPosition);
@@ -85,6 +80,29 @@ namespace zephkelly
         ActivateOrGenerateChunks(playerCurrentChunkPosition);
 
         playerLastChunkPosition = playerCurrentChunkPosition;
+      }
+    }
+
+    public void AddAsteroidToChunk(Asteroid asteroidInfo)
+    {
+      var chunkPosition = QuantisePosition(asteroidInfo.CurrentPosition);
+
+      foreach (var chunk in activeChunks)
+      {
+        if (chunk.Key == chunkPosition)
+        {
+          chunk.Value.AddForiegnAsteroid(asteroidInfo);
+          return;
+        }
+      }
+
+      foreach (var chunk in deactivatedChunks)
+      {
+        if (chunk.Key == chunkPosition)
+        {
+          chunk.Value.AddForiegnAsteroid(asteroidInfo);
+         return;
+        }
       }
     }
 

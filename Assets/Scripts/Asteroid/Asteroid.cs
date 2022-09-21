@@ -5,29 +5,8 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  public enum AsteroidSize
-  {
-    Pickup,
-    Small,
-    Medium,
-    Large,
-    ExtraLarge
-  }
-
-  public enum AsteroidType
-  {
-    Iron,
-    Platinum,
-    Gold,
-    Palladium,
-    Cobalt,
-    Stellarite,
-    Darkore
-  }
-
   public class Asteroid
   {
-
     private Vector2 spawnPosition;
     private Vector2 currentPosition;
     private Vector2 lazyKey;
@@ -61,7 +40,6 @@ namespace zephkelly
 
     public Vector2 SetLazyKey()
     {
-      IsLazy = true;
       lazyKey = AsteroidTransform.position;
       return lazyKey;
     }
@@ -80,6 +58,12 @@ namespace zephkelly
     public void SetNewSpawn(Vector2 _newSpawn)
     {
       spawnPosition = _newSpawn;
+    }
+
+    public void RemoveParentChunk()
+    {
+      ParentChunk.DestroyAsteroidFromLazy(this);
+      ParentChunk = null;
     }
   }
 }

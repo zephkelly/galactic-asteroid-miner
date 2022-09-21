@@ -17,6 +17,7 @@ namespace zephkelly
 
     public Rigidbody2D AsteroidRigid2D { get => asteroidRigid2D; }
     public Asteroid AsteroidInfo { get => asteroidInfo; }
+    public float Health { get => asteroidInfo.Health; }
 
     private void Awake()
     {
@@ -45,6 +46,7 @@ namespace zephkelly
       if (asteroidInfo.AsteroidTransform == null)
       {
         Debug.LogError("AsteroidController: Update: AsteroidTransform is null");
+        Destroy(this.gameObject);
         return;
       }
 
