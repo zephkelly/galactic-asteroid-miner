@@ -38,7 +38,9 @@ namespace zephkelly
         Chunk2 chunkInfo = chunk.Value;
         if (chunkInfo.HasStar) return;
 
-        GenerateStars(chunkInfo, chunks);
+        var madeAStar = GenerateStars(chunkInfo, chunks);
+
+        if (madeAStar) Debug.Log("Made a star in chunk " + chunkInfo.AttachedObject + chunkInfo.ChunkStar.Type);
         //GeneratePlanets();
         //GenerateMoons();
         //GenerateSpaceStations();
@@ -65,6 +67,8 @@ namespace zephkelly
 
     private bool GenerateStars(Chunk2 thisChunk, Dictionary<Vector2Int,Chunk2> chunks)
     {
+      if (thisChunk.Key == Vector2.zero) return false;
+
       //Stars are always generated in the center of a chunk
       List<float> starDistances = new List<float>();
       
@@ -114,7 +118,7 @@ namespace zephkelly
       bool TryGenerateStar()
       {
         int shouldGenerateStar = Random.Range(0, 100);
-        if (shouldGenerateStar < 20) return false;   //20% chance
+        if (shouldGenerateStar > 10) return false;   //6% chance
 
         int starTypeGenerator = Random.Range(0, 1000);
 

@@ -9,8 +9,9 @@ namespace zephkelly
   {
     public static ChunkManager2 Instance { get; private set; }
 
-    private OcclusionManager2 occlusionManager = new OcclusionManager2();
+    private OcclusionManager2 occlusionManager;
     private ChunkPopulator2 chunkPopulator = new ChunkPopulator2();
+    private PrefabInstantiator prefabGetter = new PrefabInstantiator();
 
     private Dictionary<Vector2Int, Chunk2> activeChunks = 
       new Dictionary<Vector2Int, Chunk2>();
@@ -35,19 +36,21 @@ namespace zephkelly
     //------------------------------------------------------------------------------
 
     public OcclusionManager2 OcclusionManager { get => occlusionManager; }
+    public PrefabInstantiator Instantiator { get => prefabGetter; }
 
     public Dictionary<Vector2Int, Chunk2> ActiveChunks { get => activeChunks; }
     public Dictionary<Vector2Int, Chunk2> LazyChunks { get => lazyChunks; }
     public Dictionary<Vector2Int, Chunk2> InactiveChunks { get => inactiveChunks; }
 
     public int StarCount { get => starCount; }
+    public int ChunkDiameter { get => chunkDiameter; }
 
     //------------------------------------------------------------------------------
 
     private void Awake()
     {
       playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-
+      occlusionManager = new OcclusionManager2(playerTransform, this);
       managerTransform = transform;
 
       //Singleton pattern
@@ -66,6 +69,28 @@ namespace zephkelly
       playerLastChunkPosition = playerChunkPosition;
     }
 
+    public Vector2Int QuantisePosition(Vector2 _position)
+    {
+      return new Vector2Int(
+        Mathf.RoundToInt(_position.x / chunkDiameter),
+        Mathf.RoundToInt(_position.y / chunkDiameter)
+      );
+    }
+
+    public Chunk2 GetChunk(Vector2Int _chunkPosition)
+    {
+      if (activeChunks.ContainsKey(_chunkPosition)) {
+        return activeChunks[_chunkPosition];
+      } else if (lazyChunks.ContainsKey(_chunkPosition)) {
+        return lazyChunks[_chunkPosition];
+      } else if (inactiveChunks.ContainsKey(_chunkPosition)) {
+        return inactiveChunks[_chunkPosition];
+      } else {
+        Debug.LogError("Chunk not found");
+        return null;
+      }
+    }
+
     private void Update()
     {
       if (playerTransform == null) return;
@@ -77,14 +102,8 @@ namespace zephkelly
         GenerateChunks(playerChunkPosition);
         playerLastChunkPosition = playerChunkPosition;
       }
-    }
 
-    private Vector2Int QuantisePosition(Vector2 _position)
-    {
-      return new Vector2Int(
-        Mathf.RoundToInt(_position.x / chunkDiameter),
-        Mathf.RoundToInt(_position.y / chunkDiameter)
-      );
+      occlusionManager.UpdateOcclusion();
     }
 
     private void GenerateChunks(Vector2Int center)

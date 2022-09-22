@@ -15066,7 +15066,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5757880dd24470f48bcfe9b798eb37fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkDiameter: 100
+  chunkDiameter: 200
 --- !u!1 &1976971261
 GameObject:
   m_ObjectHideFlags: 0

@@ -31,7 +31,8 @@ namespace zephkelly
     private float beltMin;
     private float beltMax;
 
-    private GameObject currentStarObject;
+    private GameObject starObject;
+    private Renderer starRenderer;
     private Chunk2 parentChunk;
 
     private List<GameObject> orbitingBodies = new List<GameObject>();
@@ -44,7 +45,7 @@ namespace zephkelly
     public float MaxOrbitRadius { get => starMaxRadius; }
 
     public Chunk2 ParentChunk { get => parentChunk; }
-    public GameObject StarObject { get => currentStarObject; }
+    public GameObject AttachedObject { get => starObject; }
     public List<GameObject> OrbitingBodies { get => orbitingBodies; }
 
     //------------------------------------------------------------------------------
@@ -55,11 +56,24 @@ namespace zephkelly
       starPosition = _parentChunk.Position;
 
       starType = _type;
+      starObject = null;
+    }
 
-      //Star Orbit Radius based on Star Types
-      //Get asteroid orbit radius
+    public void SetStarObject(GameObject _starObject)
+    {
+      starObject = _starObject;
+      starRenderer = starObject.GetComponent<Renderer>();
 
-      currentStarObject = null;
+      _starObject.transform.position = starPosition;
+    }
+
+    public void DisposeObject()
+    {
+      if (starObject != null) return;
+
+      GameObject.Destroy(starObject);
+      starObject = null;
+      starRenderer = null;
     }
   }
 }

@@ -28,7 +28,10 @@ namespace zephkelly
     public Bounds ChunkBounds { get => chunkBounds; }
     public GameObject AttachedObject { get => attackedObject; }
 
-    public Dictionary<Vector2, Asteroid2> Asteroids { get => asteroids; }
+    public Dictionary<Vector2, Asteroid2> Asteroids { 
+      get => asteroids; 
+      set => asteroids = value; 
+    }
 
     public Star ChunkStar { get => star; }
     public bool HasStar { get => containsStar; }
