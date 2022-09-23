@@ -39,7 +39,7 @@ namespace zephkelly
 
     //------------------------------------------------------------------------------
 
-    public Vector2 Position { get => starPosition; }
+    public Vector2 SpawnPoint { get => starPosition; }
     public Vector2 AsteroidBeltRadius { get => new Vector2(beltMin, beltMax); }
     public StarType Type { get => starType; }
     public float MaxOrbitRadius { get => starMaxRadius; }

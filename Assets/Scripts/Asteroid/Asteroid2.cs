@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -67,11 +66,11 @@ namespace zephkelly
       health = _health;
     }
 
-    public void SetAsteroidObject(GameObject _asteroidObject, Vector2 _position)
+    public void SetObject(GameObject _asteroidObject, Vector2 _position)
     {
       asteroidObject = _asteroidObject;
       asteroidTransform = asteroidObject.transform;
-      renderer = asteroidObject.GetComponent<SpriteRenderer>();
+      renderer = asteroidObject.GetComponentInChildren<SpriteRenderer>();
 
       asteroidObject.transform.position = _position;
     }
@@ -85,22 +84,17 @@ namespace zephkelly
     {
       currentPosition = asteroidTransform.position;
 
-      Vector2Int newChunkKey = ChunkManager2.Instance.QuantisePosition(currentPosition);
-
-      if (asteroidObject != null)
-      {
-        GameObject.Destroy(asteroidObject);
-        asteroidObject = null;
-        asteroidTransform = null;
-        renderer = null;
-      }
-
-      if (parentChunk.Key == newChunkKey) return;
+      Vector2Int newChunkKey = ChunkManager2.Instance.GetChunkPosition(currentPosition);
+      
       parentChunk.RemoveAsteroid(spawnPosition);
-      spawnPosition = currentPosition;
 
       parentChunk = ChunkManager2.Instance.GetChunk(newChunkKey);
+      spawnPosition = currentPosition;
+
       parentChunk.AddAsteroid(this, spawnPosition);
+
+      asteroidTransform = null;
+      renderer = null;
     }
 
     public int UpdateHealth(int damage)

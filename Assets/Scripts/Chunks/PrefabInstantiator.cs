@@ -4,51 +4,72 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  public class PrefabInstantiator
+  public class PrefabInstantiator : MonoBehaviour
   {
-    //Asteroids
-    public GameObject AsteroidSmall { get; private set; }
-    public GameObject AsteroidMedium { get; private set; }
-    public GameObject AsteroidLarge { get; private set; }
-    public GameObject AsteroidHuge { get; private set; }
+    [SerializeField] GameObject asteroidSmall;
+    [SerializeField] GameObject asteroidMedium;
+    [SerializeField] GameObject asteroidLarge;
+    [SerializeField] GameObject asteroidHuge;
 
-    //Stars
-    public GameObject WhiteDwarf { get; private set; }
-    public GameObject BrownDwarf { get; private set; }
-    public GameObject RedDwarf { get; private set; }
-    public GameObject YellowDwarf { get; private set; }
-    public GameObject BlueGiant { get; private set; }
-    public GameObject OrangeGiant { get; private set; }
-    public GameObject RedGiant { get; private set; }
-    public GameObject BlueSuperGiant { get; private set; }
-    public GameObject RedSuperGiant { get; private set; }
-    public GameObject BlueHyperGiant { get; private set; }
-    public GameObject RedHyperGiant { get; private set; }
-    public GameObject NeutronStar { get; private set; }
-    public GameObject BlackHole { get; private set; }
+    [SerializeField] GameObject whiteDwarf;
+    [SerializeField] GameObject brownDwarf;
+    [SerializeField] GameObject redDwarf;
+    [SerializeField] GameObject yellowDwarf;
+    [SerializeField] GameObject blueGiant;
+    [SerializeField] GameObject orangeGiant;
+    [SerializeField] GameObject redGiant;
+    [SerializeField] GameObject blueSuperGiant;
+    [SerializeField] GameObject redSuperGiant;
+    [SerializeField] GameObject blueHyperGiant;
+    [SerializeField] GameObject redHyperGiant;
+    [SerializeField] GameObject neutronStar;
+    [SerializeField] GameObject blackHole;
 
     //------------------------------------------------------------------------------
 
-    private void Start()
-    {
-      AsteroidSmall = Resources.Load("Prefabs/Asteroids/Asteroid-S") as GameObject;
-      AsteroidMedium = Resources.Load("Prefabs/Asteroids/Asteroid-M") as GameObject;
-      AsteroidLarge = Resources.Load("Prefabs/Asteroids/Asteroid-L") as GameObject;
-      AsteroidHuge = Resources.Load("Prefabs/Asteroids/Asteroid-XL") as GameObject;
+    //Asteroids
+    public GameObject AsteroidSmall { get => asteroidSmall; }
+    public GameObject AsteroidMedium { get => asteroidMedium; }
+    public GameObject AsteroidLarge { get => asteroidLarge; }
+    public GameObject AsteroidHuge { get => asteroidHuge; }
 
-      WhiteDwarf = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      BrownDwarf = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      RedDwarf = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      YellowDwarf = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      BlueGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      OrangeGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      RedGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      BlueSuperGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      RedSuperGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      BlueHyperGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      RedHyperGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      NeutronStar = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
-      BlackHole = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+    //Stars
+    public GameObject WhiteDwarf { get => whiteDwarf; }
+    public GameObject BrownDwarf { get => brownDwarf; }
+    public GameObject RedDwarf { get => redDwarf; }
+    public GameObject YellowDwarf { get => yellowDwarf; }
+    public GameObject BlueGiant { get => blueGiant; }
+    public GameObject OrangeGiant { get => orangeGiant; }
+    public GameObject RedGiant { get => redGiant; }
+    public GameObject BlueSuperGiant { get => blueSuperGiant; }
+    public GameObject RedSuperGiant { get => redSuperGiant; }
+    public GameObject BlueHyperGiant { get => blueHyperGiant; }
+    public GameObject RedHyperGiant { get => redHyperGiant; }
+    public GameObject NeutronStar { get => neutronStar; }
+    public GameObject BlackHole { get => blackHole; }
+
+    //------------------------------------------------------------------------------
+
+    private void Awake()
+    {
+      asteroidSmall = Resources.Load<GameObject>("Prefabs/Asteroids/Asteroid-S");
+      asteroidMedium = Resources.Load<GameObject>("Prefabs/Asteroids/Asteroid-M");
+      asteroidLarge = Resources.Load<GameObject>("Prefabs/Asteroids/Asteroid-L");
+      asteroidHuge = Resources.Load<GameObject>("Prefabs/Asteroids/Asteroid-XL");
+
+      whiteDwarf = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      brownDwarf = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      redDwarf = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      yellowDwarf = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      blueGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      orangeGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      redGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      blueSuperGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      redSuperGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      blueHyperGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      redHyperGiant = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      neutronStar = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
+      blackHole = Resources.Load<GameObject>("Prefabs/Stars/StarOrange");
     }
 
     public GameObject GetStar(Star _starInfo)

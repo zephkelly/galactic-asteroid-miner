@@ -206,13 +206,13 @@ Camera:
     serializedVersion: 2
     x: 0
     y: 0
-    width: 1
-    height: 1
+    width: 0.99999994
+    height: 0.99921197
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 120
   orthographic: 1
-  orthographic size: 14.5625
+  orthographic size: 18
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -5107,7 +5107,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 818486901}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 809d6df8c040b4d489ec404e7d266f7d, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f04564ec0254544e9294a83659b7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 818486902}
@@ -5115,7 +5115,7 @@ MonoBehaviour:
   starSizeMin: 0.05
   starSizeMax: 0.2
   starSpawnRadius: 40
-  parallaxFactor: 44
+  parallaxFactor: 45
 --- !u!1 &1119855913
 GameObject:
   m_ObjectHideFlags: 0
@@ -5194,7 +5194,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1513829204}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 809d6df8c040b4d489ec404e7d266f7d, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f04564ec0254544e9294a83659b7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1513829205}
@@ -10074,7 +10074,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1663101731}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 809d6df8c040b4d489ec404e7d266f7d, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f04564ec0254544e9294a83659b7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1663101732}
@@ -10082,7 +10082,7 @@ MonoBehaviour:
   starSizeMin: 0.05
   starSizeMax: 0.2
   starSpawnRadius: 40
-  parallaxFactor: 47
+  parallaxFactor: 48.5
 --- !u!199 &1663101734
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -15032,6 +15032,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1930855596}
   - component: {fileID: 1930855597}
+  - component: {fileID: 1930855598}
   m_Layer: 0
   m_Name: ChunkManager
   m_TagString: Untagged
@@ -15067,6 +15068,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   chunkDiameter: 200
+--- !u!114 &1930855598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930855594}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1010bed5303826846bcf05a65c6c5e18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  asteroidSmall: {fileID: 0}
+  asteroidMedium: {fileID: 0}
+  asteroidLarge: {fileID: 0}
+  asteroidHuge: {fileID: 0}
+  whiteDwarf: {fileID: 0}
+  brownDwarf: {fileID: 0}
+  redDwarf: {fileID: 0}
+  yellowDwarf: {fileID: 0}
+  blueGiant: {fileID: 0}
+  orangeGiant: {fileID: 0}
+  redGiant: {fileID: 0}
+  blueSuperGiant: {fileID: 0}
+  redSuperGiant: {fileID: 0}
+  blueHyperGiant: {fileID: 0}
+  redHyperGiant: {fileID: 0}
+  neutronStar: {fileID: 0}
+  blackHole: {fileID: 0}
 --- !u!1 &1976971261
 GameObject:
   m_ObjectHideFlags: 0
@@ -19889,7 +19919,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1976971261}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 809d6df8c040b4d489ec404e7d266f7d, type: 3}
+  m_Script: {fileID: 11500000, guid: 7f04564ec0254544e9294a83659b7a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1976971262}

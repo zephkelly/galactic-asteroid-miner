@@ -41,6 +41,7 @@ namespace zephkelly
       asteroidInfo = asteroidBehaviour.SetHealth(asteroidInfo);
     }
 
+    /*
     private void Update()
     {
       if (asteroidInfo.AsteroidTransform == null)
@@ -52,6 +53,7 @@ namespace zephkelly
 
       asteroidInfo.UpdatePosition();
     }
+    */
 
     public void TakeDamage(int damage, Vector2 hitVector)
     {

@@ -18,7 +18,7 @@ namespace zephkelly
       new Dictionary<Vector2, Asteroid2>();
 
     private Star star;
-    private bool containsStar;
+    private bool hasStar;
 
     //------------------------------------------------------------------------------
 
@@ -34,7 +34,7 @@ namespace zephkelly
     }
 
     public Star ChunkStar { get => star; }
-    public bool HasStar { get => containsStar; }
+    public bool HasStar { get => hasStar; }
     public bool HasBeenPopulated { get => hasBeenPopulated; }
 
     //------------------------------------------------------------------------------
@@ -47,14 +47,14 @@ namespace zephkelly
       attackedObject = _object;
       chunkBounds =  new Bounds(chunkWorldPosition, Vector2.one * _chunkDiameter);
 
-      containsStar = false;
+      hasStar = false;
       hasBeenPopulated = false;
       star = null;
     }
 
     public void SetStar(Star _star)
     {
-      containsStar = true;
+      hasStar = true;
       star = _star;
     }
 

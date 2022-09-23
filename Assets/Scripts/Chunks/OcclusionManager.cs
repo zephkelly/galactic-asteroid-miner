@@ -47,15 +47,9 @@ namespace zephkelly
         CheckAsteroidOcclusion(chunk.Value, playerTransform.position);
       }
 
-      if (deactivatedAsteroids.Count == 0) return;
       foreach (var asteroid in deactivatedAsteroids)
       {
-        var asteroidInfo = asteroid.Value;
-
-        asteroidInfo.RemoveParentChunk();
-        chunkManager.AddAsteroidToChunk(asteroidInfo);
-
-        Destroy(asteroid.Value.AsteroidObject); //Pool
+        Destroy(asteroid.Value.AsteroidObject);
       }
 
       deactivatedAsteroids.Clear();
@@ -66,58 +60,55 @@ namespace zephkelly
     {
       foreach (var asteroid in currentChunk.Asteroids)
       {
-        Asteroid asteroidInfo = asteroid.Value;
-        Vector2 currentSpawn = asteroidInfo.SpawnPosition;
-        Vector2 currentPosition = asteroidInfo.CurrentPosition;
+        Asteroid currentAsteroid = asteroid.Value;
+        Vector2 currentSpawn = currentAsteroid.SpawnPosition;
+        Vector2 currentPosition = currentAsteroid.CurrentPosition;
 
         //Check if active
         if (activeAsteroids.ContainsKey(asteroid.Key))
         {
           if (Vector2.Distance(playerPosition, currentPosition) > occlusionDistance)
           {
-            if(asteroidInfo.AsteroidObject == null)
+            if(currentAsteroid.AsteroidObject == null)
             {
               Debug.LogError("Asteroid object is null");
               currentChunk.Asteroids.Remove(asteroid.Key);
               return;
             }
             
-            var lazyKey = asteroidInfo.SetLazyKey();
-            asteroidInfo.AsteroidObject.SetActive(false);
-            //Destroy(asteroidInfo.AsteroidObject); //Pool instead
+            var lazyKey = currentAsteroid.SetLazyKey();
+            currentAsteroid.AsteroidObject.SetActive(false);
 
             activeAsteroids.Remove(asteroid.Key);
-            lazyAsteroids.Add(lazyKey, asteroidInfo);
+            lazyAsteroids.Add(lazyKey, currentAsteroid);
             deactivationTimer.Add(lazyKey, destructionTimer);
             return;
           }
         }
 
         //Check if lazy
-        else if (lazyAsteroids.ContainsKey(asteroidInfo.LazyKey))
+        else if (lazyAsteroids.ContainsKey(currentAsteroid.LazyKey))
         {
           if (Vector2.Distance(playerPosition, currentPosition) < occlusionDistance)
           {
-            asteroidInfo.AsteroidObject.SetActive(true);
+            currentAsteroid.AsteroidObject.SetActive(true);
+            currentAsteroid.IsLazy = false;
 
-            asteroidInfo.SetNewSpawn(asteroidInfo.CurrentPosition);
-            activeAsteroids.Add(asteroidInfo.SpawnPosition, asteroidInfo);
-
-            lazyAsteroids.Remove(asteroidInfo.LazyKey);
-            deactivationTimer.Remove(asteroidInfo.LazyKey);
+            activeAsteroids.Add(asteroid.Key, currentAsteroid);
+            lazyAsteroids.Remove(currentAsteroid.LazyKey);
+            deactivationTimer.Remove(currentAsteroid.LazyKey);
           }
           else
           {
-            deactivationTimer[asteroidInfo.LazyKey] -= Time.deltaTime;
+            deactivationTimer[currentAsteroid.LazyKey] -= Time.deltaTime;
 
-            if (deactivationTimer[asteroidInfo.LazyKey] <= 0)
+            if (deactivationTimer[currentAsteroid.LazyKey] <= 0)
             {
-              Destroy(asteroidInfo.AsteroidObject); //Pool instead
+              Destroy(currentAsteroid.AsteroidObject);
 
-              deactivatedAsteroids.Add(asteroidInfo.LazyKey, asteroidInfo);
-
-              lazyAsteroids.Remove(asteroidInfo.LazyKey);
-              deactivationTimer.Remove(asteroidInfo.LazyKey);
+              deactivatedAsteroids.Add(currentAsteroid.LazyKey, currentAsteroid);
+              lazyAsteroids.Remove(currentAsteroid.LazyKey);
+              deactivationTimer.Remove(currentAsteroid.LazyKey);
             }
           }
         }
@@ -125,7 +116,7 @@ namespace zephkelly
         //New asteroid
         else if (Vector2.Distance(playerPosition, asteroid.Value.SpawnPosition) < occlusionDistance)
         {
-          switch (asteroidInfo.Size)
+          switch (currentAsteroid.Size)
           {
             case AsteroidSize.Pickup:
               var pickupAsteroid = Instantiate(asteroidPickupPrefab);
@@ -156,8 +147,8 @@ namespace zephkelly
           void SetAsteroid(GameObject newAsteroid)
           {
             newAsteroid.GetComponent<AsteroidController>()
-              .SetAsteroid(asteroidInfo, currentChunk);
-            newAsteroid.transform.parent = currentChunk.ChunkTransform;
+              .SetAsteroid(currentAsteroid, currentChunk);
+            newAsteroid.transform.parent = currentChunk.ChunkObject.transform;  //Remove get component transform
             newAsteroid.transform.position = asteroid.Key;
 
             activeAsteroids.Add(asteroid.Key, asteroid.Value);
@@ -168,24 +159,18 @@ namespace zephkelly
 
     public void RemoveAsteroid(Asteroid asteroid)
     {
-      if (activeAsteroids.ContainsKey(asteroid.SpawnPosition))
+      if (activeAsteroids.ContainsKey(asteroid.CurrentPosition))
       {
-        activeAsteroids.Remove(asteroid.SpawnPosition);
+        activeAsteroids.Remove(asteroid.CurrentPosition);
       }
-      else if (lazyAsteroids.ContainsKey(asteroid.LazyKey))
+      else if (lazyAsteroids.ContainsKey(asteroid.CurrentPosition))
       {
-        lazyAsteroids.Remove(asteroid.LazyKey);
-      }
-      else if (deactivatedAsteroids.ContainsKey(asteroid.LazyKey) == false)
-      {
-        deactivatedAsteroids.Add(asteroid.LazyKey, asteroid);
+        lazyAsteroids.Remove(asteroid.CurrentPosition);
       }
 
       asteroid.ParentChunk.Asteroids.Remove(asteroid.SpawnPosition);
-
-      if (asteroid.AsteroidObject == null) return;
-      Destroy(asteroid.AsteroidObject); //Pool instead
+      deactivatedAsteroids.Add(asteroid.CurrentPosition, asteroid);
+      Destroy(asteroid.AsteroidObject);
     }
   }
 }
-  

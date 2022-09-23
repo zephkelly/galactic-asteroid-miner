@@ -19,8 +19,8 @@ namespace zephkelly
     private static int starMinDistance8 = 2400;   //BlackHole
 
     //Asteroids
-    private static int minAsteroids = 50;
-    private static int maxAsteroids = 100;
+    private static int minAsteroids = 40;
+    private static int maxAsteroids = 70;
     //Minimum distances before asteroids can spawn
     private static int asteroidMinDistance1 = 0;   //Iron - Platinum
     private static int asteroidMinDistance2 = 300;   //Gold
@@ -31,38 +31,23 @@ namespace zephkelly
 
     //------------------------------------------------------------------------------
 
-    public void PopulateLargeBodies(Dictionary<Vector2Int, Chunk2> chunks)
+    public bool PopulateLargeBodies(Chunk2 lazyChunk)
     {
-      foreach (var chunk in chunks)
-      {
-        Chunk2 chunkInfo = chunk.Value;
-        if (chunkInfo.HasStar) return;
+      var hasStar = GenerateStars(lazyChunk, ChunkManager2.Instance.LazyChunks);
 
-        var madeAStar = GenerateStars(chunkInfo, chunks);
+      if (!hasStar) return false;
 
-        if (madeAStar) Debug.Log("Made a star in chunk " + chunkInfo.AttachedObject + chunkInfo.ChunkStar.Type);
-        //GeneratePlanets();
-        //GenerateMoons();
-        //GenerateSpaceStations();
-      }
+      GenerateAsteroids(lazyChunk, true);
+      return true;
     }
 
-    public void PopulateSmallBodies(Dictionary<Vector2Int, Chunk2> chunks)
+    public void PopulateSmallBodies(Chunk2 activeChunk)
     {
-      foreach (var chunk in chunks)
-      {
-        Chunk2 chunkInfo = chunk.Value;
-        if (chunkInfo.HasBeenPopulated) return;   //here we could include repopulating code? special spawns?
+      if (activeChunk.HasBeenPopulated) return;   //here we could include repopulating code? special spawns?
 
-        if (chunkInfo.HasStar) {
-          GenerateAsteroids(chunkInfo, hasStar: true);
-        }
-        else {
-          GenerateAsteroids(chunkInfo, hasStar: false);
-        }
+      GenerateAsteroids(activeChunk, hasStar: false);
 
-        chunkInfo.SetPopulated();
-      }
+      activeChunk.SetPopulated();
     }
 
     private bool GenerateStars(Chunk2 thisChunk, Dictionary<Vector2Int,Chunk2> chunks)
@@ -109,7 +94,6 @@ namespace zephkelly
         for (int i = 0; i < starDistances.Count; i++)
         {
           if (starDistances[i] < starMinimumSeparation) return false;
-          else continue;
         }
 
         return true;
@@ -247,7 +231,7 @@ namespace zephkelly
         {
           spawnPoint = GetPositionAroundStar(chunk.ChunkStar);
           
-          if (chunk.Asteroids.ContainsKey(spawnPoint)) continue;
+          if (chunk.Asteroids.ContainsKey(spawnPoint)) return;
 
           chunk.AddAsteroid(CreateAsteroid(spawnPoint), spawnPoint);
         }
@@ -258,7 +242,7 @@ namespace zephkelly
         {
           spawnPoint = GetRandomPosition(chunk.ChunkBounds);
 
-          if (chunk.Asteroids.ContainsKey(spawnPoint)) continue;
+          if (chunk.Asteroids.ContainsKey(spawnPoint)) return;
 
           chunk.AddAsteroid(CreateAsteroid(spawnPoint), spawnPoint);
         }
@@ -274,8 +258,9 @@ namespace zephkelly
 
         return new Asteroid2(
           chunk,
-          AsteroidSize.Medium,
-          randomType, _spawnPoint,
+          randomSize,
+          randomType,
+          _spawnPoint,
           health
         );
       }
@@ -284,9 +269,9 @@ namespace zephkelly
       {
         int randomSize = Random.Range(0, 100);
 
-        if (randomSize < 60) return AsteroidSize.Small;
-        else if (randomSize < 80) return AsteroidSize.Medium;
-        else if (randomSize < 90) return AsteroidSize.Large;
+        if (randomSize <= 60) return AsteroidSize.Small;
+        else if (randomSize <= 85) return AsteroidSize.Medium;
+        else if (randomSize <= 99) return AsteroidSize.Large;
         else return AsteroidSize.Huge;
       }
 
@@ -297,14 +282,14 @@ namespace zephkelly
 
         if (originDistance > asteroidMinDistance1)
         {
-          if (gen <= 8) return AsteroidType.Iron;
+          if (gen <= 80) return AsteroidType.Iron;
           else return AsteroidType.Platinum;
         }
 
         else if (originDistance > asteroidMinDistance2)
         {
-          if (gen <= 7) return AsteroidType.Iron;
-          else if (gen <= 9) return AsteroidType.Platinum;
+          if (gen <= 70) return AsteroidType.Iron;
+          else if (gen <= 90) return AsteroidType.Platinum;
           else return AsteroidType.Gold;
         }
 
