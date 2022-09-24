@@ -66,7 +66,7 @@ namespace zephkelly
     {
       if (playerTransform == null) return;
 
-      occlusionManager.UpdateOcclusion(activeChunks);
+      occlusionManager.UpdateOcclusion(activeChunks, lazyChunks);
 
       playerChunkPosition = GetChunkPosition(playerTransform.position);
 
@@ -127,6 +127,7 @@ namespace zephkelly
       }
     }
 
+    //Add 5x5 to lazy chunks
     private void ChunkCreator(Vector2Int chunkCenter)
     {
       Vector2Int lazyGridKey = new Vector2Int(chunkCenter.x -2, chunkCenter.y -2);
@@ -151,15 +152,9 @@ namespace zephkelly
             Chunk2 newChunkInfo = new Chunk2(lazyGridKey, chunkDiameter, newChunk);
             chunkNumber++;
 
-            var hasStar = chunkPopulator.PopulateLargeBodies(newChunkInfo);
+            chunkPopulator.PopulateLargeBodies(newChunkInfo);
 
-            if (hasStar) {
-              Debug.Log("Star in " + newChunkInfo.Position);
-              activeChunks.Add(newChunkInfo.Key, newChunkInfo);
-            }
-            else {
-              lazyChunks.Add(newChunkInfo.Key, newChunkInfo);
-            }
+            lazyChunks.Add(newChunkInfo.Key, newChunkInfo);
           }
 
           lazyGridKey.x++;

@@ -37,6 +37,7 @@ namespace zephkelly
 
       if (!hasStar) return false;
 
+      Debug.Log("Star at " + lazyChunk.Position);
       GenerateAsteroids(lazyChunk, true);
       return true;
     }
@@ -45,7 +46,7 @@ namespace zephkelly
     {
       if (activeChunk.HasBeenPopulated) return;   //here we could include repopulating code? special spawns?
 
-      GenerateAsteroids(activeChunk, hasStar: false);
+      GenerateAsteroids(activeChunk);
 
       activeChunk.SetPopulated();
     }
@@ -217,7 +218,7 @@ namespace zephkelly
       }
     }
 
-    private void GenerateAsteroids(Chunk2 chunk, bool hasStar)
+    private void GenerateAsteroids(Chunk2 chunk, bool hasStar = false)
     {
       int minimum = Random.Range(minAsteroids - 10, minAsteroids + 10);
       int maximum = Random.Range(maxAsteroids - 10, maxAsteroids + 10);
@@ -280,28 +281,27 @@ namespace zephkelly
         int gen = Random.Range(0, 100);
         float originDistance = Vector2.Distance(chunk.Position, Vector2.zero);
 
-        if (originDistance > asteroidMinDistance1)
-        {
-          if (gen <= 80) return AsteroidType.Iron;
-          else return AsteroidType.Platinum;
-        }
-
-        else if (originDistance > asteroidMinDistance2)
+        if (originDistance <= asteroidMinDistance1)
         {
           if (gen <= 70) return AsteroidType.Iron;
+          else return AsteroidType.Platinum;
+        }
+        else if (originDistance <= asteroidMinDistance2)
+        {
+          if (gen <= 60) return AsteroidType.Iron;
           else if (gen <= 90) return AsteroidType.Platinum;
           else return AsteroidType.Gold;
         }
 
-        else if (originDistance > asteroidMinDistance3)
+        else if (originDistance <= asteroidMinDistance3)
         {
-          if (gen <= 55) return AsteroidType.Iron;
+          if (gen <= 50) return AsteroidType.Iron;
           else if (gen <= 75) return AsteroidType.Platinum;
           else if (gen <= 90) return AsteroidType.Gold;
           else return AsteroidType.Palladium;
         }
 
-        else if (originDistance > asteroidMinDistance4)
+        else if (originDistance <= asteroidMinDistance4)
         {
           if (gen <= 40) return AsteroidType.Iron;
           else if (gen <= 60) return AsteroidType.Platinum;
@@ -310,7 +310,7 @@ namespace zephkelly
           else return AsteroidType.Cobalt;
         }
 
-        else if (originDistance > asteroidMinDistance5)
+        else if (originDistance <= asteroidMinDistance5)
         {
           if (gen <= 30) return AsteroidType.Iron;
           else if (gen <= 50) return AsteroidType.Platinum;
@@ -330,8 +330,11 @@ namespace zephkelly
           else if (gen <= 90) return AsteroidType.Stellarite;
           else return AsteroidType.Darkore;
         }
-
-        else return AsteroidType.Iron;
+        else
+        {
+          Debug.LogError("Random index out of range");
+          return AsteroidType.Iron;
+        }
       }
 
       Vector2 GetRandomPosition(Bounds chunkBounds)

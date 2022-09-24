@@ -6,6 +6,7 @@ namespace zephkelly
 {
   public class OcclusionManager : MonoBehaviour
   {
+    /* Defunct class Upgrade to 2.0 in progress
     private ChunkManager chunkManager;
     private ChunkPopulator chunkPopulator;
 
@@ -172,5 +173,7 @@ namespace zephkelly
       deactivatedAsteroids.Add(asteroid.CurrentPosition, asteroid);
       Destroy(asteroid.AsteroidObject);
     }
+
+    */
   }
 }

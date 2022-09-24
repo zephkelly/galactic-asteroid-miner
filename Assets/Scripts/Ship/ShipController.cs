@@ -129,6 +129,8 @@ namespace zephkelly
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+      //We will get a null ref here because if we touch a star we will be destroyed
+      
       if (!other.CompareTag("Star")) return;
 
       //Activate star behaviour

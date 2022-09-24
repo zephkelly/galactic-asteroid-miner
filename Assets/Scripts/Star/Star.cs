@@ -28,8 +28,8 @@ namespace zephkelly
     private StarType starType;
 
     private float starMaxRadius;
-    private float beltMin;
-    private float beltMax;
+    private float beltMin = 20;
+    private float beltMax = 30;
 
     private GameObject starObject;
     private Renderer starRenderer;
@@ -62,16 +62,16 @@ namespace zephkelly
     public void SetStarObject(GameObject _starObject)
     {
       starObject = _starObject;
-      starRenderer = starObject.GetComponent<Renderer>();
+      starRenderer = starObject.GetComponent<SpriteRenderer>();
 
       _starObject.transform.position = starPosition;
     }
 
     public void DisposeObject()
     {
+      Debug.Log("Disposing star object");
       if (starObject != null) return;
 
-      GameObject.Destroy(starObject);
       starObject = null;
       starRenderer = null;
     }

@@ -6,6 +6,7 @@ namespace zephkelly
 {
   public class StarAsteroidBeltGenerator : MonoBehaviour
   {
+    /* defunct class see chunk populator
     private GameObject mediumAsteroidPrefab;
     
     [SerializeField] float beltMinumumRadius = 60f;
@@ -56,5 +57,6 @@ namespace zephkelly
         while (float.IsNaN(positionX) && float.IsNaN(positionY));
       }
     }
+    */
   }
 }

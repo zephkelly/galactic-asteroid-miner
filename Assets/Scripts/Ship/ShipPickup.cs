@@ -36,13 +36,11 @@ namespace zephkelly
       Task lerpTask = PickupLerp(otherCollider.transform, asteroidInfo.Type);
       await Task.WhenAll(lerpTask);
 
-      if (asteroidInfo.Collider == null) return;
       //Add to inventory and destroy
-      shipController.Inventory.AddItem(asteroidInfo.ToString(), 1);
+      shipController.Inventory.AddItem(asteroidInfo.Type.ToString(), 1);
       shipController.Inventory.PrintInventory();
 
-      Debug.Log("Picked up " + asteroidInfo.SpawnPosition);
-      //occlusionManager.RemoveAsteroid(asteroidInfo);
+      //Delete from occlusion manager
     
       Destroy(otherCollider.gameObject);
     }

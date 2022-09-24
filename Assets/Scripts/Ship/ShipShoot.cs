@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace zephkelly
 {
+  //See LaserParticleFire.cs for more info
   public class ShipShoot : MonoBehaviour
   {
     [SerializeField] GameObject laserObject; //Set in inspector
