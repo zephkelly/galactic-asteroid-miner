@@ -7,42 +7,72 @@ namespace zephkelly
 {
   public class Chunk
   {
-    public Vector2 Position { get; set; }
-    public GameObject ChunkObject { get; set; }
-    public Transform ChunkTransform { get; set; }
+    private Vector2Int chunkKey;
+    private Vector2 chunkWorldPosition;
+    private bool hasBeenPopulated;
 
-    private Dictionary<Vector2, Asteroid> asteroids = 
+    private GameObject attackedObject;
+    private Bounds chunkBounds;
+
+    private Dictionary<Vector2, Asteroid> asteroids =
       new Dictionary<Vector2, Asteroid>();
 
-    public Dictionary<Vector2, Asteroid> Asteroids { get => asteroids; set => asteroids = value; }
+    private Star star;
+    private bool hasStar;
 
-    public void SetChunkObject(Vector2Int _position, GameObject _chunkObject)
-    {
-      Position = _position;
-      ChunkObject = _chunkObject;
-      ChunkTransform = ChunkObject.transform;
+    //------------------------------------------------------------------------------
+
+    public Vector2Int Key { get => chunkKey; }
+    public Vector2 Position { get => chunkWorldPosition; }
+
+    public Bounds ChunkBounds { get => chunkBounds; }
+    public GameObject AttachedObject { get => attackedObject; }
+
+    public Dictionary<Vector2, Asteroid> Asteroids { 
+      get => asteroids; 
+      set => asteroids = value; 
     }
 
-    public void AddAsteroid(Asteroid asteroid)
+    public Star ChunkStar { get => star; }
+    public bool HasStar { get => hasStar; }
+    public bool HasBeenPopulated { get => hasBeenPopulated; }
+
+    //------------------------------------------------------------------------------
+
+    public Chunk(Vector2Int _chunkKey, int _chunkDiameter, GameObject _object)
     {
-      asteroids.Add(asteroid.SpawnPosition, asteroid);
+      chunkKey = _chunkKey;
+      chunkWorldPosition = chunkKey * _chunkDiameter;
+
+      attackedObject = _object;
+      chunkBounds =  new Bounds(chunkWorldPosition, Vector2.one * _chunkDiameter);
+
+      hasStar = false;
+      hasBeenPopulated = false;
+      star = null;
     }
 
-    public void AddForiegnAsteroid(Asteroid asteroid)
+    public void SetStar(Star _star)
     {
-      asteroid.ParentChunk = this;
-      asteroid.SetNewSpawn(asteroid.CurrentPosition);
-      asteroids.Add(asteroid.SpawnPosition, asteroid);
+      hasStar = true;
+      star = _star;
     }
 
-    public void DestroyAsteroidFromLazy(Asteroid asteroid)
+    public void PopulateAsteroid(Asteroid asteroid, Vector2 populatePosition)
     {
-      asteroids.Remove(asteroid.LazyKey);
+      asteroids.Add(populatePosition, asteroid);
     }
 
-    public void DestroyAsteroidFromSpawn(Asteroid asteroid)
+    public void AddAsteroid(Asteroid asteroid, Vector2 spawnPosition)
     {
-      asteroids.Remove(asteroid.SpawnPosition);
+      asteroids.Add(spawnPosition, asteroid);
     }
+
+    public void RemoveAsteroid(Vector2 position)
+    {
+      asteroids.Remove(position);
+    }
+
+    public void SetPopulated() => hasBeenPopulated = true;
   }
 }

@@ -8,7 +8,7 @@ namespace zephkelly
   public class AsteroidController : MonoBehaviour
   {
     private AsteroidBehaviour asteroidBehaviour;
-    private Asteroid2 asteroidInfo;
+    private Asteroid asteroidInfo;
 
     [SerializeField] SpriteRenderer asteroidSpriteRenderer;   //In inspector
     private Rigidbody2D asteroidRigid2D;
@@ -17,7 +17,7 @@ namespace zephkelly
     //------------------------------------------------------------------------------
 
     public Rigidbody2D AsteroidRigid2D { get => asteroidRigid2D; }
-    public Asteroid2 AsteroidInfo { get => asteroidInfo; }
+    public Asteroid AsteroidInfo { get => asteroidInfo; }
     public float Health { get => asteroidInfo.Health; }
 
     private void Awake()
@@ -29,7 +29,7 @@ namespace zephkelly
       asteroidTransform = GetComponent<Transform>();
     }
 
-    public void SetAsteroidInfo(Asteroid2 _asteroidInfo)
+    public void SetAsteroidInfo(Asteroid _asteroidInfo)
     {
       asteroidInfo = _asteroidInfo;
     }

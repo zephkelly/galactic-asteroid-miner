@@ -6,24 +6,24 @@ namespace zephkelly
 {
   public class PrefabInstantiator : MonoBehaviour
   {
-    [SerializeField] GameObject asteroidSmall;
-    [SerializeField] GameObject asteroidMedium;
-    [SerializeField] GameObject asteroidLarge;
-    [SerializeField] GameObject asteroidHuge;
+    private GameObject asteroidSmall;
+    private GameObject asteroidMedium;
+    private GameObject asteroidLarge;
+    private GameObject asteroidHuge;
 
-    [SerializeField] GameObject whiteDwarf;
-    [SerializeField] GameObject brownDwarf;
-    [SerializeField] GameObject redDwarf;
-    [SerializeField] GameObject yellowDwarf;
-    [SerializeField] GameObject blueGiant;
-    [SerializeField] GameObject orangeGiant;
-    [SerializeField] GameObject redGiant;
-    [SerializeField] GameObject blueSuperGiant;
-    [SerializeField] GameObject redSuperGiant;
-    [SerializeField] GameObject blueHyperGiant;
-    [SerializeField] GameObject redHyperGiant;
-    [SerializeField] GameObject neutronStar;
-    [SerializeField] GameObject blackHole;
+    private GameObject whiteDwarf;
+    private GameObject brownDwarf;
+    private GameObject redDwarf;
+    private GameObject yellowDwarf;
+    private GameObject blueGiant;
+    private GameObject orangeGiant;
+    private GameObject redGiant;
+    private GameObject blueSuperGiant;
+    private GameObject redSuperGiant;
+    private GameObject blueHyperGiant;
+    private GameObject redHyperGiant;
+    private GameObject neutronStar;
+    private GameObject blackHole;
 
     //------------------------------------------------------------------------------
 
@@ -109,9 +109,9 @@ namespace zephkelly
       }
     }
 
-    public GameObject GetAsteroid(AsteroidSize _asteroidSize)
+    public GameObject GetAsteroid(Asteroid _asteroidInfo)
     {
-      switch (_asteroidSize)
+      switch (_asteroidInfo.Size)
       {
         case AsteroidSize.Small:
           return GameObject.Instantiate(AsteroidSmall);

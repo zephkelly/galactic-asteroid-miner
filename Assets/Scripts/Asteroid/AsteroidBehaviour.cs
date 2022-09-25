@@ -26,7 +26,7 @@ namespace zephkelly
       asteroidPickupPrefab = Resources.Load<GameObject>("Prefabs/Asteroids/AsteroidPickup");
     }
 
-    public int TakeDamage(Asteroid2 parentAsteroidInfo, int damage, Vector2 hitVector)
+    public int TakeDamage(Asteroid parentAsteroidInfo, int damage, Vector2 hitVector)
     {
       var health = parentAsteroidInfo.Health - damage;
 
@@ -40,7 +40,7 @@ namespace zephkelly
       return health;
     }
 
-    private void SplitAsteroid(Asteroid2 parentAsteroidInfo)
+    private void SplitAsteroid(Asteroid parentAsteroidInfo)
     {
       //If we're a pickup, ignore
       if (parentAsteroidInfo.Size == AsteroidSize.Pickup) return;
@@ -54,12 +54,12 @@ namespace zephkelly
       Vector2 parentBoundsSize = parentAsteroidBounds.size;
 
       //New asteroid components
-      Asteroid2 newAsteroidInfo;
+      Asteroid newAsteroidInfo;
       AsteroidSize newSize;
       GameObject newAsteroid;
       Vector2 newRandomBoundsPosition;
 
-      Chunk2 parentChunk = parentAsteroid.ParentChunk;
+      Chunk parentChunk = parentAsteroid.ParentChunk;
       AsteroidType rubbleType = parentAsteroid.Type;
 
       //Spawn 2 children
@@ -117,9 +117,9 @@ namespace zephkelly
             break;
         }
 
-        Asteroid2 CreateAsteroidInfo()
+        Asteroid CreateAsteroidInfo()
         {
-          return new Asteroid2(
+          return new Asteroid(
             parentChunk,
             newSize,
             rubbleType,
@@ -130,7 +130,7 @@ namespace zephkelly
       }
     }
 
-    private void CreateRubbleOnDamage(Asteroid2 parentAsteroidInfo, Vector2 hitVector)
+    private void CreateRubbleOnDamage(Asteroid parentAsteroidInfo, Vector2 hitVector)
     {
       //Parent asteroid components
       var parentAsteroid = parentAsteroidInfo;
@@ -140,7 +140,7 @@ namespace zephkelly
 
       //Set below
       GameObject newRubble;
-      Asteroid2 newRubbleInfo;
+      Asteroid newRubbleInfo;
       AsteroidSize rubbleSize;
 
       //Create rubble based on size
@@ -289,9 +289,9 @@ namespace zephkelly
         }
       }
 
-      Asteroid2 CreateRubbleInfo()
+      Asteroid CreateRubbleInfo()
       {
-        return new Asteroid2(
+        return new Asteroid(
           parentChunk,
           rubbleSize,
           rubbleType,

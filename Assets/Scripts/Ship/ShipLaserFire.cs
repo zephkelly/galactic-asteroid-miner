@@ -5,7 +5,7 @@ using UnityEngine.Rendering.Universal;
 
 namespace zephkelly
 {
-  public class LaserParticleFire : MonoBehaviour
+  public class ShipLaserFire : MonoBehaviour
   {
     [SerializeField] ParticleSystem laserParticleSystem;
     [SerializeField] GameObject explosionPrefab;

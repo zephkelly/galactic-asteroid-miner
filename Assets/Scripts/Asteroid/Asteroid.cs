@@ -5,65 +5,129 @@ using UnityEngine;
 
 namespace zephkelly
 {
+  public enum AsteroidSize
+  {
+    Pickup,
+    Small,
+    Medium,
+    Large,
+    Huge,
+    ExtraLarge
+  }
+
+  public enum AsteroidType
+  {
+    Iron,
+    Platinum,
+    Titanium,
+    Gold,
+    Palladium,
+    Cobalt,
+    Stellarite,
+    Darkore
+  }
+
   public class Asteroid
   {
     private Vector2 spawnPosition;
     private Vector2 currentPosition;
-    private Vector2 lazyKey;
+
+    private GameObject asteroidObject;
+    private Transform asteroidTransform;
+    private SpriteRenderer renderer;
+    private Rigidbody2D rigid2D;
+    private Collider2D collider2D;
+
+    private Chunk parentChunk;
+    private AsteroidSize asteroidSize;
+    private AsteroidType asteroidType;
+
+    private int health;
 
     //------------------------------------------------------------------------------
+    
+    public Vector2 SpawnPoint { get => spawnPosition; }
+    public Vector2 Position { get => currentPosition; }
 
-    public AsteroidType Type { get; set; }
-    public AsteroidSize Size { get; set; }
-    public Chunk ParentChunk { get; set; }
+    public GameObject AttachedObject { get => asteroidObject; }
+    public Transform AttachedTransform { get => asteroidTransform; }
+    public Renderer AttachedRenderer { get => renderer; }
+    public Rigidbody2D AttachedRigid { get => rigid2D; }
+    public Collider2D AttachedCollider { get => collider2D; }
 
-    public GameObject AsteroidObject { get; set; }
-    public Transform AsteroidTransform { get; set; }
-    public Collider2D Collider { get; set; }
-    public Rigidbody2D Rigid2D { get; set; }
-    public SpriteRenderer Renderer { get; set; }
+    public Chunk ParentChunk { get => parentChunk; }
+    public AsteroidSize Size { get => asteroidSize; }
+    public AsteroidType Type { get => asteroidType; }
 
-    public Vector2 SpawnPosition { get => spawnPosition; }
-    public Vector2 CurrentPosition { get => currentPosition; }
-    public Vector2 LazyKey { get => lazyKey; }
+    public int Health { get => health; }
+    public bool RendererStatus { get => renderer.enabled; }
 
-    public bool IsLazy { get; set; }
-    public int Health { get; set; }
-
-    //------------------------------------------------------------------------------
-
-    public void SetSpawnPosition(Vector2 _spawnPosition)
+    public Asteroid(Chunk _parentChunk, AsteroidSize _size, AsteroidType _type, Vector2 _position, int _health)
     {
-      spawnPosition = _spawnPosition;
-      currentPosition = _spawnPosition;
+      parentChunk = _parentChunk;
+      asteroidSize = _size;
+      asteroidType = _type;
+
+      spawnPosition = _position;
+      health = _health;
     }
 
-    public Vector2 SetLazyKey()
+    public void SetObject(GameObject _asteroidObject, Vector2 _position)
     {
-      lazyKey = AsteroidTransform.position;
-      return lazyKey;
+      asteroidObject = _asteroidObject;
+      asteroidTransform = asteroidObject.transform;
+
+      rigid2D = asteroidObject.GetComponent<Rigidbody2D>();
+      collider2D = asteroidObject.GetComponent<Collider2D>();
+      renderer = asteroidObject.GetComponentInChildren<SpriteRenderer>();
+      
+      asteroidObject.GetComponent<AsteroidController>().SetAsteroidInfo(this);
+      asteroidObject.transform.position = _position;
     }
 
-    public void UpdatePosition()
+    public void DisposeObject()
     {
-      if (AsteroidTransform == null)
-      {
-        Debug.LogError("AsteroidTransform is null");
-        return;
-      }
+      parentChunk.RemoveAsteroid(spawnPosition);
+      renderer = null;
 
-      currentPosition = AsteroidTransform.position;
+      if (asteroidTransform == null) return;
+
+      currentPosition = asteroidTransform.position;
+      asteroidTransform = null;
+
+      var newChunkKey = ChunkManager.Instance.GetChunkPosition(currentPosition);
+      parentChunk = ChunkManager.Instance.GetChunk(newChunkKey);
+      spawnPosition = currentPosition;
+
+      parentChunk.AddAsteroid(this, spawnPosition);
     }
 
-    public void SetNewSpawn(Vector2 _newSpawn)
+    public void IsRendered(bool _enabled)
     {
-      spawnPosition = _newSpawn;
+      renderer.enabled = _enabled;
     }
 
-    public void RemoveParentChunk()
+    public void SetHealth(int _health)
     {
-      ParentChunk.DestroyAsteroidFromLazy(this);
-      ParentChunk = null;
+      health = _health;
     }
+
+    public void SetChildSize(AsteroidSize _size)
+    {
+      asteroidSize = _size;
+    }
+
+    public void SetChildType(AsteroidType _type)
+    {
+      asteroidType = _type;
+    }
+
+    public void UpdateSpawnPoint() 
+    {
+      currentPosition = asteroidTransform.position;
+      spawnPosition = currentPosition;
+    }
+
+    public void SetPosition(Vector2 newPosition) => currentPosition = newPosition;
   }
 }

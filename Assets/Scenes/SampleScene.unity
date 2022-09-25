@@ -205,9 +205,9 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.0011025359
-    width: 1
-    height: 0.9966924
+    y: 0
+    width: 0.99999994
+    height: 0.99921197
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 120
@@ -285,6 +285,17 @@ MonoBehaviour:
   - {fileID: 1513829206}
   mouseInterpolateDistance: 4
   cameraPanSpeed: 0.125
+--- !u!114 &645345645 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5710026794217489033, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+  m_PrefabInstance: {fileID: 8847222161297726559}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f80c5774afe6865489be16c3e5e5a7fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &818486901
 GameObject:
   m_ObjectHideFlags: 0
@@ -5148,8 +5159,8 @@ Transform:
   - {fileID: 818486902}
   - {fileID: 1663101732}
   - {fileID: 1513829205}
-  m_Father: {fileID: 1669991865}
-  m_RootOrder: 1
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1513829204
 GameObject:
@@ -10029,7 +10040,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1669991865}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1663101731
 GameObject:
@@ -14892,7 +14903,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1930855596}
-  - {fileID: 1119855914}
   - {fileID: 1560126800}
   - {fileID: 1788404360}
   m_Father: {fileID: 0}
@@ -15020,7 +15030,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1669991865}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1930855594
 GameObject:
@@ -15064,7 +15074,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1930855594}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5757880dd24470f48bcfe9b798eb37fb, type: 3}
+  m_Script: {fileID: 11500000, guid: 24c0383512c6679489251dd50e548dd6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   chunkDiameter: 200
@@ -15080,23 +15090,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1010bed5303826846bcf05a65c6c5e18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  asteroidSmall: {fileID: 0}
-  asteroidMedium: {fileID: 0}
-  asteroidLarge: {fileID: 0}
-  asteroidHuge: {fileID: 0}
-  whiteDwarf: {fileID: 0}
-  brownDwarf: {fileID: 0}
-  redDwarf: {fileID: 0}
-  yellowDwarf: {fileID: 0}
-  blueGiant: {fileID: 0}
-  orangeGiant: {fileID: 0}
-  redGiant: {fileID: 0}
-  blueSuperGiant: {fileID: 0}
-  redSuperGiant: {fileID: 0}
-  blueHyperGiant: {fileID: 0}
-  redHyperGiant: {fileID: 0}
-  neutronStar: {fileID: 0}
-  blackHole: {fileID: 0}
 --- !u!1 &1976971261
 GameObject:
   m_ObjectHideFlags: 0
@@ -19939,9 +19932,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
+    - target: {fileID: 1928648051, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: laserWeapon
+      value: 
+      objectReference: {fileID: 645345645}
+    - target: {fileID: 1019796804800047149, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_LocalPosition.x

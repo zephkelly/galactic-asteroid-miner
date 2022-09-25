@@ -7,7 +7,7 @@ namespace zephkelly
 {
   public class ShipPickup : MonoBehaviour
   {
-    private OcclusionManager2 occlusionManager;
+    private OcclusionManager occlusionManager;
     [SerializeField] ShipController shipController;
 
     private Collider2D shipPickupTrigger;
@@ -22,7 +22,7 @@ namespace zephkelly
 
     private void Start()
     {
-      occlusionManager = ChunkManager2.Instance.OcclusionManager;
+      occlusionManager = ChunkManager.Instance.OcclusionManager;
     }
 
     private async void OnTriggerEnter2D(Collider2D otherCollider)

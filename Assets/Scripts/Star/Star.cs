@@ -33,7 +33,7 @@ namespace zephkelly
 
     private GameObject starObject;
     private Renderer starRenderer;
-    private Chunk2 parentChunk;
+    private Chunk parentChunk;
 
     private List<GameObject> orbitingBodies = new List<GameObject>();
 
@@ -44,13 +44,13 @@ namespace zephkelly
     public StarType Type { get => starType; }
     public float MaxOrbitRadius { get => starMaxRadius; }
 
-    public Chunk2 ParentChunk { get => parentChunk; }
+    public Chunk ParentChunk { get => parentChunk; }
     public GameObject AttachedObject { get => starObject; }
     public List<GameObject> OrbitingBodies { get => orbitingBodies; }
 
     //------------------------------------------------------------------------------
 
-    public Star(Chunk2 _parentChunk, StarType _type)
+    public Star(Chunk _parentChunk, StarType _type)
     {
       parentChunk = _parentChunk;
       starPosition = _parentChunk.Position;

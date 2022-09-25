@@ -8,14 +8,14 @@ namespace zephkelly
   public class ShipShoot : MonoBehaviour
   {
     [SerializeField] GameObject laserObject; //Set in inspector
-    [SerializeField] LaserParticleFire laserWeapon;
+    [SerializeField] ShipLaserFire laserWeapon;
 
     private const float fireTime = 0.15f;
     private float _fireTimer; 
 
     public void Start()
     {
-      laserWeapon = laserObject.GetComponent<LaserParticleFire>();
+      laserWeapon = laserObject.GetComponent<ShipLaserFire>();
     }
 
     public void Update()

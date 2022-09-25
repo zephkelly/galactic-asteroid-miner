@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 1395682309}
   - component: {fileID: 1395682311}
   - component: {fileID: 1395682310}
-  - component: {fileID: 1395682312}
+  - component: {fileID: 5710026794217489033}
   m_Layer: 0
   m_Name: LaserGun
   m_TagString: Player
@@ -4998,7 +4998,7 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!114 &1395682312
+--- !u!114 &5710026794217489033
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5007,12 +5007,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1395682308}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68b83b937b0d2d24f8615a3cd690baaf, type: 3}
+  m_Script: {fileID: 11500000, guid: f80c5774afe6865489be16c3e5e5a7fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   laserParticleSystem: {fileID: 1395682311}
   explosionPrefab: {fileID: 9040800380259856629, guid: 86fb0dd900976b7479798859db239e30, type: 3}
-  explosionForce: 6
+  explosionForce: 4
 --- !u!1 &1793072628
 GameObject:
   m_ObjectHideFlags: 0
@@ -5152,7 +5152,7 @@ GameObject:
   - component: {fileID: 5413373596981526961}
   m_Layer: 0
   m_Name: PickupRadius
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5400,7 +5400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   laserObject: {fileID: 1395682308}
-  laserWeapon: {fileID: 1395682312}
+  laserWeapon: {fileID: 0}
 --- !u!114 &703457927003787081
 MonoBehaviour:
   m_ObjectHideFlags: 0

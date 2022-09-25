@@ -8,51 +8,42 @@ namespace zephkelly
   public class ChunkManager : MonoBehaviour
   {
     public static ChunkManager Instance;
-    private ChunkPopulator chunkPopulator;
+
+    private ChunkPopulator chunkPopulator = new ChunkPopulator();
     private OcclusionManager occlusionManager;
+    private PrefabInstantiator prefabInstantiator;
 
-    //Deactivated chunks
-    private Dictionary<Vector2Int, Chunk> deactivatedChunks = 
-      new Dictionary<Vector2Int, Chunk>();
-
-    //Active chunks
-    private Dictionary<Vector2Int, Chunk> activeChunks = 
-      new Dictionary<Vector2Int, Chunk>();
-
-    //------------------------------------------------------------------------------
-
-    [SerializeField] int chunkDiameter = 200;
-    internal int chunkNumberNamer;
+    [SerializeField] int chunkDiameter = 100;
+    internal int chunkNumber;
 
     private Transform playerTransform;
-    private Vector2Int playerCurrentChunkPosition;
+    private Vector2Int playerChunkPosition;
     private Vector2Int playerLastChunkPosition;
+
+    private Dictionary<Vector2Int, Chunk> activeChunks =
+      new Dictionary<Vector2Int, Chunk>();
+
+    private Dictionary<Vector2Int, Chunk> lazyChunks = 
+      new Dictionary<Vector2Int, Chunk>();
+
+    private Dictionary<Vector2Int, Chunk> inactiveChunks =
+      new Dictionary<Vector2Int, Chunk>();
 
     //------------------------------------------------------------------------------
 
-    internal int starCount;
-
+    public PrefabInstantiator Instantiator { get => prefabInstantiator; }
     public OcclusionManager OcclusionManager { get => occlusionManager; }
-    public Transform PlayerTransform { get => playerTransform; }
 
-    public Dictionary <Vector2Int, Chunk> ActiveChunks { 
-      get => activeChunks;
-    }
-
-    public Dictionary <Vector2Int, Chunk> DeactivatedChunks { 
-      get => deactivatedChunks;
-    }
-
-    public int StarCount { get => starCount; set => starCount = value; }
+    public Dictionary<Vector2Int, Chunk> ActiveChunks { get => activeChunks; }
+    public Dictionary<Vector2Int, Chunk> LazyChunks { get => lazyChunks; }
+    public Dictionary<Vector2Int, Chunk> InactiveChunks { get => inactiveChunks; }
 
     private void Awake()
     {
-      chunkPopulator = Resources.Load("ScriptableObjects/ChunkPopulator") 
-        as ChunkPopulator;
-
-      occlusionManager = GetComponent<OcclusionManager>();
       playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-  
+      prefabInstantiator = GetComponent<PrefabInstantiator>();
+      occlusionManager = new OcclusionManager(playerTransform, this);
+
       //Singleton pattern
       if (Instance == null) {
         Instance = this;
@@ -61,53 +52,33 @@ namespace zephkelly
       }
     }
 
+    //Makes sure first chunks are loaded
     private void Start()
     {
-      playerLastChunkPosition = QuantisePosition(playerTransform.position);
+      playerLastChunkPosition = GetChunkPosition(playerTransform.position);
 
-      ActivateOrGenerateChunks(playerLastChunkPosition);
+      ChunkCreator(playerLastChunkPosition);
+      SetActiveChunks(playerChunkPosition);
     }
 
     private void Update()
     {
       if (playerTransform == null) return;
 
-      playerCurrentChunkPosition = QuantisePosition(playerTransform.position);
+      occlusionManager.UpdateOcclusion(activeChunks, lazyChunks);
 
-      if (playerCurrentChunkPosition != playerLastChunkPosition)
-      {
-        DeactivateActiveChunks();
-        ActivateOrGenerateChunks(playerCurrentChunkPosition);
+      playerChunkPosition = GetChunkPosition(playerTransform.position);
 
-        playerLastChunkPosition = playerCurrentChunkPosition;
-      }
+      if (playerChunkPosition == playerLastChunkPosition) return;
+
+      DeactivateActiveChunks();
+      ChunkCreator(playerChunkPosition);
+      SetActiveChunks(playerChunkPosition);
+
+      playerLastChunkPosition = playerChunkPosition;
     }
 
-    public void AddAsteroidToChunk(Asteroid asteroidInfo)
-    {
-      var chunkPosition = QuantisePosition(asteroidInfo.CurrentPosition);
-
-      foreach (var chunk in activeChunks)
-      {
-        if (chunk.Key == chunkPosition)
-        {
-          chunk.Value.AddForiegnAsteroid(asteroidInfo);
-          return;
-        }
-      }
-
-      foreach (var chunk in deactivatedChunks)
-      {
-        if (chunk.Key == chunkPosition)
-        {
-          chunk.Value.AddForiegnAsteroid(asteroidInfo);
-         return;
-        }
-      }
-    }
-
-    //Quantise position to nearest chunk
-    private Vector2Int QuantisePosition(Vector2 position)
+    public Vector2Int GetChunkPosition(Vector2 position)
     {
       return new Vector2Int(
         Mathf.RoundToInt(position.x / chunkDiameter),
@@ -115,57 +86,112 @@ namespace zephkelly
       );
     }
 
-    private void DeactivateActiveChunks()
+    public Chunk GetChunk(Vector2Int chunkKey)
     {
-      foreach (var chunk in activeChunks)
-      {
-        deactivatedChunks.Add(chunk.Key, chunk.Value);
+      if (activeChunks.ContainsKey(chunkKey)) {
+        return activeChunks[chunkKey];
+      } else if (lazyChunks.ContainsKey(chunkKey)) {
+        return lazyChunks[chunkKey];
+      } else if (inactiveChunks.ContainsKey(chunkKey)) {
+        return inactiveChunks[chunkKey];
+      } else {
+        return null;
       }
     }
 
-    private void ActivateOrGenerateChunks(Vector2Int playerGridKey)
-    { 
-      Vector2Int activeGridKey = new Vector2Int(
-        playerGridKey.x - 1, playerGridKey.y - 1);
+    private void DeactivateActiveChunks()
+    {
+      //Active chunks
+      if (activeChunks.Count != 0)
+      {
+        foreach (var activeChunk in activeChunks)
+        {
+          activeChunk.Value.AttachedObject.SetActive(false);
+          inactiveChunks.Add(activeChunk.Key, activeChunk.Value);
+        }
 
-      activeChunks.Clear();
+        activeChunks.Clear();
+      }
+
+      //Lazy chunks
+      if (lazyChunks.Count != 0)
+      {
+        foreach (var lazyChunk in lazyChunks)
+        {
+          lazyChunk.Value.AttachedObject.SetActive(false);
+          inactiveChunks.Add(lazyChunk.Key, lazyChunk.Value);
+        }
+
+        lazyChunks.Clear();
+      }
+    }
+
+    //Add 5x5 to lazy chunks
+    private void ChunkCreator(Vector2Int chunkCenter)
+    {
+      Vector2Int lazyGridKey = new Vector2Int(chunkCenter.x -2, chunkCenter.y -2);
+
+      for (int y = 0; y < 5; y++)
+      {
+        for (int x = 0; x < 5; x++)
+        {
+          if (inactiveChunks.ContainsKey(lazyGridKey))
+          {
+            Chunk inactiveChunk = inactiveChunks[lazyGridKey];
+
+            inactiveChunks.Remove(lazyGridKey);
+            lazyChunks.Add(inactiveChunk.Key, inactiveChunk);
+          }
+          else
+          {
+            GameObject newChunk = new GameObject("Chunk " + chunkNumber);
+            newChunk.transform.parent = this.transform;
+            newChunk.SetActive(false);
+
+            Chunk newChunkInfo = new Chunk(lazyGridKey, chunkDiameter, newChunk);
+            chunkNumber++;
+
+            chunkPopulator.PopulateLargeBodies(newChunkInfo);
+
+            lazyChunks.Add(newChunkInfo.Key, newChunkInfo);
+          }
+
+          lazyGridKey.x++;
+        }
+
+        lazyGridKey.y++;
+        lazyGridKey.x -= 5;
+      }
+    }
+
+    private void SetActiveChunks(Vector2Int chunkCenter)
+    {
+      Vector2Int activeGridKey = new Vector2Int(chunkCenter.x - 1, chunkCenter.y - 1);
 
       for (int y = 0; y < 3; y++)
       {
         for (int x = 0; x < 3; x++)
         {
-          if (deactivatedChunks.ContainsKey(activeGridKey))
+          if (lazyChunks.ContainsKey(activeGridKey))
           {
-            Chunk activeChunk = deactivatedChunks[activeGridKey];
-            activeChunk.ChunkObject.SetActive(true);
+            Chunk lazyChunk = lazyChunks[activeGridKey];
+            lazyChunk.AttachedObject.SetActive(true);
 
-            activeChunks.Add(activeGridKey, activeChunk);
-            deactivatedChunks.Remove(activeGridKey);
+            chunkPopulator.PopulateSmallBodies(lazyChunk);
+
+            lazyChunks.Remove(activeGridKey);
+            activeChunks.Add(lazyChunk.Key, lazyChunk);
           }
-          else   //Make a new chunk
+          else
           {
-            GameObject newChunkObject = new GameObject("Chunk " + chunkNumberNamer);
-            newChunkObject.transform.SetParent(this.transform);
-
-            Chunk newChunkInfo = new Chunk();
-            newChunkInfo.SetChunkObject(activeGridKey, newChunkObject);
-            
-            chunkPopulator.Populate(activeGridKey, chunkDiameter, newChunkInfo);
-
-            activeChunks.Add(activeGridKey, newChunkInfo);
-            chunkNumberNamer++;
+            Debug.LogError("Chunk not found in lazy chunks.");
           }
 
           activeGridKey.x++;
         }
 
         activeGridKey.y++;
-        activeGridKey.x -= 3;   //Need to reset x axis for next row
-      }
-      
-      foreach (var chunk in deactivatedChunks)
-      {
-        chunk.Value.ChunkObject.SetActive(false);
+        activeGridKey.x -= 3;
       }
     }
   }

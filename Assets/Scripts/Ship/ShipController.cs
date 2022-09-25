@@ -6,145 +6,117 @@ namespace zephkelly
 {
   public class ShipController : MonoBehaviour
   {
-    private InputManager inputs;
-    private Inventory inventory;
-    private Rigidbody2D rigid2D;
+    private InputManager playerInputs;
+    private Inventory playerInventory;
+    private ShipConfiguration shipConfiguration;
 
-    //----------------------------------------------------------------------------------------------
-
-    [SerializeField] float moveSpeed = 60f;
-    [SerializeField] bool moveToMouse;
+    private Rigidbody2D playerRigid2D;
+    private Transform playerTransform;
+    
     private Vector2 mouseDirection;
+    [SerializeField] float moveSpeed = 60f;
 
-    //Star-Orbiting-Behaviour-----------------------------------------------------------------------
-
-    private StarOrbitingBehaviour _currentStarBehaviour;
-    private Vector2 _shipOrbitalVelocity;
-    private Vector2 _lastVelocity;
-    private bool _activateStarOrbiting;
+    //Orbiting Variables
+    private StarOrbitingBehaviour starBehaviour;
+    private Vector2 orbitalVelocity;
+    private Vector2 lastOrbitalVelocity;
+    private bool orbitingStar;
 
     //----------------------------------------------------------------------------------------------
 
-    public Inventory Inventory => inventory;
+    public Inventory Inventory => playerInventory;
 
     private void Awake()
     {
-      rigid2D = GetComponent<Rigidbody2D>();
-      inventory = Resources.Load("ScriptableObjects/PlayerInventory") as Inventory;
+      playerInventory = Resources.Load("ScriptableObjects/PlayerInventory") as Inventory;
+      shipConfiguration = new ShipConfiguration(this);
+      shipConfiguration.AssignDefaults();
+
+      playerTransform = gameObject.transform;
+      playerRigid2D = GetComponent<Rigidbody2D>();
     }
 
     private void Start()
     {
-      _activateStarOrbiting = false;
-      inputs = InputManager.Instance;
-      rigid2D.centerOfMass = Vector2.zero;
+      orbitingStar = false;
+      playerInputs = InputManager.Instance;
+      playerRigid2D.centerOfMass = Vector2.zero;
     }
 
     private void Update()
     {
-      mouseDirection = inputs.MouseWorldPosition - (Vector2) transform.position;
+      mouseDirection = playerInputs.MouseWorldPosition - (Vector2) transform.position;
       mouseDirection.Normalize();
-
-      if (Input.GetKeyDown(KeyCode.Tab)) moveToMouse = !moveToMouse;
       
       LookAtMouse();
     }
 
     private void FixedUpdate()
     {
-      ControlBehaviour();
+      if (Input.GetKey(KeyCode.LeftShift)) {
+        playerRigid2D.AddForce(playerInputs.KeyboardInput * (moveSpeed * 3), ForceMode2D.Force);
+      } else {
+        playerRigid2D.AddForce(playerInputs.KeyboardInput * moveSpeed, ForceMode2D.Force);
+      }
       
-      if (_activateStarOrbiting) 
-      {
+      if (orbitingStar) {
         StarOrbiting();
+        return;
       }
-      else 
-      {
-        //Linear dragging while in space
-        rigid2D.AddForce(-rigid2D.velocity * rigid2D.mass, ForceMode2D.Force);
 
-        if (rigid2D.velocity.magnitude < 0.1f)
-        {
-          rigid2D.velocity = Vector2.zero;
-        }
-      }
-    }
-
-    private void ControlBehaviour()
-    {
-      if (moveToMouse)
-      {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-          rigid2D.AddForce(mouseDirection * (moveSpeed * 3), ForceMode2D.Force);
-        }
-        else
-        {
-          rigid2D.AddForce(mouseDirection * moveSpeed, ForceMode2D.Force);
-        }
-      }
-      else
-      {
-        if (Input.GetKey(KeyCode.LeftShift))
-        {
-          rigid2D.AddForce(inputs.KeyboardInput * (moveSpeed * 3), ForceMode2D.Force);
-        }
-        else
-        {
-          rigid2D.AddForce(inputs.KeyboardInput * moveSpeed, ForceMode2D.Force);
-        }
-      }
+      //Linear drag
+      playerRigid2D.AddForce(-playerRigid2D.velocity * playerRigid2D.mass, ForceMode2D.Force);
+      if (playerRigid2D.velocity.magnitude < 0.1f) playerRigid2D.velocity = Vector2.zero;
     }
 
     private void StarOrbiting()
     {
-      if (_currentStarBehaviour == null) 
-      {
-        print("Error: StarOrbiting() called but no StarOrbiting behaviour found on player");
+      if (starBehaviour == null) {
+        Debug.LogError("Error: StarOrbiting() null reference");
         return;
       }
 
-      //Makes sure that we are travelling the correct speed around the star
-      _lastVelocity = _shipOrbitalVelocity;
-      _shipOrbitalVelocity = _currentStarBehaviour.GetOrbitalVelocity(rigid2D);
+      //MSet constant orbit velocity
+      lastOrbitalVelocity = orbitalVelocity;
+      orbitalVelocity = starBehaviour.GetOrbitalVelocity(playerRigid2D);
 
-      rigid2D.velocity -= _lastVelocity;
-      rigid2D.velocity += _shipOrbitalVelocity;
+      playerRigid2D.velocity -= lastOrbitalVelocity;   //Working around unity physics
+      playerRigid2D.velocity += orbitalVelocity;
 
-      //Dragging While Orbiting
-      if (rigid2D.velocity.x > _shipOrbitalVelocity.x || rigid2D.velocity.x < _shipOrbitalVelocity.x) {
-        rigid2D.AddForce(new Vector2((_shipOrbitalVelocity.x - rigid2D.velocity.x), 0) * rigid2D.mass, ForceMode2D.Force);
+      var orbitalDragX = new Vector2(orbitalVelocity.x - playerRigid2D.velocity.x, 0);
+      var orbitalDragY = new Vector2(0, orbitalVelocity.y - playerRigid2D.velocity.y);
+
+      //Orbital drag
+      if (playerRigid2D.velocity.x > orbitalVelocity.x || playerRigid2D.velocity.x < orbitalVelocity.x) {
+        playerRigid2D.AddForce(orbitalDragX * playerRigid2D.mass, ForceMode2D.Force);
       }
 
-      if (rigid2D.velocity.y > _shipOrbitalVelocity.y || rigid2D.velocity.y < _shipOrbitalVelocity.y) {
-        rigid2D.AddForce(new Vector2(0, (_shipOrbitalVelocity.y - rigid2D.velocity.y)) * rigid2D.mass, ForceMode2D.Force);
+      if (playerRigid2D.velocity.y > orbitalVelocity.y || playerRigid2D.velocity.y < orbitalVelocity.y) {
+        playerRigid2D.AddForce(orbitalDragY * playerRigid2D.mass, ForceMode2D.Force);
       }  
-    }
-
-    private void LookAtMouse()
-    {
-      float angle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg;
-      transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-      //We will get a null ref here because if we touch a star we will be destroyed
-      
       if (!other.CompareTag("Star")) return;
 
-      //Activate star behaviour
-      _currentStarBehaviour = other.GetComponent<StarOrbitingBehaviour>();
-      _currentStarBehaviour.ApplyInstantOrbitalVelocity(rigid2D);
-      _activateStarOrbiting = true;
+      orbitingStar = true;
+      starBehaviour = other.GetComponent<StarOrbitingBehaviour>();
+      starBehaviour.ApplyInstantOrbitalVelocity(playerRigid2D);
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
       if (!other.CompareTag("Star")) return;
 
-      _currentStarBehaviour = null;
-      _activateStarOrbiting = false;
+      orbitingStar = false;
+      starBehaviour = null;
+    }
+
+    private void LookAtMouse()
+    {
+      float angle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg;
+      transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
     }
   }
 }
