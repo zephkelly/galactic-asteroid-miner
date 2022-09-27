@@ -10,8 +10,9 @@ namespace zephkelly
     public static ChunkManager Instance;
 
     private ChunkPopulator chunkPopulator = new ChunkPopulator();
-    private OcclusionManager occlusionManager;
     private PrefabInstantiator prefabInstantiator;
+    private OcclusionManager occlusionManager;
+    private ShipStarCompass shipStarCompass;
 
     [SerializeField] int chunkDiameter = 100;
     internal int chunkNumber;
@@ -42,6 +43,7 @@ namespace zephkelly
     {
       playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
       prefabInstantiator = GetComponent<PrefabInstantiator>();
+      shipStarCompass = GetComponent<ShipStarCompass>();
       occlusionManager = new OcclusionManager(playerTransform, this);
 
       //Singleton pattern
@@ -65,15 +67,18 @@ namespace zephkelly
     {
       if (playerTransform == null) return;
 
-      occlusionManager.UpdateOcclusion(activeChunks, lazyChunks);
-
       playerChunkPosition = GetChunkPosition(playerTransform.position);
 
-      if (playerChunkPosition == playerLastChunkPosition) return;
+      if (playerChunkPosition != playerLastChunkPosition)
+      {
+        DeactivateActiveChunks();
+        ChunkCreator(playerChunkPosition);
+        SetActiveChunks(playerChunkPosition);
 
-      DeactivateActiveChunks();
-      ChunkCreator(playerChunkPosition);
-      SetActiveChunks(playerChunkPosition);
+        shipStarCompass.UpdateCompass();
+      }
+
+      occlusionManager.UpdateOcclusion(activeChunks, lazyChunks);
 
       playerLastChunkPosition = playerChunkPosition;
     }

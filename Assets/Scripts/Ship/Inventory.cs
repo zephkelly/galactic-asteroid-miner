@@ -4,12 +4,15 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  [CreateAssetMenu(fileName = "Inventory", menuName = "ScriptableObjects/Inventory", order = 0)]
+  [CreateAssetMenu(menuName = "ScriptableObjects/Inventory")]
   public class Inventory : ScriptableObject
   {
     //public event System.Action OnInventoryChanged;
+    //for gui
     
-    [SerializeField] Dictionary <string, int> inventory = new Dictionary<string, int>();
+    private Dictionary <string, int> inventory = new Dictionary<string, int>();
+
+    //------------------------------------------------------------------------------
 
     public void AddItem(string item, int amount)
     {
@@ -31,7 +34,7 @@ namespace zephkelly
       }
       else
       {
-        Debug.Log("Item not found");
+        Debug.LogError("Item not found");
       }
     }
 
@@ -43,7 +46,7 @@ namespace zephkelly
       }
       else
       {
-        Debug.Log("Item not found");
+        Debug.LogError("Item not found");
         return 0;
       }
     }

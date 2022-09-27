@@ -58,7 +58,7 @@ namespace zephkelly
       //Stars are always generated in the center of a chunk
       List<float> starDistances = new List<float>();
       
-      GetStarDistances();
+      GetStarDistances();   //Doesnt work will need to iterate in grid around star to check
 
       if (CanGenerateStar()) 
       {
@@ -279,7 +279,7 @@ namespace zephkelly
       AsteroidType GetRandomType()
       {
         int gen = Random.Range(0, 100);
-        float originDistance = Vector2.Distance(chunk.Position, Vector2.zero);
+        int originDistance = (int)Vector2.Distance(chunk.Position, Vector2.zero);
 
         if (originDistance <= asteroidMinDistance1)
         {
@@ -320,7 +320,7 @@ namespace zephkelly
           else return AsteroidType.Stellarite;
         }
 
-        else if (originDistance > asteroidMinDistance6)
+        else if (originDistance <= asteroidMinDistance6 || originDistance > asteroidMinDistance6)
         {
           if (gen <= 20) return AsteroidType.Iron;
           else if (gen <= 40) return AsteroidType.Platinum;

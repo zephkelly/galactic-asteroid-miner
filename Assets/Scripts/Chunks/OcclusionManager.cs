@@ -32,6 +32,8 @@ namespace zephkelly
 
     //------------------------------------------------------------------------------
 
+    public Dictionary<Vector2, Star> ActiveStars { get => activeStars; }
+
     public OcclusionManager(Transform player, ChunkManager _chunkManager) {
       chunkManager = _chunkManager;
       instantiator = chunkManager.Instantiator;

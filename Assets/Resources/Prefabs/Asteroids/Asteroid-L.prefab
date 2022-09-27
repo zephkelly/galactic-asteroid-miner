@@ -118,8 +118,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   asteroidSpriteRenderer: {fileID: 8213448675376865811}
-  asteroidRigid2D: {fileID: 7368682061809239019}
-  asteroidHealth: 0
 --- !u!1 &8258114321721337857
 GameObject:
   m_ObjectHideFlags: 0
