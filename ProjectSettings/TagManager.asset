@@ -9,6 +9,8 @@ TagManager:
   - ParallaxStarfield
   - AsteroidPickup
   - PickupMagnet
+  - Station
+  - StarCore
   layers:
   - Default
   - TransparentFX

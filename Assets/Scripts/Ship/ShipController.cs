@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,6 +25,8 @@ namespace zephkelly
 
     //----------------------------------------------------------------------------------------------
 
+    public static event Action OnPlayerDied;
+
     public Inventory Inventory => playerInventory;
 
     private void Awake()
@@ -45,10 +48,10 @@ namespace zephkelly
 
     private void Update()
     {
+      LookAtMouse();
       mouseDirection = playerInputs.MouseWorldPosition - (Vector2) transform.position;
       mouseDirection.Normalize();
-      
-      LookAtMouse();
+
     }
 
     private void FixedUpdate()
@@ -113,10 +116,20 @@ namespace zephkelly
       starBehaviour = null;
     }
 
+    private void OnCollisionEnter2D(Collision2D other)
+    {
+      if (!other.gameObject.CompareTag("Star")) return;
+
+      OnPlayerDied?.Invoke();
+      Destroy(gameObject);
+    }
+
     private void LookAtMouse()
     {
       float angle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg;
       transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
     }
+
+    //private void OnDestroy() => OnPlayerDied?.Invoke();
   }
 }

@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 5710026794217489033}
   m_Layer: 0
   m_Name: LaserGun
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5248,7 +5248,7 @@ MonoBehaviour:
   m_ComponentVersion: 1
   m_LightType: 3
   m_BlendStyleIndex: 0
-  m_FalloffIntensity: 0.25
+  m_FalloffIntensity: 0.5
   m_Color: {r: 1, g: 0.9757165, b: 0.9, a: 1}
   m_Intensity: 0.6
   m_LightVolumeIntensity: 1
@@ -5301,7 +5301,7 @@ MonoBehaviour:
   m_PointLightInnerAngle: 0
   m_PointLightOuterAngle: 270
   m_PointLightInnerRadius: 0
-  m_PointLightOuterRadius: 26
+  m_PointLightOuterRadius: 27
   m_ShapeLightParametricSides: 5
   m_ShapeLightParametricAngleOffset: 0
   m_ShapeLightParametricRadius: 1
@@ -5400,7 +5400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   laserObject: {fileID: 1395682308}
-  laserWeapon: {fileID: 0}
+  laserWeapon: {fileID: 5710026794217489033}
 --- !u!114 &703457927003787081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5414,7 +5414,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 60
-  moveToMouse: 0
 --- !u!1 &8847222160360162418
 GameObject:
   m_ObjectHideFlags: 0
@@ -5427,7 +5426,7 @@ GameObject:
   - component: {fileID: 8847222160360162416}
   m_Layer: 0
   m_Name: Sprite
-  m_TagString: Player
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -40,6 +40,12 @@ namespace zephkelly
       playerTransform = player;
     }
 
+    public void UpdatePlayerTransform(Transform player)
+    {
+      playerTransform = player;
+      DisposeAllObjects();
+    }
+
     public void UpdateOcclusion(Dictionary<Vector2Int, Chunk> activeChunks,
       Dictionary<Vector2Int, Chunk> lazyChunks)
     {
@@ -225,6 +231,52 @@ namespace zephkelly
 
       inactiveStars.Clear();
       inactiveAsteroids.Clear();
+    }
+
+    private void DisposeAllObjects()
+    {
+      foreach (var star in activeStars)
+      {
+        var starInfo = star.Value;
+
+        foreach (var asteroid in starInfo.ParentChunk.Asteroids)
+        {
+          var asteroidInfo = asteroid.Value;
+
+          if (starAsteroids.ContainsKey(asteroidInfo.SpawnPoint))
+          {
+            starAsteroids.Remove(asteroidInfo.SpawnPoint);
+            inactiveAsteroids.Add(asteroidInfo.SpawnPoint, asteroidInfo);
+          }
+        }
+
+        Object.Destroy(starInfo.AttachedObject); //Pool instead
+
+        starInfo.DisposeObject();
+      }
+
+      foreach (var asteroid in activeAsteroids)
+      {
+        var asteroidInfo = asteroid.Value;
+
+        Object.Destroy(asteroidInfo.AttachedObject); //Pool instead
+
+        asteroidInfo.DisposeObject();
+      }
+
+      foreach (var starAsteroid in starAsteroids)
+      {
+        var asteroidInfo = starAsteroid.Value;
+
+        Object.Destroy(asteroidInfo.AttachedObject); //Pool instead
+
+        asteroidInfo.DisposeObject();
+      }
+
+
+      activeStars.Clear();
+      activeAsteroids.Clear();
+      starAsteroids.Clear();
     }
 
     private float FastDistance(Vector2 _point1, Vector2 _point2)

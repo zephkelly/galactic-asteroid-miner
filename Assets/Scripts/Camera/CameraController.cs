@@ -6,19 +6,22 @@ namespace zephkelly
 {
   public class CameraController : MonoBehaviour
   {
+    public static CameraController Instance;
     private InputManager inputs;
     private Camera mainCamera;
     private Transform cameraTransform;
 
-    //----------------------------------------------------------------------------------------------
-
-    [SerializeField] ParallaxStarfield[] parallaxStarfield;
-    [SerializeField] float mouseInterpolateDistance = 2f;
-    [SerializeField] float cameraPanSpeed = 0.125f;
-
     private Transform target;
     private Rigidbody2D targetRigid2D;
     private Vector3 mouseLerpPosition;
+
+    [SerializeField] float mouseInterpolateDistance = 2f;
+    [SerializeField] float cameraPanSpeed = 0.125f;
+
+    //Parallaxing-layers----------------------------------------------------------------------------
+
+    [SerializeField] ParallaxStarfield[] starfieldsLayers;
+    [SerializeField] DepoParallax depoParallax;
 
     //----------------------------------------------------------------------------------------------
 
@@ -26,6 +29,13 @@ namespace zephkelly
     {
       mainCamera = Camera.main;
       cameraTransform = mainCamera.transform;
+
+      if (Instance == null)
+      {
+        Instance = this;
+      } else {
+        Destroy(gameObject);
+      }
     }
 
     private void Start()
@@ -53,14 +63,21 @@ namespace zephkelly
       targetVector.z = cameraTransform.position.z;
 
       Vector3 cameraLastPosition = cameraTransform.position;
-
       cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetVector, cameraPanSpeed);
 
-      //Parallax starfield layers
-      for (int i = 0; i < parallaxStarfield.Length; i++)
+      UpdateParllaxing(cameraLastPosition);
+    }
+
+    private void UpdateParllaxing(Vector2 cameraLastPosition)
+    {
+      //Starfields
+      for (int i = 0; i < starfieldsLayers.Length; i++)
       {
-        parallaxStarfield[i].Parallax(cameraLastPosition);
+        starfieldsLayers[i].Parallax(cameraLastPosition);
       }
+
+      //Home depo
+      depoParallax.Parallax(cameraLastPosition);
     }
 
     public void ChangeFocus(Transform newTarget)

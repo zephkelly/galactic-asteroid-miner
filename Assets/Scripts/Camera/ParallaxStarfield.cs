@@ -9,8 +9,6 @@ namespace zephkelly
     private ParticleSystem.Particle[] stars;
     private Transform cameraTransform;
 
-    //----------------------------------------------------------------------------------------------
-
     [SerializeField] Transform parallaxLayer;
     [SerializeField] int starsMax = 100;
     [SerializeField] float starSizeMin = 0.15f;
@@ -18,9 +16,9 @@ namespace zephkelly
     [SerializeField] float starSpawnRadius = 10;
     [SerializeField] float parallaxFactor = 0.9f;
 
-      private float starDistanceSqr;
-      private float starClipDistanceSqr;
-      private static int particleZ = 2;
+    private float starDistanceSqr;
+    private float starClipDistanceSqr;
+    private static int particleZ = 2;
     
     //----------------------------------------------------------------------------------------------
 
@@ -66,7 +64,7 @@ namespace zephkelly
       }
     }
 
-    public void Parallax(Vector3 cameraLastPosition)
+    public void Parallax(Vector3 cameraLastPosition)   //called on camera controller
     {
       Vector3 cameraDelta = (Vector2)(cameraTransform.position - cameraLastPosition); 
 

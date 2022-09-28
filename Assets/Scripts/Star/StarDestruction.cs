@@ -13,11 +13,13 @@ namespace zephkelly
         Destroy(collision.gameObject);
       }
 
+      /*
       if (collision.gameObject.tag == "Player")
       {
         Destroy(collision.gameObject);
-        Debug.Log("Player destroyed");	
+        Debug.Log("Player destroyed");
       }
+      */
     }
   }
 }

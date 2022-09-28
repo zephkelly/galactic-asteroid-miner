@@ -103,7 +103,7 @@ namespace zephkelly
       bool TryGenerateStar()
       {
         int shouldGenerateStar = Random.Range(0, 100);
-        if (shouldGenerateStar > 10) return false;   //6% chance
+        if (shouldGenerateStar > 8) return false;   //8% chance
 
         int starTypeGenerator = Random.Range(0, 1000);
 
@@ -220,6 +220,8 @@ namespace zephkelly
 
     private void GenerateAsteroids(Chunk chunk, bool hasStar = false)
     {
+      if (chunk.Key == Vector2.zero) return;
+
       int minimum = Random.Range(minAsteroids - 10, minAsteroids + 10);
       int maximum = Random.Range(maxAsteroids - 10, maxAsteroids + 10);
       int asteroidCount = Random.Range(minimum, maximum);

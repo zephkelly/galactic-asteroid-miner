@@ -209,9 +209,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43455577f3c2f8240a43025a8b6886bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  beltMinumumRadius: 30
-  beltMaximumRadius: 80
-  beltDensity: 120
 --- !u!1 &4268589948934644068
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,7 +223,7 @@ GameObject:
   - component: {fileID: 4811064134158221956}
   m_Layer: 0
   m_Name: Sprite
-  m_TagString: Star
+  m_TagString: StarCore
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

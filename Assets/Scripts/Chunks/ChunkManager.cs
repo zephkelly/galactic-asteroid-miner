@@ -39,6 +39,13 @@ namespace zephkelly
     public Dictionary<Vector2Int, Chunk> LazyChunks { get => lazyChunks; }
     public Dictionary<Vector2Int, Chunk> InactiveChunks { get => inactiveChunks; }
 
+    public void UpdatePlayerTransform(Transform player)
+    {
+      playerTransform = player;
+      occlusionManager.UpdatePlayerTransform(playerTransform);
+      playerChunkPosition = GetChunkPosition(playerTransform.position);
+    }
+
     private void Awake()
     {
       playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
