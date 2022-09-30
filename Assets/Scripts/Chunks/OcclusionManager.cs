@@ -4,279 +4,219 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  public class OcclusionManager
+  public class OcclusionManager : MonoBehaviour
   {
+    public static OcclusionManager Instance;
     private ChunkManager chunkManager;
     private PrefabInstantiator instantiator;
+
     private Transform playerTransform;
+    private const int starOcclusionRadius = 650;   //Should make it the largest star radius + players viewport size
+    private const int asteroidOcclusionDistance = 60;
 
-    private const int starOcclusionRadius = 200;   //Should make it the largest star radius + players viewport size
-    private const int asteroidOcclusionDistance = 100;
+    Dictionary<Vector2Int, Chunk> currentActiveChunks = new Dictionary<Vector2Int, Chunk>();
+    Dictionary<Vector2Int, Chunk> currentLazyChunks = new Dictionary<Vector2Int, Chunk>();
 
-    //Asteroids
-    private Dictionary<Vector2, Asteroid> activeAsteroids =
-      new Dictionary<Vector2, Asteroid>();
+    private Dictionary<Asteroid, Chunk> activeAsteroids = new Dictionary<Asteroid, Chunk>();
+    private Dictionary<Asteroid, Chunk> lazyAsteroids = new Dictionary<Asteroid, Chunk>();
+    private Dictionary<Asteroid, Chunk> inactiveAsteroids = new Dictionary<Asteroid, Chunk>();
 
-    private Dictionary<Vector2, Asteroid> inactiveAsteroids =
-      new Dictionary<Vector2, Asteroid>();
+    private Dictionary<Asteroid, Chunk> asteroidToChangeChunk = new Dictionary<Asteroid, Chunk>();
+    private Dictionary<Asteroid, Chunk> asteoridToRemove = new Dictionary<Asteroid, Chunk>();
+    private Dictionary<Asteroid, Chunk> asteroidToAdd = new Dictionary<Asteroid, Chunk>();
 
-    //Stars
-    private Dictionary<Vector2, Star> activeStars =
-      new Dictionary<Vector2, Star>();
-
-    private Dictionary<Vector2, Star> inactiveStars =
-      new Dictionary<Vector2, Star>();
-
-    private Dictionary<Vector2, Asteroid> starAsteroids =
-      new Dictionary<Vector2, Asteroid>();
+    private Dictionary<Star, Chunk> activeStars = new Dictionary<Star, Chunk>();
+    private Dictionary<Star, Chunk> inactiveStars = new Dictionary<Star, Chunk>();
 
     //------------------------------------------------------------------------------
 
-    public Dictionary<Vector2, Star> ActiveStars { get => activeStars; }
+    public Dictionary<Asteroid, Chunk> ChangeAsteroidChunk { get => activeAsteroids; set => activeAsteroids = value; }
+    public Dictionary<Asteroid, Chunk> RemoveAsteroid { get => asteoridToRemove; set => asteoridToRemove = value; }
+    public Dictionary<Asteroid, Chunk> AddAsteroid { get => asteroidToAdd; set => asteroidToAdd = value; }
 
-    public OcclusionManager(Transform player, ChunkManager _chunkManager) {
-      chunkManager = _chunkManager;
-      instantiator = chunkManager.Instantiator;
-      playerTransform = player;
+    private void Awake()
+    {
+      if (Instance == null) {
+        Instance = this;
+      } else {
+        Destroy(gameObject);
+      }
     }
 
-    public void UpdatePlayerTransform(Transform player)
+    private void Start()
     {
-      playerTransform = player;
-      DisposeAllObjects();
+      chunkManager = ChunkManager.Instance;
+      instantiator = ChunkManager.Instance.Instantiator;
+      playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
-    public void UpdateOcclusion(Dictionary<Vector2Int, Chunk> activeChunks,
-      Dictionary<Vector2Int, Chunk> lazyChunks)
+    public void UpdateChunks(Dictionary<Vector2Int, Chunk> activeChunks, Dictionary<Vector2Int, Chunk> lazyChunks)
     {
-      foreach (var activeChunk in activeChunks)
+      currentActiveChunks = activeChunks;
+      currentLazyChunks = lazyChunks;
+
+      activeStars.Clear();
+      lazyAsteroids.Clear();
+
+      GetActiveStars();
+      GetLazyAsteroids();
+    }
+
+    private void GetActiveStars()
+    {
+      foreach (var lazyChunk in currentLazyChunks)
       {
-        if (activeChunk.Value.HasStar)
+        if (!lazyChunk.Value.HasStar) continue;
+        if (activeStars.ContainsKey(lazyChunk.Value.ChunkStar)) continue;
+        activeStars.Add(lazyChunk.Value.ChunkStar, lazyChunk.Value);
+      }
+
+      foreach (var activeChunk in currentActiveChunks)
+      {
+        if (!activeChunk.Value.HasStar) continue;
+        if (activeStars.ContainsKey(activeChunk.Value.ChunkStar)) continue;
+        activeStars.Add(activeChunk.Value.ChunkStar, activeChunk.Value);
+      }
+    }
+
+    private void GetLazyAsteroids()
+    {
+      if (activeStars.Count == 0) return;
+
+      foreach (var activeStar in activeStars)
+      {
+        var starAsteroids = activeStar.Value.Asteroids;
+
+        foreach (var asteroid in starAsteroids)
         {
-          CheckStarOcclusion(activeChunk.Value, playerTransform.position);
+          var asteroidDistance = FastDistance(asteroid.SpawnPoint, playerTransform.position);
+
+          lazyAsteroids.Add(asteroid, activeStar.Value);
+        }
+      }
+    }
+
+    private void Update()
+    {
+      UpdateChunkContents();
+
+      ActiveStarOcclusion();
+      LazyAsteroidOcclusion();
+    }
+
+    private void UpdateChunkContents()
+    {
+      ChangeChunks();
+      RemoveFromChunk();
+      AddToChunk();
+
+      void ChangeChunks()
+      {
+        if (asteroidToChangeChunk.Count == 0) return;
+        foreach (var asteroid in asteroidToChangeChunk)
+        {
+          if (asteroid.Key == null) continue;
+          asteroid.Key.ParentChunk.Asteroids.Remove(asteroid.Key);
+
+          asteroid.Key.NewParentChunk(asteroid.Value);
+          asteroid.Value.Asteroids.Add(asteroid.Key);
+        }
+
+        asteroidToChangeChunk.Clear();
+      }
+
+      void RemoveFromChunk()
+      {
+        if (asteoridToRemove.Count == 0) return;
+        foreach (var asteroid in asteoridToRemove)
+        {
+          if (asteroid.Key == null) continue;
+          asteroid.Value.Asteroids.Remove(asteroid.Key);
+
+          Destroy(asteroid.Key.AttachedObject);
+
+          if (lazyAsteroids.ContainsKey(asteroid.Key)) lazyAsteroids.Remove(asteroid.Key);
+          if (activeAsteroids.ContainsKey(asteroid.Key)) activeAsteroids.Remove(asteroid.Key);
+        }
+
+        asteoridToRemove.Clear();
+      }
+
+      void AddToChunk()
+      {
+        if (asteroidToAdd.Count == 0) return;
+        foreach (var asteroid in asteroidToAdd)
+        {
+          if (asteroid.Key == null) continue;
+          if (asteroid.Key.ParentChunk == asteroid.Value) continue;
+          asteroid.Key.ParentChunk.Asteroids.Remove(asteroid.Key);
+
+          asteroid.Key.NewParentChunk(asteroid.Value);
+          asteroid.Value.Asteroids.Add(asteroid.Key);
+        }
+
+        asteroidToAdd.Clear();
+      }
+    }
+
+    private void ActiveStarOcclusion()
+    {
+      foreach (var activeStar in activeStars)
+      {
+        var starDistance = FastDistance(activeStar.Key.SpawnPoint, playerTransform.position);
+
+        //Make object if null
+        if (activeStar.Key.AttachedObject == null)
+        {
+          var starObject = instantiator.GetStar(activeStar.Key);
+          starObject.GetComponent<StarController>().SetStarInfo(activeStar.Key);
+          starObject.SetActive(false);
+        }
+
+        if (starDistance < starOcclusionRadius)
+        {
+          if (activeStar.Key.AttachedObject.activeSelf) continue;
+          activeStar.Key.AttachedObject.SetActive(true);
         }
         else
         {
-          CheckAsteroidOcclusion(activeChunk.Value, playerTransform.position);
-        }
-      }
-
-      foreach (var lazyChunk in lazyChunks)
-      {
-        if (lazyChunk.Value.HasStar == false) continue;
-        CheckStarOcclusion(lazyChunk.Value, playerTransform.position);
-      }
-
-      DisposeInactiveObjects();
-    }
-
-    private void CheckAsteroidOcclusion(Chunk currentChunk, Vector2 playerPosition)
-    {
-      foreach (var asteroid in currentChunk.Asteroids)
-      {
-        var asteroidInfo = asteroid.Value;
-        var asteroidSpawnPoint = asteroidInfo.SpawnPoint;
-
-        //var distance = Vector2.Distance(playerPosition, asteroidSpawnPoint);
-        var distance = FastDistance(asteroidSpawnPoint, playerPosition);
-
-        //Occlusion check
-        if (activeAsteroids.ContainsKey(asteroidSpawnPoint))
-        {
-          if (distance > asteroidOcclusionDistance)
-          {
-            activeAsteroids.Remove(asteroidSpawnPoint);
-            inactiveAsteroids.Add(asteroidSpawnPoint, asteroidInfo);
-            continue;
-          }
-        }
-        else if (starAsteroids.ContainsKey(asteroidSpawnPoint))
-        {
-          if (distance > asteroidOcclusionDistance)
-          {
-            if (asteroidInfo.RendererStatus == false) return;
-            asteroidInfo.IsRendered(false);
-          }
-          else
-          {
-            if (asteroidInfo.RendererStatus == true) return;
-            asteroidInfo.IsRendered(true);
-          }
-
-          continue;
-        }
-        else if (distance < asteroidOcclusionDistance)   //Should we spawn asteroid?
-        {
-          if (asteroidInfo.AttachedObject == null)
-          {
-            var newAsteroid = instantiator.GetAsteroid(asteroidInfo);
-
-            asteroidInfo.SetObject(
-              newAsteroid,
-              asteroidSpawnPoint
-            );
-
-            newAsteroid.GetComponent<AsteroidController>().SetAsteroidInfo(asteroidInfo);   
-          }
-
-          activeAsteroids.Add(asteroidSpawnPoint, asteroidInfo);
-          continue;
+          //Dispose of object send back to pool
+          if (!activeStar.Key.AttachedObject.activeSelf) continue;
+          activeStar.Key.AttachedObject.SetActive(false);
         }
       }
     }
 
-    private void CheckStarOcclusion(Chunk currentChunk, Vector2 playerPosition)
+    private void LazyAsteroidOcclusion()
     {
-      StarOcclusion();
-      CheckStarAsteroids();
-
-      void StarOcclusion()
+      foreach (var lazyAsteroid in lazyAsteroids)
       {
-        var currentStar = currentChunk.ChunkStar;
-        var starSpawn = currentStar.SpawnPoint;
-        var starDistance = FastDistance(starSpawn, playerPosition);
+        var asteroidDistance = FastDistance(lazyAsteroid.Key.CurrentPosition, playerTransform.position);
 
-        //Check the distance to the star
-        if (activeStars.ContainsKey(starSpawn))
+        //Make object if null
+        if (lazyAsteroid.Key.AttachedObject == null)
         {
-          if (starDistance < starOcclusionRadius) return;
-
-          activeStars.Remove(starSpawn);
-          inactiveStars.Add(starSpawn, currentStar);
-          return;
+          var asteroidObject = instantiator.GetAsteroid(lazyAsteroid.Key);
+          lazyAsteroid.Key.SetObject(asteroidObject);
+          lazyAsteroid.Key.IsRendered(false);
         }
-        else if (starDistance < starOcclusionRadius)
+        else
         {
-          currentStar.SetStarObject(instantiator.GetStar(currentStar));
-          activeStars.Add(starSpawn, currentStar);
-
-          foreach (var asteroid in currentChunk.Asteroids)
-          {
-            var asteroidInfo = asteroid.Value;
-            var asteroidSpawnPoint = asteroidInfo.SpawnPoint;
-
-            if (starAsteroids.ContainsKey(asteroidSpawnPoint)) 
-            {
-              continue;
-            }
-            else if (activeAsteroids.ContainsKey(asteroidSpawnPoint))
-            {
-              activeAsteroids.Remove(asteroidSpawnPoint);
-              starAsteroids.Add(asteroidSpawnPoint, asteroidInfo);
-            }
-            else
-            {
-              var starAsteroid = instantiator.GetAsteroid(asteroidInfo);
-
-              asteroidInfo.SetObject(
-                starAsteroid,
-                asteroidSpawnPoint
-              );
-
-              starAsteroid.GetComponent<AsteroidController>().SetAsteroidInfo(asteroidInfo);
-
-              starAsteroids.Add(asteroidSpawnPoint, asteroidInfo);
-            }
-          }
-        }
-      }
-
-      void CheckStarAsteroids()
-      {
-        foreach (var asteroid in currentChunk.Asteroids)
-        {
-          var asteroidInfo = asteroid.Value;
-          var asteroidSpawnPoint = asteroidInfo.Position;
-
-          var asteroidDistance = FastDistance(asteroidInfo.Position, playerPosition);
-
-          if (starAsteroids.ContainsKey(asteroidSpawnPoint))
-          {
-            asteroidInfo.UpdateSpawnPoint();
-          }
-        }
-      }
-    }
-
-    private void DisposeInactiveObjects()
-    {
-      foreach (var star in inactiveStars)
-      {
-        var starInfo = star.Value;
-
-        foreach (var asteroid in starInfo.ParentChunk.Asteroids)
-        {
-          var asteroidInfo = asteroid.Value;
-
-          if (starAsteroids.ContainsKey(asteroidInfo.SpawnPoint))
-          {
-            starAsteroids.Remove(asteroidInfo.SpawnPoint);
-            inactiveAsteroids.Add(asteroidInfo.SpawnPoint, asteroidInfo);
-          }
+          lazyAsteroid.Key.UpdateCurrentPosition();
         }
 
-        Object.Destroy(starInfo.AttachedObject); //Pool instead
-
-        starInfo.DisposeObject();
-      }
-
-      foreach (var asteroid in inactiveAsteroids)
-      {
-        var asteroidInfo = asteroid.Value;
-
-        Object.Destroy(asteroidInfo.AttachedObject); //Pool instead
-
-        asteroidInfo.DisposeObject();
-      }
-
-      inactiveStars.Clear();
-      inactiveAsteroids.Clear();
-    }
-
-    private void DisposeAllObjects()
-    {
-      foreach (var star in activeStars)
-      {
-        var starInfo = star.Value;
-
-        foreach (var asteroid in starInfo.ParentChunk.Asteroids)
+        if (asteroidDistance < asteroidOcclusionDistance)
         {
-          var asteroidInfo = asteroid.Value;
-
-          if (starAsteroids.ContainsKey(asteroidInfo.SpawnPoint))
-          {
-            starAsteroids.Remove(asteroidInfo.SpawnPoint);
-            inactiveAsteroids.Add(asteroidInfo.SpawnPoint, asteroidInfo);
-          }
+          if (lazyAsteroid.Key.RendererStatus) continue;
+          lazyAsteroid.Key.IsRendered(true);
         }
-
-        Object.Destroy(starInfo.AttachedObject); //Pool instead
-
-        starInfo.DisposeObject();
+        else
+        {
+          //Dispose of object send back to pool
+          if (!lazyAsteroid.Key.RendererStatus) continue;
+          lazyAsteroid.Key.IsRendered(false);
+        }
       }
-
-      foreach (var asteroid in activeAsteroids)
-      {
-        var asteroidInfo = asteroid.Value;
-
-        Object.Destroy(asteroidInfo.AttachedObject); //Pool instead
-
-        asteroidInfo.DisposeObject();
-      }
-
-      foreach (var starAsteroid in starAsteroids)
-      {
-        var asteroidInfo = starAsteroid.Value;
-
-        Object.Destroy(asteroidInfo.AttachedObject); //Pool instead
-
-        asteroidInfo.DisposeObject();
-      }
-
-
-      activeStars.Clear();
-      activeAsteroids.Clear();
-      starAsteroids.Clear();
     }
 
     private float FastDistance(Vector2 _point1, Vector2 _point2)
@@ -286,5 +226,5 @@ namespace zephkelly
 
       return Mathf.Sqrt(x * x + y * y);
     }
-  }
+  } 
 }

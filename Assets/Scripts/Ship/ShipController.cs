@@ -16,9 +16,10 @@ namespace zephkelly
     
     private Vector2 mouseDirection;
     [SerializeField] float moveSpeed = 60f;
+    [SerializeField] bool invulnerable = false;
 
     //Orbiting Variables
-    private StarOrbitingBehaviour starBehaviour;
+    private StarController starController;
     private Vector2 orbitalVelocity;
     private Vector2 lastOrbitalVelocity;
     private bool orbitingStar;
@@ -26,16 +27,21 @@ namespace zephkelly
     //----------------------------------------------------------------------------------------------
 
     public static event Action OnPlayerDied;
-
     public Inventory Inventory => playerInventory;
+    public bool OrbitingStar => orbitingStar;
+
+    public void Die()
+    {
+      OnPlayerDied?.Invoke();
+      Destroy(gameObject);
+    }
 
     private void Awake()
     {
       playerInventory = Resources.Load("ScriptableObjects/PlayerInventory") as Inventory;
-      shipConfiguration = new ShipConfiguration(this);
-      shipConfiguration.AssignDefaults();
+      shipConfiguration = GetComponent<ShipConfiguration>();
 
-      playerTransform = gameObject.transform;
+      playerTransform = transform;
       playerRigid2D = GetComponent<Rigidbody2D>();
     }
 
@@ -52,6 +58,24 @@ namespace zephkelly
       mouseDirection = playerInputs.MouseWorldPosition - (Vector2) transform.position;
       mouseDirection.Normalize();
 
+      if (!orbitingStar) return;
+
+      CalculateThermalGradient();
+    }
+
+    private void LookAtMouse()
+    {
+      float angle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg;
+      transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
+    }
+
+    private void CalculateThermalGradient()
+    {
+      float distanceToStar = Vector2.Distance(transform.position, starController.transform.position);
+
+      float ambientTemperature = starController.OrbitingBehaviour.GetThermalGradient(distanceToStar);
+
+      shipConfiguration.SetAmbientTemperature = ambientTemperature;
     }
 
     private void FixedUpdate()
@@ -74,14 +98,14 @@ namespace zephkelly
 
     private void StarOrbiting()
     {
-      if (starBehaviour == null) {
+      if (starController == null) {
         Debug.LogError("Error: StarOrbiting() null reference");
         return;
       }
 
       //MSet constant orbit velocity
       lastOrbitalVelocity = orbitalVelocity;
-      orbitalVelocity = starBehaviour.GetOrbitalVelocity(playerRigid2D);
+      orbitalVelocity = starController.OrbitingBehaviour.GetOrbitalVelocity(playerRigid2D);
 
       playerRigid2D.velocity -= lastOrbitalVelocity;   //Working around unity physics
       playerRigid2D.velocity += orbitalVelocity;
@@ -104,32 +128,40 @@ namespace zephkelly
       if (!other.CompareTag("Star")) return;
 
       orbitingStar = true;
-      starBehaviour = other.GetComponent<StarOrbitingBehaviour>();
-      starBehaviour.ApplyInstantOrbitalVelocity(playerRigid2D);
+      starController = other.GetComponent<StarController>();
+      starController.OrbitingBehaviour.ApplyInstantOrbitalVelocity(playerRigid2D);
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
       if (!other.CompareTag("Star")) return;
 
+      shipConfiguration.SetAmbientTemperature = 0f;
+
       orbitingStar = false;
-      starBehaviour = null;
+      starController = null;
     }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-      if (!other.gameObject.CompareTag("Star")) return;
+      GameObject otherObject = other.gameObject;
 
-      OnPlayerDied?.Invoke();
-      Destroy(gameObject);
+      if (otherObject.CompareTag("Asteroid"))
+      {
+        if (invulnerable) return;
+
+        var damage = 10;
+
+        var healthRemaining = shipConfiguration.TakeDamage(damage);
+
+        Debug.Log($"Player health remaining: {healthRemaining}");
+        return;
+      }
+      else if (otherObject.CompareTag("Star"))
+      {
+        Die();
+        return;
+      }
     }
-
-    private void LookAtMouse()
-    {
-      float angle = Mathf.Atan2(mouseDirection.y, mouseDirection.x) * Mathf.Rad2Deg;
-      transform.rotation = Quaternion.AngleAxis(angle - 90, Vector3.forward);
-    }
-
-    //private void OnDestroy() => OnPlayerDied?.Invoke();
   }
 }

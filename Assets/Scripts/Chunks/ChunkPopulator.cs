@@ -37,7 +37,6 @@ namespace zephkelly
 
       if (!hasStar) return false;
 
-      Debug.Log("Star at " + lazyChunk.Position);
       GenerateAsteroids(lazyChunk, true);
       return true;
     }
@@ -234,9 +233,7 @@ namespace zephkelly
         {
           spawnPoint = GetPositionAroundStar(chunk.ChunkStar);
           
-          if (chunk.Asteroids.ContainsKey(spawnPoint)) return;
-
-          chunk.AddAsteroid(CreateAsteroid(spawnPoint), spawnPoint);
+          chunk.PopulateAsteroid(CreateAsteroid(spawnPoint), spawnPoint);
         }
       }
       else   //Generate asteroids randomly
@@ -245,9 +242,7 @@ namespace zephkelly
         {
           spawnPoint = GetRandomPosition(chunk.ChunkBounds);
 
-          if (chunk.Asteroids.ContainsKey(spawnPoint)) return;
-
-          chunk.AddAsteroid(CreateAsteroid(spawnPoint), spawnPoint);
+          chunk.PopulateAsteroid(CreateAsteroid(spawnPoint), spawnPoint);
         }
       }
 

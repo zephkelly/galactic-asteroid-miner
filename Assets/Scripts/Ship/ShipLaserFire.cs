@@ -52,6 +52,8 @@ namespace zephkelly
       }
       else if (hitObject.CompareTag("AsteroidPickup"))
       {
+        var asteroidInfo = hitObject.GetComponent<AsteroidController>().AsteroidInfo;
+
         Destroy(hitObject);
       }
 

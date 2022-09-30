@@ -7,7 +7,6 @@ namespace zephkelly
 {
   public class ShipPickup : MonoBehaviour
   {
-    private OcclusionManager occlusionManager;
     [SerializeField] ShipController shipController;
 
     private Collider2D shipPickupTrigger;
@@ -18,11 +17,6 @@ namespace zephkelly
     {
       shipPickupTrigger = GetComponent<Collider2D>();
       rigid2D = shipPickupTrigger.attachedRigidbody;
-    }
-
-    private void Start()
-    {
-      occlusionManager = ChunkManager.Instance.OcclusionManager;
     }
 
     private async void OnTriggerEnter2D(Collider2D otherCollider)
@@ -40,9 +34,7 @@ namespace zephkelly
       shipController.Inventory.AddItem(asteroidInfo.Type.ToString(), 1);
       shipController.Inventory.PrintInventory();
 
-      //Delete from occlusion manager
-    
-      Destroy(otherCollider.gameObject);
+      OcclusionManager.Instance.RemoveAsteroid.Add(asteroidInfo, asteroidInfo.ParentChunk);
     }
 
     private async Task PickupLerp(Transform pickupTransform, AsteroidType pickupType)

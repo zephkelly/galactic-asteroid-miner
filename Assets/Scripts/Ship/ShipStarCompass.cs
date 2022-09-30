@@ -64,13 +64,6 @@ namespace zephkelly
 
         pointers.Add(activeChunk.Value.Position, rectTransform);
       }
-
-      Debug.Log(pointers.Count);
-
-      foreach (var pointer in pointers)
-      {
-        Debug.Log(pointer.Key);
-      }
     }
 
     private void LateUpdate()

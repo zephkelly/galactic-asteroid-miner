@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace zephkelly
@@ -12,6 +13,18 @@ namespace zephkelly
     StellariteHull,
     DarkoreHull
   }
+
+  public enum ShipRadiator
+  {
+    SteelRadiator,
+    TitaniumRadiator,
+    CobaltRadiator,
+    PalladiumRadiator,
+    StellariteRadiator,
+  }
+
+  #region Region1
+  /*
 
   public enum ShipEngine
   {
@@ -63,290 +76,157 @@ namespace zephkelly
     LargeCargoBay,
     HugeCargoBay
   }
+  #endregion
+  */
+  #endregion
 
-  public class ShipConfiguration
+  public class ShipConfiguration : MonoBehaviour
   {
     private ShipController shipController;
-    private ShipHull shipHullCurrent;
-    private ShipEngine shipEngineCurrent;
-    private ShipWeapon shipWeaponCurrent;
-    private ShipShield shipShieldCurrent;
-    private ShipFuelTank shipFuelTankCurrent;
-    private ShipCargoBay shipCargoBayCurrent;
-    private ShipDeflector shipDeflectorCurrent;
 
+    private ShipHull shipHull;
     private int hullStrengthMax;
-    private int engineSpeedMax;
-    private int weaponDamageMax;
-    private int shieldStrengthMax;
-    private int fuelCapacityMax;
-    private int cargoCapacityMax;
-    private int deflectorStrengthMax;
-
     private int hullStrengthCurrent;
-    private int engineSpeedCurrent;
-    private int weaponDamageCurrent;
-    private int shieldStrengthCurrent;
-    private int fuelCapacityCurrent;
-    private int cargoCapacityCurrent;
-    private int deflectorStrengthCurrent;
 
-    //------------------------------------------------------------------------------
-    
-    public ShipConfiguration (ShipController _shipController)
+    private ShipRadiator shipRadiator;
+    private int radiatorEfficiency;
+    private float hullTemperatureMax;
+    [SerializeField] float hullTemperatureCurrent;
+    private float ambientTemperature;
+    internal float timersLength = 1;
+    internal float tempIncreaser;
+    internal float tempDecreaser;
+
+    public ShipHull ShipHullCurrent { get => shipHull; }
+    public ShipRadiator ShipRadiatorCurrent { get => shipRadiator; }
+
+    public float SetAmbientTemperature { set => ambientTemperature = value; }
+
+    //----------------------------------------------------------------------------------------------
+
+    #region Setter
+
+    public void AssignNewHull(ShipHull newHull)
     {
-      shipController = _shipController;
+      shipHull = newHull;
+      SetHull();
     }
 
-    public ShipHull HullType { get => shipHullCurrent; }
-    public ShipEngine EngineType { get => shipEngineCurrent; }
-    public ShipWeapon WeaponType { get => shipWeaponCurrent; }
-    public ShipShield ShieldType { get => shipShieldCurrent; }
-    public ShipFuelTank FuelTankType { get => shipFuelTankCurrent; }
-    public ShipCargoBay CargoBayType { get => shipCargoBayCurrent; }
-    public ShipDeflector DeflectorType { get => shipDeflectorCurrent; }
-
-    public int HullStrengthMax { get => hullStrengthMax; }
-    public int EngineSpeedMax { get => engineSpeedMax; }
-    public int WeaponDamageMax { get => weaponDamageMax; }
-    public int ShieldStrengthMax { get => shieldStrengthMax; }
-    public int FuelCapacityMax { get => fuelCapacityMax; }
-    public int CargoCapacityMax { get => cargoCapacityMax; }
-    public int DeflectorStrengthMax { get => deflectorStrengthMax; }
-
-    public int HullStrengthCur { get => hullStrengthCurrent; }
-    public int EngineSpeedCur { get => engineSpeedCurrent; }
-    public int WeaponDamageCur { get => weaponDamageCurrent; }
-    public int ShieldStrengthCur { get => shieldStrengthCurrent; }
-    public int FuelCapacityCur { get => fuelCapacityCurrent; }
-    public int CargoCapacityCur { get => cargoCapacityCurrent; }
-    public int DeflectorStrengthCur { get => deflectorStrengthCurrent; }
-
-    //------------------------------------------------------------------------------
-
-    public ShipHull SetHull { set => shipHullCurrent = value; }
-    public ShipEngine SetEngine { set => shipEngineCurrent = value; }
-
-    public void UpdateWeapon (ShipWeapon _shipWeapon) {
-      shipWeaponCurrent = _shipWeapon;
-      SetShipConfiguration();
+    public void AssignNewRadiators(ShipRadiator newRadiator)
+    {
+      shipRadiator = newRadiator;
+      SetRadiator();
     }
+    #endregion
 
-    public void UpdateShield (ShipShield _shipShield) {
-      shipShieldCurrent = _shipShield;
-      SetShipConfiguration();
-    }
+    private void Awake()
+    {
+      shipController = GetComponent<ShipController>();
 
-    public void UpdateFuelTank (ShipFuelTank _shipFuelTank) {
-      shipFuelTankCurrent = _shipFuelTank;
-      SetShipConfiguration();
-    }
+      shipHull = ShipHull.SteelHull;
+      shipRadiator = ShipRadiator.SteelRadiator;
 
-    public void UpdateCargoBay (ShipCargoBay _shipCargoBay) {
-      shipCargoBayCurrent = _shipCargoBay;
-      SetShipConfiguration();
-    }
-
-    public void UpdateDeflector (ShipDeflector _shipDeflector) {
-      shipDeflectorCurrent = _shipDeflector;
-      SetShipConfiguration();
+      SetHull();
+      SetRadiator();
     }
 
     public int TakeDamage(int _damage)
     {
       hullStrengthCurrent -= _damage;
+      
+      if (hullStrengthCurrent <= 0) shipController.Die();
+
       return hullStrengthCurrent;
     }
 
-    //------------------------------------------------------------------------------
-
-    public void AssignDefaults()
+    private void Update()
     {
-      shipHullCurrent = ShipHull.SteelHull;
-      shipEngineCurrent = ShipEngine.RocketEngine;
-      shipWeaponCurrent = ShipWeapon.PhotonCannon;
-      shipShieldCurrent = ShipShield.NoShield;
-      shipFuelTankCurrent = ShipFuelTank.SmallTank;
-      shipCargoBayCurrent = ShipCargoBay.TinyCargoBay;
-      shipDeflectorCurrent = ShipDeflector.NoDeflector;
-
-      SetShipConfiguration();
+      UseRadiators();
     }
 
-    private void LoadGameSaveData()
+    private void UseRadiators()
     {
-      //Load game save data
+      if (ambientTemperature == 0 && hullTemperatureCurrent == 0) return;
+
+      if (ambientTemperature > hullTemperatureCurrent)
+      {
+        if (tempIncreaser > 0) {
+          tempIncreaser -= Time.deltaTime;
+          return;
+        }
+
+        hullTemperatureCurrent += ambientTemperature / 10;
+        hullTemperatureCurrent = Mathf.Clamp(hullTemperatureCurrent, 0, hullTemperatureMax);
+
+        tempIncreaser = timersLength;
+      }
+      else
+      {
+        if (tempDecreaser > 0) {
+          tempDecreaser -= Time.deltaTime;
+          return;
+        }
+
+        hullTemperatureCurrent -= (hullTemperatureMax / 14) * radiatorEfficiency;
+        hullTemperatureCurrent = Mathf.Clamp(hullTemperatureCurrent, 0, hullTemperatureMax);
+
+        tempDecreaser = timersLength;
+      }
     }
 
-    private void SetShipConfiguration()
+    #region UpgradeMethods
+    private void SetHull()
     {
-      SetHull();
-      SetEngine();
-      SetWeapon();
-      SetShield();
-      SetFuelTank();
-      SetCargoBay();
-      SetDeflector();
-
-      AssignToCurrent();
-
-      //Adjust-everything-below-------------------------------------------------------
-
-      void SetHull()
+      switch (shipHull)
       {
-        switch (shipHullCurrent)
-        {
-          case ShipHull.SteelHull:
-            hullStrengthMax = 100;
-            break;
-          case ShipHull.TitaniumHull:
-            hullStrengthMax = 200;
-            break;
-          case ShipHull.CobaltHull:
-            hullStrengthMax = 300;
-            break;
-          case ShipHull.StellariteHull:
-            hullStrengthMax = 400;
-            break;
-          case ShipHull.DarkoreHull:
-            hullStrengthMax = 500;
-            break;
-        }
+        case ShipHull.SteelHull:
+          hullStrengthMax = 100;
+          break;
+        case ShipHull.TitaniumHull:
+          hullStrengthMax = 200;
+          break;
+        case ShipHull.CobaltHull:
+          hullStrengthMax = 400;
+          break;
+        case ShipHull.StellariteHull:
+          hullStrengthMax = 800;
+          break;
+        case ShipHull.DarkoreHull:
+          hullStrengthMax = 10000;
+          break;
       }
 
-      void SetEngine()
-      {
-        switch (shipEngineCurrent)
-        {
-          case ShipEngine.RocketEngine:
-            engineSpeedMax = 100;
-            break;
-          case ShipEngine.ImuplseEngine:
-            engineSpeedMax = 200;
-            break;
-          case ShipEngine.IonEngine:
-            engineSpeedMax = 300;
-            break;
-          case ShipEngine.WarpDrive:
-            engineSpeedMax = 400;
-            break;
-          case ShipEngine.HyperDrive:
-            engineSpeedMax = 500;
-            break;
-        }
-      }
-
-      void SetWeapon()
-      {
-        switch (shipWeaponCurrent)
-        {
-          case ShipWeapon.PhotonCannon:
-            weaponDamageMax = 100;
-            break;
-          case ShipWeapon.PlasmaCannon:
-            weaponDamageMax = 200;
-            break;
-          case ShipWeapon.IonCannon:
-            weaponDamageMax = 300;
-            break;
-          case ShipWeapon.DarkCannon:
-            weaponDamageMax = 400;
-            break;
-        }
-      }
-
-      void SetShield()
-      {
-        switch (shipShieldCurrent)
-        {
-          case ShipShield.NoShield:
-            shieldStrengthMax = 0;
-            break;
-          case ShipShield.StandardShiled:
-            shieldStrengthMax = 100;
-            break;
-          case ShipShield.ResonantShield:
-            shieldStrengthMax = 200;
-            break;
-          case ShipShield.ElectromagneticShield:
-            shieldStrengthMax = 300;
-            break;
-          case ShipShield.FluxPinnedShield:
-            shieldStrengthMax = 400;
-            break;
-        }
-      }
-
-      void SetFuelTank()
-      {
-        switch (shipFuelTankCurrent)
-        {
-          case ShipFuelTank.SmallTank:
-            fuelCapacityMax = 100;
-            break;
-          case ShipFuelTank.MediumTank:
-            fuelCapacityMax = 200;
-            break;
-          case ShipFuelTank.LargeTank:
-            fuelCapacityMax = 300;
-            break;
-          case ShipFuelTank.StellariteReactor:
-            fuelCapacityMax = 400;
-            break;
-          case ShipFuelTank.DarkoreReactor:
-            fuelCapacityMax = 500;
-            break;
-        }
-      }
-
-      void SetCargoBay()
-      {
-        switch (shipCargoBayCurrent)
-        {
-          case ShipCargoBay.TinyCargoBay:
-            cargoCapacityMax = 100;
-            break;
-          case ShipCargoBay.SmallCargoBay:
-            cargoCapacityMax = 200;
-            break;
-          case ShipCargoBay.MediumCargoBay:
-            cargoCapacityMax = 300;
-            break;
-          case ShipCargoBay.LargeCargoBay:
-            cargoCapacityMax = 400;
-            break;
-          case ShipCargoBay.HugeCargoBay:
-            cargoCapacityMax = 500;
-            break;
-        }
-      }
-
-      void SetDeflector()
-      {
-        switch (shipDeflectorCurrent)
-        {
-          case ShipDeflector.NoDeflector:
-            deflectorStrengthMax = 0;
-            break;
-          case ShipDeflector.ElectromagneticDeflector:
-            deflectorStrengthMax = 100;
-            break;
-          case ShipDeflector.PlasmaticDeflector:
-            deflectorStrengthMax = 200;
-            break;
-        }
-      }
-
-      void AssignToCurrent()
-      {
-        hullStrengthCurrent = hullStrengthMax;
-        engineSpeedCurrent = engineSpeedMax;
-        weaponDamageCurrent = weaponDamageMax;
-        shieldStrengthCurrent = shieldStrengthMax;
-        fuelCapacityCurrent = fuelCapacityMax;
-        cargoCapacityCurrent = cargoCapacityMax;
-        deflectorStrengthCurrent = deflectorStrengthMax;
-      }
+      hullStrengthCurrent = hullStrengthMax;
     }
+
+    private void SetRadiator()
+    {
+      switch (shipRadiator)
+      {
+        case ShipRadiator.SteelRadiator:
+          hullTemperatureMax = 100000;
+          radiatorEfficiency = 1;
+          break;
+        case ShipRadiator.TitaniumRadiator:
+          hullTemperatureMax = 1000000;
+          radiatorEfficiency = 2;
+          break;
+        case ShipRadiator.PalladiumRadiator:
+          hullTemperatureMax = 15000000;
+          radiatorEfficiency = 3;
+          break;
+        case ShipRadiator.CobaltRadiator:
+          hullTemperatureMax = 40000000;
+          radiatorEfficiency = 4;
+          break;
+        case ShipRadiator.StellariteRadiator:
+          hullTemperatureMax = 50000000;
+          radiatorEfficiency = 5;
+          break;
+      }
+
+      hullTemperatureCurrent = 0;
+    }
+    #endregion
   }
 }

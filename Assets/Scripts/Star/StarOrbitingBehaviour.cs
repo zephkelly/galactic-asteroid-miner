@@ -7,13 +7,16 @@ namespace zephkelly
 {
   public class StarOrbitingBehaviour : MonoBehaviour
   {
-    private const float G = 0.2f;   //Newtons Gravity constant
+    private StarController starController;
 
     private Rigidbody2D starRigidbody;
     private List<Rigidbody2D> orbitingBodies = new List<Rigidbody2D>();
 
+    private const float G = 0.2f;   //Newtons Gravity constant
+
     private void Awake()
     {
+      starController = gameObject.GetComponent<StarController>();
       starRigidbody = gameObject.GetComponent<Rigidbody2D>();
     }
 
@@ -85,6 +88,15 @@ namespace zephkelly
       Vector2 perpendicularDirection = Vector2.Perpendicular(directionToStar);
 
       return perpendicularDirection * Mathf.Sqrt((G * starMass) / distanceToStar);
+    }
+
+    public float GetThermalGradient(float _objectDistance)
+    {
+      var distanceNormalized = _objectDistance / starController.StarInfo.MaxOrbitRadius;
+
+      var trueDistance = 1 - distanceNormalized;
+
+      return Mathf.Lerp(0, starController.StarInfo.Temperature, trueDistance);
     }
   }
 }

@@ -10107,6 +10107,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1395682311, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: playOnAwake
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -14999,6 +15003,7 @@ GameObject:
   - component: {fileID: 1669991865}
   - component: {fileID: 1669991867}
   - component: {fileID: 1669991868}
+  - component: {fileID: 1669991869}
   m_Layer: 0
   m_Name: GameplayManager
   m_TagString: Untagged
@@ -15048,6 +15053,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 31ae5613fbbd96b448147fb3ba9e5d90, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1669991869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1669991864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71db21444f1f211458142d48a1b8ce39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1788404358

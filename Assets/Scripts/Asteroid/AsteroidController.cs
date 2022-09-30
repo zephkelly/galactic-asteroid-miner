@@ -40,9 +40,29 @@ namespace zephkelly
 
       if(asteroidInfo.Health <= 0)
       {
-        Destroy(gameObject);
-        //Needa remove asteroid from occlusion manager
+        OcclusionManager.Instance.RemoveAsteroid.Add(asteroidInfo, asteroidInfo.ParentChunk);
       }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+      if (!other.CompareTag("Star")) return;
+      var starChunk = other.GetComponent<StarController>().ParentChunk;
+
+      if (starChunk == asteroidInfo.ParentChunk) return;
+      if (OcclusionManager.Instance.ChangeAsteroidChunk.ContainsKey(asteroidInfo)) return;
+      OcclusionManager.Instance.ChangeAsteroidChunk.Add(asteroidInfo, starChunk);
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+      if (!other.CompareTag("Star")) return;
+      var newChunkPosition = ChunkManager.Instance.GetChunkPosition(asteroidTransform.position);
+      var newChunk = ChunkManager.Instance.GetChunk(newChunkPosition);
+
+      if (newChunk == asteroidInfo.ParentChunk) return;
+      if (OcclusionManager.Instance.ChangeAsteroidChunk.ContainsKey(asteroidInfo)) return;
+      OcclusionManager.Instance.ChangeAsteroidChunk.Add(asteroidInfo, newChunk);
     }
   }
 }

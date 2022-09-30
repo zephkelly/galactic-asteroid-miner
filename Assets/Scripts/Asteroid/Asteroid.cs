@@ -47,7 +47,7 @@ namespace zephkelly
     //------------------------------------------------------------------------------
     
     public Vector2 SpawnPoint { get => spawnPosition; }
-    public Vector2 Position { get => currentPosition; }
+    public Vector2 CurrentPosition { get => currentPosition; }
 
     public GameObject AttachedObject { get => asteroidObject; }
     public Transform AttachedTransform { get => asteroidTransform; }
@@ -56,6 +56,7 @@ namespace zephkelly
     public Collider2D AttachedCollider { get => collider2D; }
 
     public Chunk ParentChunk { get => parentChunk; }
+    public Star ParentStar { get => parentChunk.ChunkStar; }
     public AsteroidSize Size { get => asteroidSize; }
     public AsteroidType Type { get => asteroidType; }
 
@@ -69,10 +70,11 @@ namespace zephkelly
       asteroidType = _type;
 
       spawnPosition = _position;
+      currentPosition = _position;
       health = _health;
     }
 
-    public void SetObject(GameObject _asteroidObject, Vector2 _position)
+    public void SetObject(GameObject _asteroidObject)
     {
       asteroidObject = _asteroidObject;
       asteroidTransform = asteroidObject.transform;
@@ -82,24 +84,12 @@ namespace zephkelly
       renderer = asteroidObject.GetComponentInChildren<SpriteRenderer>();
       
       asteroidObject.GetComponent<AsteroidController>().SetAsteroidInfo(this);
-      asteroidObject.transform.position = _position;
+      asteroidObject.transform.position = spawnPosition;
     }
 
-    public void DisposeObject()
+    public void UpdateCurrentPosition()
     {
-      parentChunk.RemoveAsteroid(spawnPosition);
-      renderer = null;
-
-      if (asteroidTransform == null) return;
-
       currentPosition = asteroidTransform.position;
-      asteroidTransform = null;
-
-      var newChunkKey = ChunkManager.Instance.GetChunkPosition(currentPosition);
-      parentChunk = ChunkManager.Instance.GetChunk(newChunkKey);
-      spawnPosition = currentPosition;
-
-      parentChunk.AddAsteroid(this, spawnPosition);
     }
 
     public void IsRendered(bool _enabled)
@@ -122,12 +112,9 @@ namespace zephkelly
       asteroidType = _type;
     }
 
-    public void UpdateSpawnPoint() 
+    public void NewParentChunk(Chunk _newParentChunk)
     {
-      currentPosition = asteroidTransform.position;
-      spawnPosition = currentPosition;
+      parentChunk = _newParentChunk;
     }
-
-    public void SetPosition(Vector2 newPosition) => currentPosition = newPosition;
   }
 }

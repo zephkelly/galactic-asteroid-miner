@@ -14,8 +14,7 @@ namespace zephkelly
     private GameObject attackedObject;
     private Bounds chunkBounds;
 
-    private Dictionary<Vector2, Asteroid> asteroids =
-      new Dictionary<Vector2, Asteroid>();
+    private List<Asteroid> asteroids = new List<Asteroid>();
 
     private Star star;
     private bool hasStar;
@@ -28,7 +27,7 @@ namespace zephkelly
     public Bounds ChunkBounds { get => chunkBounds; }
     public GameObject AttachedObject { get => attackedObject; }
 
-    public Dictionary<Vector2, Asteroid> Asteroids { 
+    public List<Asteroid> Asteroids { 
       get => asteroids; 
       set => asteroids = value; 
     }
@@ -58,19 +57,10 @@ namespace zephkelly
       star = _star;
     }
 
+    //Adding and removing asteroids from chunks is handled by occlusion manager
     public void PopulateAsteroid(Asteroid asteroid, Vector2 populatePosition)
     {
-      asteroids.Add(populatePosition, asteroid);
-    }
-
-    public void AddAsteroid(Asteroid asteroid, Vector2 spawnPosition)
-    {
-      asteroids.Add(spawnPosition, asteroid);
-    }
-
-    public void RemoveAsteroid(Vector2 position)
-    {
-      asteroids.Remove(position);
+      asteroids.Add(asteroid);
     }
 
     public void SetPopulated() => hasBeenPopulated = true;

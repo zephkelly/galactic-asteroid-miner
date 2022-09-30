@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +10,6 @@ namespace zephkelly
 
     private ChunkPopulator chunkPopulator = new ChunkPopulator();
     private PrefabInstantiator prefabInstantiator;
-    private OcclusionManager occlusionManager;
     private ShipStarCompass shipStarCompass;
 
     [SerializeField] int chunkDiameter = 100;
@@ -30,10 +28,12 @@ namespace zephkelly
     private Dictionary<Vector2Int, Chunk> inactiveChunks =
       new Dictionary<Vector2Int, Chunk>();
 
+    private Dictionary<Vector2Int, Chunk> allChunks =
+      new Dictionary<Vector2Int, Chunk>();
+
     //------------------------------------------------------------------------------
 
     public PrefabInstantiator Instantiator { get => prefabInstantiator; }
-    public OcclusionManager OcclusionManager { get => occlusionManager; }
 
     public Dictionary<Vector2Int, Chunk> ActiveChunks { get => activeChunks; }
     public Dictionary<Vector2Int, Chunk> LazyChunks { get => lazyChunks; }
@@ -42,7 +42,6 @@ namespace zephkelly
     public void UpdatePlayerTransform(Transform player)
     {
       playerTransform = player;
-      occlusionManager.UpdatePlayerTransform(playerTransform);
       playerChunkPosition = GetChunkPosition(playerTransform.position);
     }
 
@@ -51,7 +50,6 @@ namespace zephkelly
       playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
       prefabInstantiator = GetComponent<PrefabInstantiator>();
       shipStarCompass = GetComponent<ShipStarCompass>();
-      occlusionManager = new OcclusionManager(playerTransform, this);
 
       //Singleton pattern
       if (Instance == null) {
@@ -68,6 +66,8 @@ namespace zephkelly
 
       ChunkCreator(playerLastChunkPosition);
       SetActiveChunks(playerChunkPosition);
+
+      shipStarCompass.UpdateCompass();
     }
 
     private void Update()
@@ -82,10 +82,9 @@ namespace zephkelly
         ChunkCreator(playerChunkPosition);
         SetActiveChunks(playerChunkPosition);
 
+        OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
         shipStarCompass.UpdateCompass();
       }
-
-      occlusionManager.UpdateOcclusion(activeChunks, lazyChunks);
 
       playerLastChunkPosition = playerChunkPosition;
     }
@@ -141,11 +140,11 @@ namespace zephkelly
     //Add 5x5 to lazy chunks
     private void ChunkCreator(Vector2Int chunkCenter)
     {
-      Vector2Int lazyGridKey = new Vector2Int(chunkCenter.x -2, chunkCenter.y -2);
+      Vector2Int lazyGridKey = new Vector2Int(chunkCenter.x -3, chunkCenter.y -3);
 
-      for (int y = 0; y < 5; y++)
+      for (int y = 0; y < 7; y++)
       {
-        for (int x = 0; x < 5; x++)
+        for (int x = 0; x < 7; x++)
         {
           if (inactiveChunks.ContainsKey(lazyGridKey))
           {
@@ -166,13 +165,14 @@ namespace zephkelly
             chunkPopulator.PopulateLargeBodies(newChunkInfo);
 
             lazyChunks.Add(newChunkInfo.Key, newChunkInfo);
+            allChunks.Add(newChunkInfo.Key, newChunkInfo);
           }
 
           lazyGridKey.x++;
         }
 
         lazyGridKey.y++;
-        lazyGridKey.x -= 5;
+        lazyGridKey.x -= 7;
       }
     }
 

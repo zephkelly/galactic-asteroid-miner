@@ -28,8 +28,9 @@ namespace zephkelly
     private StarType starType;
 
     private float starMaxRadius;
-    private float beltMin = 20;
-    private float beltMax = 30;
+    private float starTemperature;
+    private float beltMin = 30;
+    private float beltMax = 60;
 
     private GameObject starObject;
     private Renderer starRenderer;
@@ -43,6 +44,7 @@ namespace zephkelly
     public Vector2 AsteroidBeltRadius { get => new Vector2(beltMin, beltMax); }
     public StarType Type { get => starType; }
     public float MaxOrbitRadius { get => starMaxRadius; }
+    public float Temperature { get => starTemperature; }
 
     public Chunk ParentChunk { get => parentChunk; }
     public GameObject AttachedObject { get => starObject; }
@@ -56,24 +58,85 @@ namespace zephkelly
       starPosition = _parentChunk.Position;
 
       starType = _type;
+      SetStarProperties();
+
       starObject = null;
     }
 
-    public void SetStarObject(GameObject _starObject)
+    public void SetStarObject(GameObject _starObject, SpriteRenderer _starRenderer)
     {
       starObject = _starObject;
-      starRenderer = starObject.GetComponent<SpriteRenderer>();
+      starRenderer = _starRenderer;
 
       _starObject.transform.position = starPosition;
     }
 
     public void DisposeObject()
     {
+      if (starObject == null) return;
       Debug.Log("Disposing star object");
-      if (starObject != null) return;
 
       starObject = null;
       starRenderer = null;
+    }
+
+    private void SetStarProperties()
+    {
+      switch (starType)
+      {
+        case StarType.WhiteDwarf:
+          starMaxRadius = 60;
+          starTemperature = 50000;
+          break;
+        case StarType.BrownDwarf:
+          starMaxRadius = 80;
+          starTemperature = 80000;
+          break;
+        case StarType.RedDwarf:
+          starMaxRadius = 100;
+          starTemperature = 100000;
+          break;
+        case StarType.YellowDwarf:
+          starMaxRadius = 140;
+          starTemperature = 400000;
+          break;
+        case StarType.BlueGiant:
+          starMaxRadius = 250;
+          starTemperature = 800000;
+          break;
+        case StarType.OrangeGiant:
+          starMaxRadius = 300;
+          starTemperature = 1000000;
+          break;
+        case StarType.RedGiant:
+          starMaxRadius = 350;
+          starTemperature = 5000000;
+          break;
+        case StarType.BlueSuperGiant:
+          starMaxRadius = 400;
+          starTemperature = 15000000;
+          break;
+        case StarType.RedSuperGiant:
+          starMaxRadius = 450;
+          starTemperature = 25000000;
+          break;
+        case StarType.BlueHyperGiant:
+          starMaxRadius = 500;
+          starTemperature = 40000000;
+          break;
+        case StarType.RedHyperGiant:
+          starMaxRadius = 600;
+          starTemperature = 48000000;
+          break;
+        case StarType.NeutronStar:
+          starMaxRadius = 300;
+          starTemperature = 50000000;
+          break;
+        case StarType.BlackHole:
+          starMaxRadius = 300;
+          starTemperature = 15000000;
+          break;
+      }
     }
   }
 }
