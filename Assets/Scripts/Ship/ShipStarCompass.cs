@@ -64,6 +64,12 @@ namespace zephkelly
 
         pointers.Add(activeChunk.Value.Position, rectTransform);
       }
+
+      GameObject basePointer = Object.Instantiate(pointer);
+      basePointer.transform.SetParent(parentCanvas.transform);
+      RectTransform baseRect = basePointer.GetComponent<RectTransform>();
+      basePointer.GetComponentInChildren<UnityEngine.UI.Image>().color = new Color(0, 0.7f, 1, 1);
+      pointers.Add(Vector2.zero, baseRect);
     }
 
     private void LateUpdate()

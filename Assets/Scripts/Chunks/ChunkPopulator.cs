@@ -7,7 +7,7 @@ namespace zephkelly
   public class ChunkPopulator
   {
         //Stars
-    private static int starMinimumSeparation = 400;
+    //private static int starMinimumSeparation = 2400;
     //Minimum distances before a star can spawn
     private static int starMinDistance1 = 300;   //WhiteDwarf - BrownDwarf
     private static int starMinDistance2 = 600;   //RedDwarf - YellowDwarf
@@ -31,14 +31,13 @@ namespace zephkelly
 
     //------------------------------------------------------------------------------
 
-    public bool PopulateLargeBodies(Chunk lazyChunk)
+    public void PopulateLargeBodies(Chunk lazyChunk)
     {
-      var hasStar = GenerateStars(lazyChunk, ChunkManager.Instance.LazyChunks);
+      var hasStar = GenerateStars(lazyChunk);
 
-      if (!hasStar) return false;
+      if (!hasStar) return;
 
       GenerateAsteroids(lazyChunk, true);
-      return true;
     }
 
     public void PopulateSmallBodies(Chunk activeChunk)
@@ -50,53 +49,47 @@ namespace zephkelly
       activeChunk.SetPopulated();
     }
 
-    private bool GenerateStars(Chunk thisChunk, Dictionary<Vector2Int,Chunk> chunks)
+    private bool GenerateStars(Chunk thisChunk)
     {
       if (thisChunk.Key == Vector2.zero) return false;
 
-      //Stars are always generated in the center of a chunk
-      List<float> starDistances = new List<float>();
-      
-      GetStarDistances();   //Doesnt work will need to iterate in grid around star to check
+      bool starNearby = GetStarDistances();
 
-      if (CanGenerateStar()) 
-      {
-        return TryGenerateStar();   //returns true if star was generated
-      } else {
-        return false; 
-      }
+      if (starNearby) return false;
+      return TryGenerateStar();   //true if star was generated
 
       //------------------------------------------------------------------------------
 
-      void GetStarDistances()
+      //This function makes me want to vomit
+      bool GetStarDistances()
       {
-        foreach (var chunk in chunks)
-        {
-          if (chunk.Key == thisChunk.Key) continue;   //ignore ourselves
+        Vector2Int starCheckKey = new Vector2Int(thisChunk.Key.x - 3, thisChunk.Key.y - 3);
 
-          if (chunk.Value.HasStar)
+        for (int y = 0; y < 7; y++)
+        {
+          for (int x = 0; x < 7; x++)
           {
-            var distanceToStar = Vector2.Distance (
-              thisChunk.Position,
-              chunk.Value.Position
-            );
+            if (ChunkManager.Instance.AllChunks.ContainsKey(starCheckKey))
+            {
+              if (starCheckKey != thisChunk.Key)
+              {
+                var chunk = ChunkManager.Instance.AllChunks[starCheckKey];
 
-            starDistances.Add(distanceToStar);
+                if (chunk.HasStar)
+                {
+                  return true;
+                }
+              }
+            }
+
+            starCheckKey.x++;
           }
-          else continue;
-        }
-      }
 
-      bool CanGenerateStar()
-      {
-        if (starDistances.Count == 0) return true;   //if there are no stars
-
-        for (int i = 0; i < starDistances.Count; i++)
-        {
-          if (starDistances[i] < starMinimumSeparation) return false;
+          starCheckKey.y++;
+          starCheckKey.x -= 7;
         }
 
-        return true;
+        return false;
       }
 
       bool TryGenerateStar()
@@ -219,7 +212,7 @@ namespace zephkelly
 
     private void GenerateAsteroids(Chunk chunk, bool hasStar = false)
     {
-      if (chunk.Key == Vector2.zero) return;
+      //if (chunk.Key == Vector2.zero) return;
 
       int minimum = Random.Range(minAsteroids - 10, minAsteroids + 10);
       int maximum = Random.Range(maxAsteroids - 10, maxAsteroids + 10);

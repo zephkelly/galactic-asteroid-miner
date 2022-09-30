@@ -118,8 +118,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   asteroidSpriteRenderer: {fileID: 4179776488643482051}
-  asteroidRigid2D: {fileID: 3785719556351337997}
-  asteroidHealth: 0
 --- !u!1 &5904528131540670529
 GameObject:
   m_ObjectHideFlags: 0
@@ -190,8 +188,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1494104147
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 83d3d9d6eb913ac47afdc55900f58045, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

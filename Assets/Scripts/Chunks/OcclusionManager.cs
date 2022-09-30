@@ -60,6 +60,7 @@ namespace zephkelly
 
       GetActiveStars();
       GetLazyAsteroids();
+      GetActiveAsteroids();
     }
 
     private void GetActiveStars()
@@ -82,16 +83,29 @@ namespace zephkelly
     private void GetLazyAsteroids()
     {
       if (activeStars.Count == 0) return;
-
       foreach (var activeStar in activeStars)
       {
-        var starAsteroids = activeStar.Value.Asteroids;
+        if (activeStar.Value.Asteroids.Count == 0) continue;
 
-        foreach (var asteroid in starAsteroids)
+        foreach (var asteroid in activeStar.Value.Asteroids)
         {
-          var asteroidDistance = FastDistance(asteroid.SpawnPoint, playerTransform.position);
-
+          if (lazyAsteroids.ContainsKey(asteroid)) continue;
           lazyAsteroids.Add(asteroid, activeStar.Value);
+        }
+      }
+    }
+
+    private void GetActiveAsteroids()
+    {
+      foreach (var activeChunk in currentActiveChunks)
+      {
+        if (activeChunk.Value.HasStar) continue;
+        if (activeChunk.Value.Asteroids.Count == 0) continue;
+
+        foreach (var activeAsteroid in activeChunk.Value.Asteroids)
+        {
+          if (activeAsteroids.ContainsKey(activeAsteroid)) continue;
+          activeAsteroids.Add(activeAsteroid, activeChunk.Value);
         }
       }
     }
@@ -102,6 +116,7 @@ namespace zephkelly
 
       ActiveStarOcclusion();
       LazyAsteroidOcclusion();
+      ActiveAsteroidOcclusion();
     }
 
     private void UpdateChunkContents()
@@ -181,8 +196,23 @@ namespace zephkelly
         else
         {
           //Dispose of object send back to pool
+          //Get all new asteroid spawn points
           if (!activeStar.Key.AttachedObject.activeSelf) continue;
           activeStar.Key.AttachedObject.SetActive(false);
+
+          foreach (var asteroid in activeStar.Value.Asteroids)
+          {
+            if (lazyAsteroids.ContainsKey(asteroid))
+            {
+              lazyAsteroids.Remove(asteroid);
+
+              if (asteroid.AttachedObject == null) continue;
+
+              //Dispose object and send back to pool
+              //Update asteroid spawn point
+              asteroid.AttachedObject.SetActive(false);
+            }
+          }
         }
       }
     }
@@ -200,8 +230,7 @@ namespace zephkelly
           lazyAsteroid.Key.SetObject(asteroidObject);
           lazyAsteroid.Key.IsRendered(false);
         }
-        else
-        {
+        else {
           lazyAsteroid.Key.UpdateCurrentPosition();
         }
 
@@ -212,9 +241,39 @@ namespace zephkelly
         }
         else
         {
-          //Dispose of object send back to pool
           if (!lazyAsteroid.Key.RendererStatus) continue;
           lazyAsteroid.Key.IsRendered(false);
+        }
+      }
+    }
+
+    private void ActiveAsteroidOcclusion()
+    {
+      foreach (var activeAsteroid in activeAsteroids)
+      {
+        var asteroidDistance = FastDistance(activeAsteroid.Key.CurrentPosition, playerTransform.position);
+
+        if (asteroidDistance < asteroidOcclusionDistance)
+        {
+          //Make object if null
+          if (activeAsteroid.Key.AttachedObject == null)
+          {
+            var asteroidObject = instantiator.GetAsteroid(activeAsteroid.Key);
+            activeAsteroid.Key.SetObject(asteroidObject);
+          } 
+          else {
+            activeAsteroid.Key.UpdateCurrentPosition();
+
+            if (activeAsteroid.Key.RendererStatus) continue;
+            activeAsteroid.Key.IsRendered(true);
+          }
+        }
+        else
+        {
+          //Dispose of object and update spawn point
+          if (activeAsteroid.Key.AttachedObject == null) continue;
+          if (!activeAsteroid.Key.RendererStatus) continue;
+          activeAsteroid.Key.IsRendered(false);
         }
       }
     }

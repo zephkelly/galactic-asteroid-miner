@@ -36,6 +36,22 @@ namespace zephkelly
       Destroy(gameObject);
     }
 
+    public void SetStarBehaviour(StarController _starController, bool _orbitingStar = true)
+    {
+      orbitingStar = _orbitingStar;
+
+      if (orbitingStar)
+      {
+        starController = _starController;
+        orbitingStar = true;
+      }
+      else
+      {
+        starController = null;
+        orbitingStar = false;
+      }
+    }
+
     private void Awake()
     {
       playerInventory = Resources.Load("ScriptableObjects/PlayerInventory") as Inventory;
@@ -123,6 +139,7 @@ namespace zephkelly
       }  
     }
 
+    /*
     private void OnTriggerEnter2D(Collider2D other)
     {
       if (!other.CompareTag("Star")) return;
@@ -141,10 +158,12 @@ namespace zephkelly
       orbitingStar = false;
       starController = null;
     }
+    */
 
     private void OnCollisionEnter2D(Collision2D other)
     {
       GameObject otherObject = other.gameObject;
+      Debug.Log("Collision with " + otherObject.name);
 
       if (otherObject.CompareTag("Asteroid"))
       {

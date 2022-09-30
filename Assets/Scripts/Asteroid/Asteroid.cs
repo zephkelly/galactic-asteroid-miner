@@ -77,6 +77,8 @@ namespace zephkelly
     public void SetObject(GameObject _asteroidObject)
     {
       asteroidObject = _asteroidObject;
+      if (asteroidObject == null) return;
+      
       asteroidTransform = asteroidObject.transform;
 
       rigid2D = asteroidObject.GetComponent<Rigidbody2D>();

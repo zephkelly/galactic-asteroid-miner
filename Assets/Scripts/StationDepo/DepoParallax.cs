@@ -8,8 +8,10 @@ namespace zephkelly
   {
     private Transform cameraTransform;
     [SerializeField] Transform depoOuterLayerTransform;
+    [SerializeField] Transform depoInnerLayerTransform;
 
-    [SerializeField] float parallaxFactor;
+    [SerializeField] float parallaxFactorOuter;
+    [SerializeField] float parallaxFactorInner;
 
     //----------------------------------------------------------------------------------------------
 
@@ -21,12 +23,19 @@ namespace zephkelly
     public void Parallax(Vector2 cameraLastPosition)
     {
       Vector2 cameraDelta = (Vector2)cameraTransform.position - cameraLastPosition;
-      Vector2 depoPosition = (Vector2)depoOuterLayerTransform.position;
+      Vector2 depoPositionOuter = (Vector2)depoOuterLayerTransform.position;
+      Vector2 depoPositionInner = (Vector2)depoInnerLayerTransform.position;
 
       depoOuterLayerTransform.position = Vector2.Lerp(
-        depoPosition,
-        depoPosition + cameraDelta,
-        parallaxFactor * Time.deltaTime
+        depoPositionOuter,
+        depoPositionOuter + cameraDelta,
+        parallaxFactorOuter * Time.deltaTime
+      );
+
+      depoInnerLayerTransform.position = Vector2.Lerp(
+        depoPositionInner,
+        depoPositionInner + cameraDelta,
+        parallaxFactorInner * Time.deltaTime
       );
     }
   }

@@ -48,9 +48,15 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Player
-    uniqueID: 1555942171
+  - name: Stations
+    uniqueID: 3870770329
     locked: 0
   - name: Asteroids
     uniqueID: 1494104147
+    locked: 0
+  - name: Player
+    uniqueID: 1555942171
+    locked: 0
+  - name: Weapons
+    uniqueID: 655645123
     locked: 0

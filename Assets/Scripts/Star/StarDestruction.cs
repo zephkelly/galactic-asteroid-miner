@@ -10,7 +10,9 @@ namespace zephkelly
     {
       if (collision.gameObject.tag == "Asteroid")
       {
-        Destroy(collision.gameObject);
+        var asteroidInfo = collision.gameObject.GetComponent<AsteroidController>().AsteroidInfo;
+
+        OcclusionManager.Instance.RemoveAsteroid.Add(asteroidInfo, asteroidInfo.ParentChunk);
       }
 
       /*

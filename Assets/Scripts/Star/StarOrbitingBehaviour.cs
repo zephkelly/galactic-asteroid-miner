@@ -22,6 +22,12 @@ namespace zephkelly
 
     private void OnTriggerEnter2D(Collider2D c) 
     {
+      if (c.CompareTag("Player"))
+      {
+        c.gameObject.GetComponent<ShipController>().SetStarBehaviour(starController);
+        return;
+      }
+
       if (!(c.CompareTag("Asteroid") || c.CompareTag("AsteroidPickup"))) return;
 
       //Add to list of orbiting bodies and set velocity
@@ -32,6 +38,12 @@ namespace zephkelly
 
     private void OnTriggerExit2D(Collider2D c) 
     {
+      if (c.CompareTag("Player"))
+      {
+        c.gameObject.GetComponent<ShipController>().SetStarBehaviour(starController, false);
+        return;
+      }
+
       if (!(c.CompareTag("Asteroid") || c.CompareTag("AsteroidPickup"))) return;
 
       var exitingRigidbody = c.GetComponent<Rigidbody2D>();

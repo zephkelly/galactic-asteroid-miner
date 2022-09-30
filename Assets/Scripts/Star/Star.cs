@@ -48,7 +48,7 @@ namespace zephkelly
 
     public Chunk ParentChunk { get => parentChunk; }
     public GameObject AttachedObject { get => starObject; }
-    public List<GameObject> OrbitingBodies { get => orbitingBodies; }
+    public List<GameObject> OrbitiSpawngBodies { get => orbitingBodies; }
 
     //------------------------------------------------------------------------------
 

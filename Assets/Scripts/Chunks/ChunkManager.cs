@@ -35,6 +35,7 @@ namespace zephkelly
 
     public PrefabInstantiator Instantiator { get => prefabInstantiator; }
 
+    public Dictionary<Vector2Int, Chunk> AllChunks { get => allChunks; }
     public Dictionary<Vector2Int, Chunk> ActiveChunks { get => activeChunks; }
     public Dictionary<Vector2Int, Chunk> LazyChunks { get => lazyChunks; }
     public Dictionary<Vector2Int, Chunk> InactiveChunks { get => inactiveChunks; }
@@ -66,7 +67,8 @@ namespace zephkelly
 
       ChunkCreator(playerLastChunkPosition);
       SetActiveChunks(playerChunkPosition);
-
+      
+      OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
       shipStarCompass.UpdateCompass();
     }
 

@@ -10107,10 +10107,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1395682311, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: playOnAwake
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -10159,7 +10155,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6398120923866792553, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
 --- !u!1 &1663101731
 GameObject:
@@ -15104,7 +15101,7 @@ MonoBehaviour:
   m_Intensity: 0.25
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
-  m_ApplyToSortingLayers: 000000001bcbbd5c53380e59
+  m_ApplyToSortingLayers: 000000001bcbbd5c53380e599944b7e6
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -20280,10 +20277,6 @@ PrefabInstance:
     - target: {fileID: 1966893755498499276, guid: 977896a2595d4004f8c481f54e3a1fdb, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1966893755498499278, guid: 977896a2595d4004f8c481f54e3a1fdb, type: 3}
-      propertyPath: parallaxFactor
-      value: 1.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 977896a2595d4004f8c481f54e3a1fdb, type: 3}
