@@ -19,14 +19,14 @@ namespace zephkelly
 
     private Dictionary<Asteroid, Chunk> activeAsteroids = new Dictionary<Asteroid, Chunk>();
     private Dictionary<Asteroid, Chunk> lazyAsteroids = new Dictionary<Asteroid, Chunk>();
-    private Dictionary<Asteroid, Chunk> inactiveAsteroids = new Dictionary<Asteroid, Chunk>();
+    //private Dictionary<Asteroid, Chunk> inactiveAsteroids = new Dictionary<Asteroid, Chunk>();
 
     private Dictionary<Asteroid, Chunk> asteroidToChangeChunk = new Dictionary<Asteroid, Chunk>();
     private Dictionary<Asteroid, Chunk> asteoridToRemove = new Dictionary<Asteroid, Chunk>();
     private Dictionary<Asteroid, Chunk> asteroidToAdd = new Dictionary<Asteroid, Chunk>();
 
     private Dictionary<Star, Chunk> activeStars = new Dictionary<Star, Chunk>();
-    private Dictionary<Star, Chunk> inactiveStars = new Dictionary<Star, Chunk>();
+    //private Dictionary<Star, Chunk> inactiveStars = new Dictionary<Star, Chunk>();
 
     //------------------------------------------------------------------------------
 
@@ -150,8 +150,11 @@ namespace zephkelly
 
           Destroy(asteroid.Key.AttachedObject);
 
-          if (lazyAsteroids.ContainsKey(asteroid.Key)) lazyAsteroids.Remove(asteroid.Key);
           if (activeAsteroids.ContainsKey(asteroid.Key)) activeAsteroids.Remove(asteroid.Key);
+          if (lazyAsteroids.ContainsKey(asteroid.Key)) lazyAsteroids.Remove(asteroid.Key);
+
+          GetActiveAsteroids();
+          GetLazyAsteroids();
         }
 
         asteoridToRemove.Clear();
@@ -159,15 +162,13 @@ namespace zephkelly
 
       void AddToChunk()
       {
-        if (asteroidToAdd.Count == 0) return;
         foreach (var asteroid in asteroidToAdd)
         {
           if (asteroid.Key == null) continue;
-          if (asteroid.Key.ParentChunk == asteroid.Value) continue;
-          asteroid.Key.ParentChunk.Asteroids.Remove(asteroid.Key);
-
-          asteroid.Key.NewParentChunk(asteroid.Value);
           asteroid.Value.Asteroids.Add(asteroid.Key);
+
+          GetActiveAsteroids();
+          GetLazyAsteroids();
         }
 
         asteroidToAdd.Clear();
@@ -221,6 +222,7 @@ namespace zephkelly
     {
       foreach (var lazyAsteroid in lazyAsteroids)
       {
+        
         var asteroidDistance = FastDistance(lazyAsteroid.Key.CurrentPosition, playerTransform.position);
 
         //Make object if null
@@ -236,11 +238,13 @@ namespace zephkelly
 
         if (asteroidDistance < asteroidOcclusionDistance)
         {
+          if (lazyAsteroid.Key.AttachedObject == null) continue;
           if (lazyAsteroid.Key.RendererStatus) continue;
           lazyAsteroid.Key.IsRendered(true);
         }
         else
         {
+          if (lazyAsteroid.Key.AttachedObject == null) continue;
           if (!lazyAsteroid.Key.RendererStatus) continue;
           lazyAsteroid.Key.IsRendered(false);
         }
@@ -273,6 +277,7 @@ namespace zephkelly
           //Dispose of object and update spawn point
           if (activeAsteroid.Key.AttachedObject == null) continue;
           if (!activeAsteroid.Key.RendererStatus) continue;
+          activeAsteroid.Key.UpdateCurrentPosition();
           activeAsteroid.Key.IsRendered(false);
         }
       }

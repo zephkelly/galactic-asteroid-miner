@@ -2,21 +2,24 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace zephkelly
 {
   public class ShipController : MonoBehaviour
   {
+    public static ShipController Instance;
+
     private InputManager playerInputs;
     private Inventory playerInventory;
     private ShipConfiguration shipConfiguration;
+    private ShipShoot shipShoot;
 
     private Rigidbody2D playerRigid2D;
     private Transform playerTransform;
     
     private Vector2 mouseDirection;
     [SerializeField] float moveSpeed = 60f;
-    [SerializeField] bool invulnerable = false;
 
     //Orbiting Variables
     private StarController starController;
@@ -26,14 +29,58 @@ namespace zephkelly
 
     //----------------------------------------------------------------------------------------------
 
+    public ShipConfiguration ShipConfig { get => shipConfiguration; }
+    public int MaxHealth { get => shipConfiguration.HullStrengthMax; }
+    public int Health { get => shipConfiguration.HullStrengthCurrent; }
+    public float MaxFuel { get => shipConfiguration.FuelMax; }
+    public float Fuel { get => shipConfiguration.FuelCurrent; }
+    public Inventory Inventory { get => playerInventory; }
+
     public static event Action OnPlayerDied;
-    public Inventory Inventory => playerInventory;
-    public bool OrbitingStar => orbitingStar;
+
+    private void Awake()
+    {
+      playerInventory = Resources.Load("ScriptableObjects/PlayerInventory") as Inventory;
+
+      playerInventory.AddItem(AsteroidType.Iron.ToString(), 0);
+      playerInventory.AddItem(AsteroidType.Platinum.ToString(), 0);
+      playerInventory.AddItem(AsteroidType.Titanium.ToString(), 0);
+      playerInventory.AddItem(AsteroidType.Gold.ToString(), 0);
+      playerInventory.AddItem(AsteroidType.Palladium.ToString(), 0);
+      playerInventory.AddItem(AsteroidType.Cobalt.ToString(), 0);
+      playerInventory.AddItem(AsteroidType.Stellarite.ToString(), 0);
+      playerInventory.AddItem(AsteroidType.Darkore.ToString(), 0);
+
+      shipConfiguration = GetComponent<ShipConfiguration>();
+      shipShoot = GetComponent<ShipShoot>();
+
+      playerTransform = transform;
+      playerRigid2D = GetComponent<Rigidbody2D>();
+
+      //Set up singleton
+      if (Instance == null) {
+        Instance = this;
+      } else {
+        Destroy(gameObject);
+      }
+    }
+
+    private void Start()
+    {
+      orbitingStar = false;
+      playerInputs = InputManager.Instance;
+      playerRigid2D.centerOfMass = Vector2.zero;
+    }
 
     public void Die()
     {
       OnPlayerDied?.Invoke();
       Destroy(gameObject);
+    }
+
+    public void CanShoot(bool toggleFire)
+    {
+      shipShoot.ToggleFiring = toggleFire;
     }
 
     public void SetStarBehaviour(StarController _starController, bool _orbitingStar = true)
@@ -50,22 +97,6 @@ namespace zephkelly
         starController = null;
         orbitingStar = false;
       }
-    }
-
-    private void Awake()
-    {
-      playerInventory = Resources.Load("ScriptableObjects/PlayerInventory") as Inventory;
-      shipConfiguration = GetComponent<ShipConfiguration>();
-
-      playerTransform = transform;
-      playerRigid2D = GetComponent<Rigidbody2D>();
-    }
-
-    private void Start()
-    {
-      orbitingStar = false;
-      playerInputs = InputManager.Instance;
-      playerRigid2D.centerOfMass = Vector2.zero;
     }
 
     private void Update()
@@ -139,41 +170,15 @@ namespace zephkelly
       }  
     }
 
-    /*
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-      if (!other.CompareTag("Star")) return;
-
-      orbitingStar = true;
-      starController = other.GetComponent<StarController>();
-      starController.OrbitingBehaviour.ApplyInstantOrbitalVelocity(playerRigid2D);
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-      if (!other.CompareTag("Star")) return;
-
-      shipConfiguration.SetAmbientTemperature = 0f;
-
-      orbitingStar = false;
-      starController = null;
-    }
-    */
-
     private void OnCollisionEnter2D(Collision2D other)
     {
       GameObject otherObject = other.gameObject;
-      Debug.Log("Collision with " + otherObject.name);
 
       if (otherObject.CompareTag("Asteroid"))
       {
-        if (invulnerable) return;
-
         var damage = 10;
-
         var healthRemaining = shipConfiguration.TakeDamage(damage);
-
-        Debug.Log($"Player health remaining: {healthRemaining}");
+        
         return;
       }
       else if (otherObject.CompareTag("Star"))

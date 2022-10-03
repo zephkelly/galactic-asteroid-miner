@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 4268589947771861375}
   - component: {fileID: 4268589947771861373}
   - component: {fileID: 9212592379821787369}
-  - component: {fileID: 8083555010907195006}
+  - component: {fileID: 2417425084677337479}
   m_Layer: 0
   m_Name: StarWhite
   m_TagString: Star
@@ -197,18 +197,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19f5834f185f90347bf138091aadc90f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &8083555010907195006
+--- !u!114 &2417425084677337479
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4268589947771861370}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 43455577f3c2f8240a43025a8b6886bf, type: 3}
+  m_Script: {fileID: 11500000, guid: a6380334cd637ef4c8bf527860ab8d81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  starLight: {fileID: 4268589947741448009}
+  starRadiusCollider: {fileID: 4268589947771861373}
+  starSpriteRenderer: {fileID: 4268589948934644073}
 --- !u!1 &4268589948934644068
 GameObject:
   m_ObjectHideFlags: 0

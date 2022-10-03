@@ -32,7 +32,6 @@ namespace zephkelly
 
       //Add to inventory and destroy
       shipController.Inventory.AddItem(asteroidInfo.Type.ToString(), 1);
-      shipController.Inventory.PrintInventory();
 
       OcclusionManager.Instance.RemoveAsteroid.Add(asteroidInfo, asteroidInfo.ParentChunk);
     }

@@ -29,6 +29,7 @@ namespace zephkelly
 
   public class Asteroid
   {
+    private AsteroidController controller;
     private Vector2 spawnPosition;
     private Vector2 currentPosition;
 
@@ -81,11 +82,12 @@ namespace zephkelly
       
       asteroidTransform = asteroidObject.transform;
 
+      controller = asteroidObject.GetComponent<AsteroidController>();
       rigid2D = asteroidObject.GetComponent<Rigidbody2D>();
       collider2D = asteroidObject.GetComponent<Collider2D>();
-      renderer = asteroidObject.GetComponentInChildren<SpriteRenderer>();
+      renderer = controller.Renderer;
       
-      asteroidObject.GetComponent<AsteroidController>().SetAsteroidInfo(this);
+      controller.SetAsteroidInfo(this);
       asteroidObject.transform.position = spawnPosition;
     }
 
@@ -96,6 +98,11 @@ namespace zephkelly
 
     public void IsRendered(bool _enabled)
     {
+      if (renderer == null) 
+      {
+        OcclusionManager.Instance.RemoveAsteroid.Add(this, parentChunk);
+        return;
+      }
       renderer.enabled = _enabled;
     }
 

@@ -7,9 +7,6 @@ namespace zephkelly
   [CreateAssetMenu(menuName = "ScriptableObjects/Inventory")]
   public class Inventory : ScriptableObject
   {
-    //public event System.Action OnInventoryChanged;
-    //for gui
-    
     private Dictionary <string, int> inventory = new Dictionary<string, int>();
 
     //------------------------------------------------------------------------------

@@ -12,8 +12,8 @@ namespace zephkelly
     private Transform cameraTransform;
 
     private Transform target;
-    private Rigidbody2D targetRigid2D;
     private Vector3 mouseLerpPosition;
+    private Vector3 currentOffsetAmount;
 
     [SerializeField] float mouseInterpolateDistance = 2f;
     [SerializeField] float cameraPanSpeed = 0.125f;
@@ -41,7 +41,6 @@ namespace zephkelly
     private void Start()
     {
       target = GameObject.Find("Player").transform;
-      targetRigid2D = target.GetComponent<Rigidbody2D>();
       inputs = InputManager.Instance;
     }
 
@@ -51,15 +50,13 @@ namespace zephkelly
 
       mouseLerpPosition = (mainCamera.ScreenToWorldPoint(Input.mousePosition) - target.position).normalized;
       mouseLerpPosition.y = mouseLerpPosition.y * 1.4f;   //beacuse the camera is wider than it is tall
-
-      cameraPanSpeed = 0.125f;
     }
 
     private void FixedUpdate()
     {
       if (target == null) return;
 
-      Vector3 targetVector = target.position + (mouseLerpPosition * mouseInterpolateDistance);
+      Vector3 targetVector = target.position + currentOffsetAmount + (mouseLerpPosition * mouseInterpolateDistance);
       targetVector.z = cameraTransform.position.z;
 
       Vector3 cameraLastPosition = cameraTransform.position;
@@ -80,9 +77,10 @@ namespace zephkelly
       depoParallax.Parallax(cameraLastPosition);
     }
 
-    public void ChangeFocus(Transform newTarget)
-    {
-      target = newTarget;
-    }
+    public void ChangeFocus(Transform newFocus) => target = newFocus;
+
+    public void SetOffset(Vector2 offsetVector) => currentOffsetAmount = offsetVector;
+
+    public void ClearOffset() => currentOffsetAmount = Vector3.zero;
   }
 }

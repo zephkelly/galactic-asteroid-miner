@@ -48,9 +48,9 @@ namespace zephkelly
 
     private void Awake()
     {
-      playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
       prefabInstantiator = GetComponent<PrefabInstantiator>();
-      shipStarCompass = GetComponent<ShipStarCompass>();
+      playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+      shipStarCompass = GameObject.FindGameObjectWithTag("UIManager").GetComponent<ShipStarCompass>();	
 
       //Singleton pattern
       if (Instance == null) {

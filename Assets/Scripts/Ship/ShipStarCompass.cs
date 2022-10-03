@@ -68,7 +68,7 @@ namespace zephkelly
       GameObject basePointer = Object.Instantiate(pointer);
       basePointer.transform.SetParent(parentCanvas.transform);
       RectTransform baseRect = basePointer.GetComponent<RectTransform>();
-      basePointer.GetComponentInChildren<UnityEngine.UI.Image>().color = new Color(0, 0.7f, 1, 1);
+      basePointer.GetComponentInChildren<UnityEngine.UI.Image>().color = new Color(0, 0.7f, 1, 0.7f);
       pointers.Add(Vector2.zero, baseRect);
     }
 
@@ -84,7 +84,7 @@ namespace zephkelly
         Vector2 screenPosition = mainCamera.WorldToScreenPoint(targetPosition);
         Vector2 cappedScreenPosition = screenPosition;
 
-        bool isOnScreen;
+        bool isOnScreen = false;
 
         RotatePointer();
         IsPointerOnScreen();
@@ -108,11 +108,15 @@ namespace zephkelly
           if (screenPosition.x > 0 && screenPosition.x < Screen.width &&
               screenPosition.y > 0 && screenPosition.y < Screen.height)
           {
+            if (!pointerTransform.gameObject.activeSelf) return;
             isOnScreen = true;
+            pointer.Value.gameObject.SetActive(false);
           }
           else
           {
+            if (pointerTransform.gameObject.activeSelf) return;
             isOnScreen = false;
+            pointer.Value.gameObject.SetActive(true);
           }
         }
 

@@ -11,6 +11,7 @@ TagManager:
   - PickupMagnet
   - Station
   - StarCore
+  - UIManager
   layers:
   - Default
   - TransparentFX

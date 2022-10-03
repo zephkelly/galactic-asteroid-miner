@@ -16,6 +16,7 @@ namespace zephkelly
 
     //------------------------------------------------------------------------------
 
+    public SpriteRenderer Renderer { get => asteroidSpriteRenderer; }
     public Rigidbody2D AsteroidRigid2D { get => asteroidRigid2D; }
     public Asteroid AsteroidInfo { get => asteroidInfo; }
     public float Health { get => asteroidInfo.Health; }
