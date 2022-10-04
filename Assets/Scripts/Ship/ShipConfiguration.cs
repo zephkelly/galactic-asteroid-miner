@@ -5,6 +5,13 @@ using System.Threading.Tasks;
 
 namespace zephkelly
 {
+  public enum RefuelType
+  {
+    Fifty,
+    Hundred,
+    Half,
+    All
+  }
   public enum ShipHull
   {
     SteelHull,
@@ -80,12 +87,14 @@ namespace zephkelly
   #endregion
 
   public class ShipConfiguration : MonoBehaviour
-  {
+  {    
     private ShipController shipController;
+    private Inventory playerInventory;
 
     private ShipHull shipHull;
     private int hullStrengthMax;
     private int hullStrengthCurrent;
+    public float hullCostPerUnit = 4;
 
     private ShipRadiator shipRadiator;
     private int radiatorEfficiency;
@@ -101,6 +110,16 @@ namespace zephkelly
     [SerializeField] float fuelTankCurrent;
     private const int fuelUsage = 1;
     internal bool toggleFuel = true;
+    public float fuelCostPerLitre = 0.5f;
+
+    public int ironPrice = 5;
+    public int platinumPrice = 10;
+    public int titaniumPrice = 15;
+    public int goldPrice = 20;
+    public int palladiumPrice = 25;
+    public int cobaltPrice = 35;
+    public int stellaritePrice = 50;
+    public int darkorePrice = 80;
 
     public ShipHull ShipsHull { get => shipHull; }
     public int HullStrengthMax { get => hullStrengthMax; }
@@ -136,25 +155,87 @@ namespace zephkelly
       SetFuelTank();
     }
 
-    public void RefuelShip(int fuelAmount)
+    public void RefuelShip(int type)
     {
-      fuelTankCurrent += fuelAmount;
-      fuelTankCurrent = Mathf.Clamp(fuelTankCurrent, 0, fuelTankMaxCapacity);
+      int fuelNeeded = 0;
+      int fuelPrice = 0;
+
+      if (type == 1)
+      {
+        fuelNeeded = (int)(fuelTankMaxCapacity - fuelTankCurrent);
+        fuelPrice = (int)(fuelNeeded * fuelCostPerLitre);
+
+        shipController.Inventory.RemoveMoney((int)fuelPrice);
+        fuelTankCurrent = fuelTankMaxCapacity;
+      }
+      else if (type == 2)
+      {
+        fuelNeeded = (int)((fuelTankMaxCapacity - fuelTankCurrent) / 2);
+        fuelPrice = (int)(fuelNeeded * fuelCostPerLitre);
+
+        shipController.Inventory.RemoveMoney((int)fuelPrice);
+        fuelTankCurrent += fuelNeeded;
+
+      }
+      else if (type == 3)
+      {
+        fuelNeeded = (int)(100 / fuelCostPerLitre);
+
+        shipController.Inventory.RemoveMoney(100);
+        fuelTankCurrent += fuelNeeded;
+      }
+      else if (type == 4)
+      {
+        fuelNeeded = (int)(50 / fuelCostPerLitre);
+
+        shipController.Inventory.RemoveMoney(50);
+        fuelTankCurrent += fuelNeeded;
+      }
+
       UIManager.Instance.OnUpdateFuel?.Invoke();
+      UIManager.Instance.MadeAPurchase();
     }
-    #endregion
 
-    private void Awake()
+    public void RepairHull(int repairAmount)
     {
-      shipController = GetComponent<ShipController>();
+      hullStrengthCurrent += repairAmount;
+      hullStrengthCurrent = Mathf.Clamp(hullStrengthCurrent, 0, hullStrengthMax);
+      UIManager.Instance.OnUpdateHull?.Invoke();
+    }
 
-      shipHull = ShipHull.SteelHull;
-      shipRadiator = ShipRadiator.SteelRadiator;
-      shipFuelTank = ShipFuelTank.SmallTank;
+    public void SellInventory()
+    {
+      var iron = playerInventory.GetItemAmount("Iron");
+      var platinum = playerInventory.GetItemAmount("Platinum");
+      var titanium = playerInventory.GetItemAmount("Titanium");
+      var gold = playerInventory.GetItemAmount("Gold");
+      var palladium = playerInventory.GetItemAmount("Palladium");
+      var cobalt = playerInventory.GetItemAmount("Cobalt");
+      var stellarite = playerInventory.GetItemAmount("Stellarite");
+      var darkore = playerInventory.GetItemAmount("Darkore");
 
-      SetHull();
-      SetRadiator();
-      SetFuelTank();
+      var ironTotal = iron * ironPrice;
+      var platinumTotal = platinum * platinumPrice;
+      var titaniumTotal = titanium * titaniumPrice;
+      var goldTotal = gold * goldPrice;
+      var palladiumTotal = palladium * palladiumPrice;
+      var cobaltTotal = cobalt * cobaltPrice;
+      var stellariteTotal = stellarite * stellaritePrice;
+      var darkoreTotal = darkore * darkorePrice;
+
+      var totalPrice = 
+        ironTotal + 
+        platinumTotal + 
+        titaniumTotal + 
+        goldTotal + 
+        palladiumTotal + 
+        cobaltTotal + 
+        stellariteTotal + 
+        darkoreTotal;
+
+      playerInventory.AddMoney(totalPrice);
+      playerInventory.ClearInventory();
+      UIManager.Instance.MadeAPurchase();
     }
 
     public int TakeDamage(int _damage)
@@ -165,6 +246,24 @@ namespace zephkelly
       if (hullStrengthCurrent <= 0) shipController.Die();
 
       return hullStrengthCurrent;
+    }
+    #endregion
+
+    private void Start()
+    {
+      shipController = GetComponent<ShipController>();
+      playerInventory = shipController.Inventory;
+
+      shipHull = ShipHull.SteelHull;
+      shipRadiator = ShipRadiator.SteelRadiator;
+      shipFuelTank = ShipFuelTank.SmallTank;
+
+      SetHull();
+      SetRadiator();
+      SetFuelTank();
+
+      UIManager.Instance.OnUpdateFuel?.Invoke();
+      UIManager.Instance.OnUpdateHull?.Invoke();
     }
 
     private void Update()

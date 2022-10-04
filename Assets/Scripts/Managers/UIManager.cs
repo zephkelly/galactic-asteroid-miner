@@ -18,15 +18,6 @@ namespace zephkelly
     public UnityEvent OnUpdateFuel;
     public UnityEvent OnUpdateHull;
 
-    private const int ironPrice = 5;
-    private const int platinumPrice = 10;
-    private const int titaniumPrice = 15;
-    private const int goldPrice = 20;
-    private const int palladiumPrice = 25;
-    private const int cobaltPrice = 35;
-    private const int stellaritePrice = 50;
-    private const int darkorePrice = 80;
-
     private void Awake()
     {
       if (Instance == null)
@@ -42,10 +33,18 @@ namespace zephkelly
     private void Start()
     {
       #region Depo Steup
+      shipConfig = ShipController.Instance.ShipConfig;
       playerInventory = ShipController.Instance.Inventory;
 
       depotUIObject = GameObject.Find("DepoUI");
       tooltipUIElement = GameObject.Find("TooltipUI").GetComponent<TextMeshProUGUI>();
+
+      creditsAmount = GameObject.Find("CreditsAmount").GetComponent<TextMeshProUGUI>();
+
+      refuelAllCost = GameObject.Find("RefuelAllCost").GetComponent<TextMeshProUGUI>();
+      refuelHalfCost = GameObject.Find("RefuelHalfCost").GetComponent<TextMeshProUGUI>();
+      repairAllCost = GameObject.Find("RepairAllCost").GetComponent<TextMeshProUGUI>();
+      repairHalfCost = GameObject.Find("RepairHalfCost").GetComponent<TextMeshProUGUI>();
 
       ironCount = GameObject.Find("IronCount").GetComponent<TextMeshProUGUI>();
       platinumCount = GameObject.Find("PlatinumCount").GetComponent<TextMeshProUGUI>();
@@ -89,6 +88,13 @@ namespace zephkelly
     }
 
     #region Depo UI
+    private TextMeshProUGUI creditsAmount;
+
+    private TextMeshProUGUI refuelAllCost;
+    private TextMeshProUGUI refuelHalfCost;
+    private TextMeshProUGUI repairAllCost;
+    private TextMeshProUGUI repairHalfCost;
+
     private TextMeshProUGUI tooltipUIElement;
     private TextMeshProUGUI ironCount;
     private TextMeshProUGUI platinumCount;
@@ -109,13 +115,18 @@ namespace zephkelly
     private TextMeshProUGUI darkoreValue;
     private TextMeshProUGUI totalValue;
 
+    private ShipConfiguration shipConfig;
     private Inventory playerInventory;
     private GameObject depotUIObject;
-    internal float tooltipFlashSpeed = 0.5f;
-    internal float tooltipUIAlphaLerp;
-    internal bool tooltipLerp;
+
     internal bool depotUI;
     internal bool depotToggle;
+
+    public void MadeAPurchase()
+    {
+      UpdateOreOverlay();
+      UpdateDepoPrices();
+    }
 
     private void DepoMenuEnable()
     {
@@ -123,6 +134,7 @@ namespace zephkelly
       depotToggle = false;
 
       UpdateOreOverlay();
+      UpdateDepoPrices();
 
       tooltipUIElement.color = new Color(1, 1, 1, 1);
     }
@@ -175,7 +187,7 @@ namespace zephkelly
     private void UpdateOreOverlay()
     {
       //Get ore counts
-      var iron = playerInventory.GetItemAmount(AsteroidType.Iron.ToString());
+      var iron = playerInventory.GetItemAmount("Iron");
       var platinum = playerInventory.GetItemAmount("Platinum");
       var titanium = playerInventory.GetItemAmount("Titanium");
       var gold = playerInventory.GetItemAmount("Gold");
@@ -194,14 +206,14 @@ namespace zephkelly
       darkoreCount.text = darkore.ToString();
 
       //Get ore prices
-      var ironTotal = iron * ironPrice;
-      var platinumTotal = platinum * platinumPrice;
-      var titaniumTotal = titanium * titaniumPrice;
-      var goldTotal = gold * goldPrice;
-      var palladiumTotal = palladium * palladiumPrice;
-      var cobaltTotal = cobalt * cobaltPrice;
-      var stellariteTotal = stellarite * stellaritePrice;
-      var darkoreTotal = darkore * darkorePrice;
+      var ironTotal = iron * shipConfig.ironPrice;
+      var platinumTotal = platinum * shipConfig.platinumPrice;
+      var titaniumTotal = titanium * shipConfig.titaniumPrice;
+      var goldTotal = gold * shipConfig.goldPrice;
+      var palladiumTotal = palladium * shipConfig.palladiumPrice;
+      var cobaltTotal = cobalt * shipConfig.cobaltPrice;
+      var stellariteTotal = stellarite * shipConfig.stellaritePrice;
+      var darkoreTotal = darkore * shipConfig.darkorePrice;
 
       var totalPrice = 
         ironTotal + 
@@ -223,6 +235,28 @@ namespace zephkelly
       darkoreValue.text = "= $" + darkoreTotal.ToString();
 
       totalValue.text = "= $" + totalPrice.ToString();
+    }
+
+    private void UpdateDepoPrices()
+    {
+      var ship = ShipController.Instance.ShipConfig;
+
+      var fuelPrice = ShipController.Instance.ShipConfig.fuelCostPerLitre;
+      var hullPrice = ShipController.Instance.ShipConfig.hullCostPerUnit;
+
+      var fuelDeltaPrice = (ship.FuelMax - ship.FuelCurrent) * fuelPrice;
+      var hullDeltaPrice = (ship.HullStrengthMax - ship.HullStrengthCurrent) * hullPrice;
+
+      fuelDeltaPrice = Mathf.RoundToInt(fuelDeltaPrice);
+      hullDeltaPrice = Mathf.RoundToInt(hullDeltaPrice);
+
+      refuelAllCost.text = "$" + fuelDeltaPrice.ToString();
+      refuelHalfCost.text = "$" + (fuelDeltaPrice / 2).ToString();
+
+      repairAllCost.text = "$" + hullDeltaPrice.ToString();
+      repairHalfCost.text = "$" + (hullDeltaPrice / 2).ToString();
+
+      creditsAmount.text = "$" + playerInventory.GetCreditsAmount();
     }
     #endregion
 

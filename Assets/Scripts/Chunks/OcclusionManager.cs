@@ -43,6 +43,8 @@ namespace zephkelly
       }
     }
 
+    public void UpdatePlayerTransform(Transform newPlayer) => playerTransform = newPlayer;
+
     private void Start()
     {
       chunkManager = ChunkManager.Instance;
@@ -112,6 +114,8 @@ namespace zephkelly
 
     private void Update()
     {
+      if (playerTransform == null) return;
+
       UpdateChunkContents();
 
       ActiveStarOcclusion();
@@ -290,5 +294,5 @@ namespace zephkelly
 
       return Mathf.Sqrt(x * x + y * y);
     }
-  } 
+  }
 }

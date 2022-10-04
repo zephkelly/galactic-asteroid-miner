@@ -41,15 +41,8 @@ namespace zephkelly
     private void Awake()
     {
       playerInventory = Resources.Load("ScriptableObjects/PlayerInventory") as Inventory;
-
-      playerInventory.AddItem(AsteroidType.Iron.ToString(), 0);
-      playerInventory.AddItem(AsteroidType.Platinum.ToString(), 0);
-      playerInventory.AddItem(AsteroidType.Titanium.ToString(), 0);
-      playerInventory.AddItem(AsteroidType.Gold.ToString(), 0);
-      playerInventory.AddItem(AsteroidType.Palladium.ToString(), 0);
-      playerInventory.AddItem(AsteroidType.Cobalt.ToString(), 0);
-      playerInventory.AddItem(AsteroidType.Stellarite.ToString(), 0);
-      playerInventory.AddItem(AsteroidType.Darkore.ToString(), 0);
+      playerInventory.ClearInventory();
+      playerInventory.ClearCredits();
 
       shipConfiguration = GetComponent<ShipConfiguration>();
       shipShoot = GetComponent<ShipShoot>();

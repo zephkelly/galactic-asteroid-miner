@@ -48,6 +48,7 @@ namespace zephkelly
 
         cameraController.ChangeFocus(playerNewTransform);
         chunkManager.UpdatePlayerTransform(playerNewTransform);
+        OcclusionManager.Instance.UpdatePlayerTransform(playerNewTransform);
       }
     }
 

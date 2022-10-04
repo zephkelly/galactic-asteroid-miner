@@ -8,6 +8,7 @@ namespace zephkelly
   public class Inventory : ScriptableObject
   {
     private Dictionary <string, int> inventory = new Dictionary<string, int>();
+    public int credits = 0;
 
     //------------------------------------------------------------------------------
 
@@ -35,6 +36,21 @@ namespace zephkelly
       }
     }
 
+    public void AddMoney(int amount)
+    {
+      credits += amount;
+    }
+
+    public void RemoveMoney(int amount)
+    {
+      credits -= amount;
+    }
+
+    public int GetCreditsAmount()
+    {
+      return credits;
+    }
+
     public int GetItemAmount(string item)
     {
       if (inventory.ContainsKey(item))
@@ -59,6 +75,26 @@ namespace zephkelly
     public void ClearInventory()
     {
       inventory.Clear();
+
+      AddItem(AsteroidType.Iron.ToString(), 0);
+      AddItem(AsteroidType.Platinum.ToString(), 0);
+      AddItem(AsteroidType.Titanium.ToString(), 0);
+      AddItem(AsteroidType.Gold.ToString(), 0);
+      AddItem(AsteroidType.Palladium.ToString(), 0);
+      AddItem(AsteroidType.Cobalt.ToString(), 0);
+      AddItem(AsteroidType.Stellarite.ToString(), 0);
+      AddItem(AsteroidType.Darkore.ToString(), 0);
+    }
+
+    public void ClearCredits()
+    {
+      credits = 0;
+    }
+
+    private void OnApplicationQuit()
+    {
+      ClearInventory();
+      ClearCredits();
     }
   }
 }

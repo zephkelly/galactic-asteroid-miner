@@ -5250,7 +5250,7 @@ MonoBehaviour:
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
   m_Color: {r: 1, g: 0.9757165, b: 0.9, a: 1}
-  m_Intensity: 0.6
+  m_Intensity: 0.8
   m_LightVolumeIntensity: 1
   m_LightVolumeIntensityEnabled: 0
   m_ApplyToSortingLayers: 000000001bcbbd5c53380e599944b7e6
@@ -5429,7 +5429,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 60
-  invulnerable: 1
 --- !u!1 &8847222160360162418
 GameObject:
   m_ObjectHideFlags: 0
