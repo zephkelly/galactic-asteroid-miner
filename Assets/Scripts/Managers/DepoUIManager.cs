@@ -8,9 +8,9 @@ using TMPro;
 
 namespace zephkelly
 {
-  public class UIManager : MonoBehaviour
+  public class DepoUIManager : MonoBehaviour
   {
-    public static UIManager Instance;
+    public static DepoUIManager Instance;
 
     public UnityEvent OnHoverDepo;
     public UnityEvent OnLeaveDepoHover;
@@ -43,8 +43,12 @@ namespace zephkelly
 
       refuelAllCost = GameObject.Find("RefuelAllCost").GetComponent<TextMeshProUGUI>();
       refuelHalfCost = GameObject.Find("RefuelHalfCost").GetComponent<TextMeshProUGUI>();
+      refuel100 = GameObject.Find("Refuel100").GetComponent<TextMeshProUGUI>();
+      refuel50 = GameObject.Find("Refuel50").GetComponent<TextMeshProUGUI>();
       repairAllCost = GameObject.Find("RepairAllCost").GetComponent<TextMeshProUGUI>();
       repairHalfCost = GameObject.Find("RepairHalfCost").GetComponent<TextMeshProUGUI>();
+      repair100 = GameObject.Find("Repair100").GetComponent<TextMeshProUGUI>();
+      repair50 = GameObject.Find("Repair50").GetComponent<TextMeshProUGUI>();
 
       ironCount = GameObject.Find("IronCount").GetComponent<TextMeshProUGUI>();
       platinumCount = GameObject.Find("PlatinumCount").GetComponent<TextMeshProUGUI>();
@@ -77,8 +81,6 @@ namespace zephkelly
 
       OnUpdateFuel.AddListener(UpdateFuelUI);
       OnUpdateHull.AddListener(UpdateHullUI);
-      OnUpdateFuel?.Invoke();
-      OnUpdateHull?.Invoke();
       #endregion
     }
 
@@ -92,8 +94,12 @@ namespace zephkelly
 
     private TextMeshProUGUI refuelAllCost;
     private TextMeshProUGUI refuelHalfCost;
+    private TextMeshProUGUI refuel100;
+    private TextMeshProUGUI refuel50;
     private TextMeshProUGUI repairAllCost;
     private TextMeshProUGUI repairHalfCost;
+    private TextMeshProUGUI repair100;
+    private TextMeshProUGUI repair50;
 
     private TextMeshProUGUI tooltipUIElement;
     private TextMeshProUGUI ironCount;
@@ -257,6 +263,60 @@ namespace zephkelly
       repairHalfCost.text = "$" + (hullDeltaPrice / 2).ToString();
 
       creditsAmount.text = "$" + playerInventory.GetCreditsAmount();
+
+      if (playerInventory.GetCreditsAmount() < fuelDeltaPrice)
+      {
+        refuelAllCost.color = Color.red;
+        refuelHalfCost.color = Color.red;
+      }
+      else
+      {
+        refuelAllCost.color = Color.black;
+        refuelHalfCost.color = Color.black;
+      }
+
+      if (playerInventory.GetCreditsAmount() < hullDeltaPrice)
+      {
+        repairAllCost.color = Color.red;
+        repairHalfCost.color = Color.red;
+      }
+      else
+      {
+        repairAllCost.color = Color.black;
+        repairHalfCost.color = Color.black;
+      }
+
+      if (playerInventory.GetCreditsAmount() < fuelDeltaPrice && 
+        playerInventory.GetCreditsAmount() < hullDeltaPrice)
+      {
+        creditsAmount.color = Color.red;
+      }
+      else
+      {
+        creditsAmount.color = Color.black;
+      }
+
+      if (playerInventory.GetCreditsAmount() < 100)
+      {
+        repair100.color = Color.red;
+        refuel100.color = Color.red;
+      }
+      else
+      {
+        repair100.color = Color.black;
+        refuel100.color = Color.black;
+      }
+      
+      if (playerInventory.GetCreditsAmount() < 50)
+      {
+        repair50.color = Color.red;
+        refuel50.color = Color.red;
+      }
+      else
+      {
+        repair50.color = Color.black;
+        refuel50.color = Color.black;
+      }
     }
     #endregion
 
@@ -270,6 +330,12 @@ namespace zephkelly
       int maxHullStrength = ShipController.Instance.MaxHealth;
 
       float healthPercentage = (float)hullStrength / (float)maxHullStrength;
+      
+      if (healthPercentage == float.NaN) 
+      {
+        Debug.LogError("Health percentage is NaN");
+        return;
+      }
 
       healthSlider.value = healthPercentage;
     }
@@ -280,6 +346,12 @@ namespace zephkelly
       float fuelMax = ShipController.Instance.MaxFuel;
 
       float fuelPercentage = fuelCurrent / fuelMax;
+
+      if (fuelPercentage == float.NaN)
+      {
+        Debug.LogError("Fuel percentage is NaN");
+        return;
+      }
 
       fuelSlider.value = fuelPercentage;
     }

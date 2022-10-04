@@ -112,12 +112,12 @@ namespace zephkelly
     internal bool toggleFuel = true;
     public float fuelCostPerLitre = 0.5f;
 
-    public int ironPrice = 5;
-    public int platinumPrice = 10;
-    public int titaniumPrice = 15;
-    public int goldPrice = 20;
-    public int palladiumPrice = 25;
-    public int cobaltPrice = 35;
+    public int ironPrice = 2;
+    public int platinumPrice = 3;
+    public int titaniumPrice = 8;
+    public int goldPrice = 12;
+    public int palladiumPrice = 18;
+    public int cobaltPrice = 24;
     public int stellaritePrice = 50;
     public int darkorePrice = 80;
 
@@ -192,15 +192,53 @@ namespace zephkelly
         fuelTankCurrent += fuelNeeded;
       }
 
-      UIManager.Instance.OnUpdateFuel?.Invoke();
-      UIManager.Instance.MadeAPurchase();
+      fuelTankCurrent = Mathf.Clamp(fuelTankCurrent, 0, fuelTankMaxCapacity);
+
+      DepoUIManager.Instance.OnUpdateFuel?.Invoke();
+      DepoUIManager.Instance.MadeAPurchase();
     }
 
-    public void RepairHull(int repairAmount)
+    public void RepairHull(int type)
     {
-      hullStrengthCurrent += repairAmount;
+      int hullPointsNeeded = 0;
+      int hullPointPrice = 0;
+
+      if (type == 1)
+      {
+        hullPointsNeeded = (int)(hullStrengthMax - hullStrengthCurrent);
+        hullPointPrice = (int)(hullPointsNeeded * hullCostPerUnit);
+
+        shipController.Inventory.RemoveMoney((int)hullPointPrice);
+        hullStrengthCurrent = hullStrengthMax;
+      }
+      else if (type == 2)
+      {
+        hullPointsNeeded = (int)((hullStrengthMax - hullStrengthCurrent) / 2);
+        hullPointPrice = (int)(hullPointsNeeded * hullCostPerUnit);
+
+        shipController.Inventory.RemoveMoney((int)hullPointPrice);
+        hullStrengthCurrent += hullPointsNeeded;
+
+      }
+      else if (type == 3)
+      {
+        hullPointsNeeded = (int)(100 / hullCostPerUnit);
+
+        shipController.Inventory.RemoveMoney(100);
+        hullStrengthCurrent += hullPointsNeeded;
+      }
+      else if (type == 4)
+      {
+        hullPointsNeeded = (int)(50 / hullCostPerUnit);
+
+        shipController.Inventory.RemoveMoney(50);
+        hullStrengthCurrent += hullPointsNeeded;
+      }
+
       hullStrengthCurrent = Mathf.Clamp(hullStrengthCurrent, 0, hullStrengthMax);
-      UIManager.Instance.OnUpdateHull?.Invoke();
+
+      DepoUIManager.Instance.OnUpdateHull?.Invoke();
+      DepoUIManager.Instance.MadeAPurchase();
     }
 
     public void SellInventory()
@@ -235,13 +273,13 @@ namespace zephkelly
 
       playerInventory.AddMoney(totalPrice);
       playerInventory.ClearInventory();
-      UIManager.Instance.MadeAPurchase();
+      DepoUIManager.Instance.MadeAPurchase();
     }
 
     public int TakeDamage(int _damage)
     {
       hullStrengthCurrent -= _damage;
-      UIManager.Instance.OnUpdateHull?.Invoke();
+      DepoUIManager.Instance.OnUpdateHull?.Invoke();
       
       if (hullStrengthCurrent <= 0) shipController.Die();
 
@@ -262,8 +300,8 @@ namespace zephkelly
       SetRadiator();
       SetFuelTank();
 
-      UIManager.Instance.OnUpdateFuel?.Invoke();
-      UIManager.Instance.OnUpdateHull?.Invoke();
+      DepoUIManager.Instance.OnUpdateFuel?.Invoke();
+      DepoUIManager.Instance.OnUpdateHull?.Invoke();
     }
 
     private void Update()
@@ -311,7 +349,7 @@ namespace zephkelly
         shipController.Die();
       }
 
-      UIManager.Instance.OnUpdateFuel?.Invoke();
+      DepoUIManager.Instance.OnUpdateFuel?.Invoke();
     }
 
     #region UpgradeMethods

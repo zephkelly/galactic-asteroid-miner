@@ -11,14 +11,14 @@ namespace zephkelly
     {
       if (!other.CompareTag("Player")) return;
 
-      UIManager.Instance.OnHoverDepo?.Invoke();
+      DepoUIManager.Instance.OnHoverDepo?.Invoke();
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
       if (!other.CompareTag("Player")) return;
 
-      UIManager.Instance.OnLeaveDepoHover?.Invoke();
+      DepoUIManager.Instance.OnLeaveDepoHover?.Invoke();
     }
   }
 }

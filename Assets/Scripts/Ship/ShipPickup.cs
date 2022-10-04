@@ -33,6 +33,7 @@ namespace zephkelly
       //Add to inventory and destroy
       shipController.Inventory.AddItem(asteroidInfo.Type.ToString(), 1);
 
+      if (OcclusionManager.Instance.RemoveAsteroid.ContainsKey(asteroidInfo)) return;
       OcclusionManager.Instance.RemoveAsteroid.Add(asteroidInfo, asteroidInfo.ParentChunk);
     }
 
@@ -46,6 +47,12 @@ namespace zephkelly
       do
       {
         if (pickupTransform == null) break;   //Exit if the pickup has been destroyed
+        if (shipController == null)
+        {
+          Destroy(pickupTransform.gameObject);
+          Destroy(gameObject);
+          break;   //Exit if the player has been destroyed
+        }
 
         shipPosition = rigid2D.position;
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace zephkelly
 {
@@ -37,18 +38,23 @@ namespace zephkelly
 
     private void RespawnPlayer()
     {
+      
       StartCoroutine(RespawnPlayerCoroutine());
 
       IEnumerator RespawnPlayerCoroutine()
       {
         yield return new WaitForSeconds(4f);
 
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+        /*
         var respawnedPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
         var playerNewTransform = respawnedPlayer.transform;
 
         cameraController.ChangeFocus(playerNewTransform);
         chunkManager.UpdatePlayerTransform(playerNewTransform);
         OcclusionManager.Instance.UpdatePlayerTransform(playerNewTransform);
+        */
       }
     }
 
