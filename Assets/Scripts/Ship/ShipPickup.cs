@@ -46,7 +46,7 @@ namespace zephkelly
 
       do
       {
-        if (pickupTransform == null) break;   //Exit if the pickup has been destroyed
+        if (pickupTransform == null) break;
         if (shipController == null)
         {
           Destroy(pickupTransform.gameObject);

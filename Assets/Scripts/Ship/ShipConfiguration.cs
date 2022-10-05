@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 
 namespace zephkelly
 {
-  public enum RefuelType
+  public enum ShipWeapon
   {
-    Fifty,
-    Hundred,
-    Half,
-    All
+    StandardPhaser,
+    PhotonCannon,
+    PlasmaCannon,
+    IonCannon,
+    DarkCannon
   }
   public enum ShipHull
   {
@@ -35,12 +36,16 @@ namespace zephkelly
     SmallTank,
     MediumTank,
     LargeTank,
-    ExtraLargeTank, //HugeTank
-    HugeTank //SolarRegenerator
+    HugeTank,
+    MegaTank //SolarRegenerator
   }
-  #region Region1
-  /*
-
+  public enum RefuelType
+  {
+    Fifty,
+    Hundred,
+    Half,
+    All
+  }
   public enum ShipCargoBay
   {
     TinyCargoBay,
@@ -49,6 +54,9 @@ namespace zephkelly
     LargeCargoBay,
     HugeCargoBay
   }
+  #region Region1
+  /*
+
 
   public enum ShipEngine
   {
@@ -59,13 +67,6 @@ namespace zephkelly
     HyperDrive
   }
 
-  public enum ShipWeapon
-  {
-    PhotonCannon,
-    PlasmaCannon,
-    IonCannon,
-    DarkCannon
-  }
 
   public enum ShipShield
   {
@@ -90,6 +91,16 @@ namespace zephkelly
   {    
     private ShipController shipController;
     private Inventory playerInventory;
+
+    private ShipWeapon shipWeapon;
+    private float weaponRange;
+    private float weaponDamage;
+    private float fireRate;
+    private Color weaponColor;
+
+    private ShipCargoBay shipCargoBay;
+    private int cargoBayMaxCapacity;
+    private int cargoBayCurrentCapacity;
 
     private ShipHull shipHull;
     private int hullStrengthMax;
@@ -121,6 +132,10 @@ namespace zephkelly
     public int stellaritePrice = 50;
     public int darkorePrice = 80;
 
+    public ShipWeapon ShipWeapon { get => shipWeapon; }
+
+    public ShipCargoBay ShipsCargoBay { get => shipCargoBay; }
+
     public ShipHull ShipsHull { get => shipHull; }
     public int HullStrengthMax { get => hullStrengthMax; }
     public int HullStrengthCurrent { get => hullStrengthCurrent; }
@@ -136,23 +151,114 @@ namespace zephkelly
 
     //----------------------------------------------------------------------------------------------
 
-    #region Setters
-    public void AssignNewHull(ShipHull newHull)
+    private void Start()
     {
-      shipHull = newHull;
+      shipController = GetComponent<ShipController>();
+      playerInventory = shipController.Inventory;
+
+      shipWeapon = ShipWeapon.StandardPhaser;
+      shipHull = ShipHull.SteelHull;
+      shipRadiator = ShipRadiator.SteelRadiator;
+      shipFuelTank = ShipFuelTank.SmallTank;
+
+      SetWeapon();
+      SetHull();
+      SetRadiator();
+      SetFuelTank();
+
+      DepoUIManager.Instance.OnUpdateFuel?.Invoke();
+      DepoUIManager.Instance.OnUpdateHull?.Invoke();
+    }
+
+    private void Update()
+    {
+      UseRadiators();
+      if (toggleFuel) UseFuel();
+    }
+
+    #region Setters
+    public void AssignNewWeapon(int type)
+    {
+      switch (type)
+      {
+        case 1:
+          shipWeapon = ShipWeapon.PhotonCannon;
+          break;
+        case 2:
+          shipWeapon = ShipWeapon.PlasmaCannon;
+          break;
+        case 3:
+          shipWeapon = ShipWeapon.IonCannon;
+          break;
+        case 4:
+          shipWeapon = ShipWeapon.DarkCannon;
+          break;
+      }
+
+      SetWeapon();
+    }
+
+    public void AssignNewHull(int type)
+    {
+      switch (type)
+      {
+        case 1:
+          shipHull = ShipHull.TitaniumHull;
+          break;
+        case 2:
+          shipHull = ShipHull.CobaltHull;
+          break;
+        case 3:
+          shipHull = ShipHull.StellariteHull;
+          break;
+        case 4:
+          shipHull = ShipHull.DarkoreHull;
+          break;
+      }
+
       SetHull();
     }
 
-    public void AssignNewRadiator(ShipRadiator newRadiator)
+    public void AssignNewFuelTank(int type)
     {
-      shipRadiator = newRadiator;
-      SetRadiator();
+      switch (type)
+      {
+        case 1:
+          shipFuelTank = ShipFuelTank.MediumTank;
+          break;
+        case 2:
+          shipFuelTank = ShipFuelTank.LargeTank;
+          break;
+        case 3:
+          shipFuelTank = ShipFuelTank.HugeTank;
+          break;
+        case 4:
+          shipFuelTank = ShipFuelTank.MegaTank;
+          break;
+      }
+
+      SetFuelTank();
     }
 
-    public void AssignNewFuelTank(ShipFuelTank newFuelTank)
+    public void AssignNewCargoBay(int type)
     {
-      shipFuelTank = newFuelTank;
-      SetFuelTank();
+      switch (type)
+      {
+        case 1:
+          shipCargoBay = ShipCargoBay.SmallCargoBay;
+          break;
+        case 2:
+          shipCargoBay = ShipCargoBay.MediumCargoBay;
+          break;
+        case 3:
+          shipCargoBay = ShipCargoBay.LargeCargoBay;
+          break;
+        case 4:
+          shipCargoBay = ShipCargoBay.HugeCargoBay;
+          break;
+      }
+
+      SetCargoBay();
     }
 
     public void RefuelShip(int type)
@@ -287,29 +393,6 @@ namespace zephkelly
     }
     #endregion
 
-    private void Start()
-    {
-      shipController = GetComponent<ShipController>();
-      playerInventory = shipController.Inventory;
-
-      shipHull = ShipHull.SteelHull;
-      shipRadiator = ShipRadiator.SteelRadiator;
-      shipFuelTank = ShipFuelTank.SmallTank;
-
-      SetHull();
-      SetRadiator();
-      SetFuelTank();
-
-      DepoUIManager.Instance.OnUpdateFuel?.Invoke();
-      DepoUIManager.Instance.OnUpdateHull?.Invoke();
-    }
-
-    private void Update()
-    {
-      UseRadiators();
-      if (toggleFuel) UseFuel();
-    }
-
     private void UseRadiators()
     {
       if (ambientTemperature == 0 && hullTemperatureCurrent == 0) return;
@@ -353,6 +436,65 @@ namespace zephkelly
     }
 
     #region UpgradeMethods
+    private void SetWeapon()
+    {
+      switch (shipWeapon)
+      {
+        case ShipWeapon.StandardPhaser:
+          fireRate = 0.5f;
+          weaponColor = Color.red;
+          weaponDamage = 1;
+          weaponRange = 50;
+          break;
+        case ShipWeapon.PhotonCannon:
+          fireRate = 0.3f;
+          weaponColor = Color.yellow;
+          weaponDamage = 2;
+          weaponRange = 100;
+          break;
+        case ShipWeapon.PlasmaCannon:
+          fireRate = 0.1f;
+          weaponColor = Color.blue;
+          weaponDamage = 3;
+          weaponRange = 150;
+          break;
+        case ShipWeapon.IonCannon:
+          fireRate = 0.05f;
+          weaponColor = Color.green;
+          weaponDamage = 4;
+          weaponRange = 200;
+          break;
+        case ShipWeapon.DarkCannon:
+          fireRate = 0.01f;
+          weaponColor = Color.black;
+          weaponDamage = 5;
+          weaponRange = 250;
+          break;
+      }
+    }
+
+    private void SetCargoBay()
+    {
+      switch (shipCargoBay)
+      {
+        case ShipCargoBay.TinyCargoBay:
+          cargoBayMaxCapacity = 50;
+          break;
+        case ShipCargoBay.SmallCargoBay:
+          cargoBayMaxCapacity = 100;
+          break;
+        case ShipCargoBay.MediumCargoBay:
+          cargoBayMaxCapacity = 150;
+          break;
+        case ShipCargoBay.LargeCargoBay:
+          cargoBayMaxCapacity = 200;
+          break;
+        case ShipCargoBay.HugeCargoBay:
+          cargoBayMaxCapacity = 300;
+          break;
+      }
+    }
+
     private void SetHull()
     {
       switch (shipHull)
@@ -419,10 +561,10 @@ namespace zephkelly
         case ShipFuelTank.LargeTank:
           fuelTankMaxCapacity = 240;
           break;
-        case ShipFuelTank.HugeTank:
+        case ShipFuelTank.MegaTank:
           fuelTankMaxCapacity = 480;
           break;
-        case ShipFuelTank.ExtraLargeTank:
+        case ShipFuelTank.HugeTank:
           fuelTankMaxCapacity = 960;
           break;
       }

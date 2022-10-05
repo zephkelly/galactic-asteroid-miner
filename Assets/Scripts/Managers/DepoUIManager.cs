@@ -32,14 +32,12 @@ namespace zephkelly
 
     private void Start()
     {
-      #region Depo Steup
+      playerCreditsAmount = GameObject.Find("CreditsAmount").GetComponent<TextMeshProUGUI>();
       shipConfig = ShipController.Instance.ShipConfig;
       playerInventory = ShipController.Instance.Inventory;
 
-      depotUIObject = GameObject.Find("DepoUI");
+      #region Depo Panel
       tooltipUIElement = GameObject.Find("TooltipUI").GetComponent<TextMeshProUGUI>();
-
-      creditsAmount = GameObject.Find("CreditsAmount").GetComponent<TextMeshProUGUI>();
 
       refuelAllCost = GameObject.Find("RefuelAllCost").GetComponent<TextMeshProUGUI>();
       refuelHalfCost = GameObject.Find("RefuelHalfCost").GetComponent<TextMeshProUGUI>();
@@ -70,9 +68,39 @@ namespace zephkelly
 
       totalValue = GameObject.Find("TotalMineralPrice").GetComponent<TextMeshProUGUI>();
 
-      depotUIObject.SetActive(false);
+      depotMenuObject = GameObject.Find("DepotMenu");
+      depotMenuObject.SetActive(true);
+
       OnHoverDepo.AddListener(DepoMenuEnable);
       OnLeaveDepoHover.AddListener(DepoMenuDisable);
+      #endregion
+
+      #region Upgrades Panel
+      photonWeaponUpgrade = GameObject.Find("PhotonButton").GetComponent<Button>();
+      plasmaWeaponUpgrade = GameObject.Find("PlasmaButton").GetComponent<Button>();
+      ionWeaponUpgrade = GameObject.Find("IonButton").GetComponent<Button>();
+      darkWeaponUpgrade = GameObject.Find("DarkButton").GetComponent<Button>();
+
+      titaniumHullUpgrade = GameObject.Find("TitaniumHullButton").GetComponent<Button>();
+      cobaltHullUpgrade = GameObject.Find("CobaltHullButton").GetComponent<Button>();
+      stellariteHullUpgrade = GameObject.Find("StellariteHullButton").GetComponent<Button>();
+      darkHullUpgrade = GameObject.Find("DarkHullButton").GetComponent<Button>();
+
+      mediumTankUpgrade = GameObject.Find("MediumTankButton").GetComponent<Button>();
+      largeTankUpgrade = GameObject.Find("LargeTankButton").GetComponent<Button>();
+      hugeTankUpgrade = GameObject.Find("HugeTankButton").GetComponent<Button>();
+      megaTankUpgrade = GameObject.Find("MegaTankButton").GetComponent<Button>();
+
+      smallBayUpgrade = GameObject.Find("SmallCargoButton").GetComponent<Button>();
+      mediumBayUpgrade = GameObject.Find("MediumCargoButton").GetComponent<Button>();
+      largeBayUpgrade = GameObject.Find("LargeCargoButton").GetComponent<Button>();
+      hugeBayUpgrade = GameObject.Find("HugeCargoButton").GetComponent<Button>();
+
+      upgradesMenuObject = GameObject.Find("UpgradesMenu");
+      upgradesMenuObject.SetActive(false);
+
+      depotUIObject = GameObject.Find("DepotUI");
+      depotUIObject.SetActive(false);
       #endregion
 
       #region Ship Setup
@@ -89,8 +117,9 @@ namespace zephkelly
       if (depotUI) DepotMenuBehaviour();
     }
 
-    #region Depo UI
-    private TextMeshProUGUI creditsAmount;
+    #region Depot UI
+    private GameObject depotMenuObject;
+    private TextMeshProUGUI playerCreditsAmount;
 
     private TextMeshProUGUI refuelAllCost;
     private TextMeshProUGUI refuelHalfCost;
@@ -120,6 +149,30 @@ namespace zephkelly
     private TextMeshProUGUI stellariteValue;
     private TextMeshProUGUI darkoreValue;
     private TextMeshProUGUI totalValue;
+    #endregion
+
+    #region Upgrades
+    private GameObject upgradesMenuObject;
+    private Button photonWeaponUpgrade;
+    private Button plasmaWeaponUpgrade;
+    private Button ionWeaponUpgrade;
+    private Button darkWeaponUpgrade;
+
+    private Button titaniumHullUpgrade;
+    private Button cobaltHullUpgrade;
+    private Button stellariteHullUpgrade;
+    private Button darkHullUpgrade;
+
+    private Button mediumTankUpgrade;
+    private Button largeTankUpgrade;
+    private Button hugeTankUpgrade;
+    private Button megaTankUpgrade;
+
+    private Button smallBayUpgrade;
+    private Button mediumBayUpgrade;
+    private Button largeBayUpgrade;
+    private Button hugeBayUpgrade;
+    #endregion
 
     private ShipConfiguration shipConfig;
     private Inventory playerInventory;
@@ -132,6 +185,7 @@ namespace zephkelly
     {
       UpdateOreOverlay();
       UpdateDepoPrices();
+      UpdateUpgradesMenu();
     }
 
     private void DepoMenuEnable()
@@ -150,6 +204,9 @@ namespace zephkelly
       depotUI = false;
 
       tooltipUIElement.color = new Color(1, 1, 1, 0);
+
+      upgradesMenuObject.SetActive(false);
+      depotMenuObject.SetActive(true);
 
       if (depotToggle == false) return;
       depotToggle = false;
@@ -262,7 +319,7 @@ namespace zephkelly
       repairAllCost.text = "$" + hullDeltaPrice.ToString();
       repairHalfCost.text = "$" + (hullDeltaPrice / 2).ToString();
 
-      creditsAmount.text = "$" + playerInventory.GetCreditsAmount();
+      playerCreditsAmount.text = "$" + playerInventory.GetCreditsAmount();
 
       if (playerInventory.GetCreditsAmount() < fuelDeltaPrice)
       {
@@ -289,11 +346,11 @@ namespace zephkelly
       if (playerInventory.GetCreditsAmount() < fuelDeltaPrice && 
         playerInventory.GetCreditsAmount() < hullDeltaPrice)
       {
-        creditsAmount.color = Color.red;
+        playerCreditsAmount.color = Color.red;
       }
       else
       {
-        creditsAmount.color = Color.black;
+        playerCreditsAmount.color = Color.black;
       }
 
       if (playerInventory.GetCreditsAmount() < 100)
@@ -318,7 +375,175 @@ namespace zephkelly
         refuel50.color = Color.black;
       }
     }
-    #endregion
+
+    private void UpdateUpgradesMenu()
+    {
+      var ship = ShipController.Instance.ShipConfig;
+
+      //Weapon
+      switch (ship.ShipWeapon)
+      {
+        case ShipWeapon.StandardPhaser:
+          break;
+        case ShipWeapon.PhotonCannon:
+          photonWeaponUpgrade.interactable = false;
+          photonWeaponUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipWeapon.PlasmaCannon:
+          photonWeaponUpgrade.interactable = false;
+          photonWeaponUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          plasmaWeaponUpgrade.interactable = false;
+          plasmaWeaponUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipWeapon.IonCannon:
+          photonWeaponUpgrade.interactable = false;
+          photonWeaponUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          plasmaWeaponUpgrade.interactable = false;
+          plasmaWeaponUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          ionWeaponUpgrade.interactable = false;
+          ionWeaponUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipWeapon.DarkCannon:
+          photonWeaponUpgrade.interactable = false;
+          photonWeaponUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          plasmaWeaponUpgrade.interactable = false;
+          plasmaWeaponUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          ionWeaponUpgrade.interactable = false;
+          ionWeaponUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          darkWeaponUpgrade.interactable = false;
+          darkWeaponUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+      }
+
+      //Hull
+      switch (ship.ShipsHull)
+      {
+        case ShipHull.SteelHull:
+          break;
+        case ShipHull.TitaniumHull:
+          titaniumHullUpgrade.interactable = false;
+          titaniumHullUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipHull.CobaltHull:
+          titaniumHullUpgrade.interactable = false;
+          titaniumHullUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          cobaltHullUpgrade.interactable = false;
+          cobaltHullUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipHull.StellariteHull:
+          titaniumHullUpgrade.interactable = false;
+          titaniumHullUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          cobaltHullUpgrade.interactable = false;
+          cobaltHullUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          stellariteHullUpgrade.interactable = false;
+          stellariteHullUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipHull.DarkoreHull:
+          titaniumHullUpgrade.interactable = false;
+          titaniumHullUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          cobaltHullUpgrade.interactable = false;
+          cobaltHullUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          stellariteHullUpgrade.interactable = false;
+          stellariteHullUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          darkHullUpgrade.interactable = false;
+          darkHullUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+      }
+
+      //Tank
+      switch (ship.ShipsFuelTank)
+      {
+        case ShipFuelTank.SmallTank:
+          break;
+        case ShipFuelTank.MediumTank:
+          mediumTankUpgrade.interactable = false;
+          mediumTankUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipFuelTank.LargeTank:
+          mediumTankUpgrade.interactable = false;
+          mediumTankUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          largeTankUpgrade.interactable = false;
+          largeTankUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipFuelTank.HugeTank:
+          mediumTankUpgrade.interactable = false;
+          mediumTankUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          largeTankUpgrade.interactable = false;
+          largeTankUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          hugeTankUpgrade.interactable = false;
+          hugeTankUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipFuelTank.MegaTank:
+          mediumTankUpgrade.interactable = false;
+          mediumTankUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          largeTankUpgrade.interactable = false;
+          largeTankUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          hugeTankUpgrade.interactable = false;
+          hugeTankUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          megaTankUpgrade.interactable = false;
+          megaTankUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+      }
+
+      //Cargo Bay
+      switch (ship.ShipsCargoBay)
+      {
+        case ShipCargoBay.TinyCargoBay:
+          break;
+        case ShipCargoBay.SmallCargoBay:
+          smallBayUpgrade.interactable = false;
+          smallBayUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipCargoBay.MediumCargoBay:
+          smallBayUpgrade.interactable = false;
+          smallBayUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          mediumBayUpgrade.interactable = false;
+          mediumBayUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipCargoBay.LargeCargoBay:
+          smallBayUpgrade.interactable = false;
+          smallBayUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          mediumBayUpgrade.interactable = false;
+          mediumBayUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          largeBayUpgrade.interactable = false;
+          largeBayUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+        case ShipCargoBay.HugeCargoBay:
+          smallBayUpgrade.interactable = false;
+          smallBayUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          mediumBayUpgrade.interactable = false;
+          mediumBayUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          largeBayUpgrade.interactable = false;
+          largeBayUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+
+          hugeBayUpgrade.interactable = false;
+          hugeBayUpgrade.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+          break;
+      }
+    }
 
     #region Ship UI
     private Slider healthSlider;
