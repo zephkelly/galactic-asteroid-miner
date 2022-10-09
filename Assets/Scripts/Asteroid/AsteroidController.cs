@@ -23,8 +23,7 @@ namespace zephkelly
 
     private void Awake()
     {
-      asteroidBehaviour = Resources.Load("ScriptableObjects/AsteroidBehaviour")
-        as AsteroidBehaviour;
+      asteroidBehaviour = GetComponent<AsteroidBehaviour>();
 
       asteroidRigid2D = GetComponent<Rigidbody2D>();
       asteroidTransform = GetComponent<Transform>();
@@ -41,6 +40,7 @@ namespace zephkelly
 
       if(asteroidInfo.Health <= 0)
       {
+        GameManager.Instance.StatisticsManager.IncrementAsteroidsDestroyed();
         OcclusionManager.Instance.RemoveAsteroid.Add(asteroidInfo, asteroidInfo.ParentChunk);
       }
     }

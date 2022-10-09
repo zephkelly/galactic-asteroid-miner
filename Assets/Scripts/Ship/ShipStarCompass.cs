@@ -1,28 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 namespace zephkelly
 {
   public class ShipStarCompass : MonoBehaviour
   {
+    private Transform playerTransform;
     private Camera mainCamera;
     private Transform cameraTransform;
     private GameObject pointer;
 
     [SerializeField] Canvas parentCanvas;
-    [SerializeField] float border = 10f;
+    private float borderX = 25f;
+    private float borderY = 20f;
 
-    private Dictionary<Vector2, RectTransform> pointers = 
-      new Dictionary<Vector2, RectTransform>();
+    private Dictionary<Vector2, Pointer> pointers =
+      new Dictionary<Vector2, Pointer>();
 
     //------------------------------------------------------------------------------
 
     private void Awake()
     {
       pointer = Resources.Load<GameObject>("Prefabs/UI/StarPointer");
+
       mainCamera = Camera.main;
       cameraTransform = mainCamera.transform;
+    }
+
+    private void Start()
+    {
+      playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     public void UpdateCompass()
@@ -33,7 +42,8 @@ namespace zephkelly
 
     private void ResetCurrentPointers()
     {
-      foreach (var pointer in pointers) {
+      foreach (var pointer in pointers)
+      {
         Destroy(pointer.Value.gameObject);
       }
 
@@ -42,44 +52,64 @@ namespace zephkelly
 
     private void GetActiveStars()
     {
+      //lazyStars
       foreach (var lazyChunk in ChunkManager.Instance.LazyChunks)
       {
         if (lazyChunk.Value.HasStar == false) continue;
 
-        GameObject newPointer = Object.Instantiate(pointer);
-        newPointer.transform.SetParent(parentCanvas.transform);
-        RectTransform rectTransform = newPointer.GetComponent<RectTransform>();
+        var starPosition = lazyChunk.Value.ChunkStar.SpawnPoint;
+        var starType = lazyChunk.Value.ChunkStar.Type;
 
-        pointers.Add(lazyChunk.Value.Position, rectTransform);
+        GameObject newStarPointer = Object.Instantiate(pointer) as GameObject;
+        newStarPointer.transform.SetParent(parentCanvas.transform);
+
+        var starPointer = newStarPointer.GetComponent<Pointer>();
+        starPointer.SetPointerColor(starType);
+
+        pointers.Add(starPosition, starPointer);
       }
 
+      //ActiveStars
       foreach (var activeChunk in ChunkManager.Instance.ActiveChunks)
       {
         if (pointers.ContainsKey(activeChunk.Value.Position)) continue;
         if (activeChunk.Value.HasStar == false) continue;
 
-        GameObject newPointer = Object.Instantiate(pointer);
-        newPointer.transform.SetParent(parentCanvas.transform);
-        RectTransform rectTransform = newPointer.GetComponent<RectTransform>();
+        var starPosition = activeChunk.Value.ChunkStar.SpawnPoint;
+        var starType = activeChunk.Value.ChunkStar.Type;
 
-        pointers.Add(activeChunk.Value.Position, rectTransform);
+        GameObject newStarPointer = Object.Instantiate(pointer) as GameObject;
+        newStarPointer.transform.SetParent(parentCanvas.transform);
+
+        var starPointer = newStarPointer.GetComponent<Pointer>();
+        starPointer.SetPointerColor(starType);
+
+        pointers.Add(starPosition, starPointer);
       }
 
-      GameObject basePointer = Object.Instantiate(pointer);
-      basePointer.transform.SetParent(parentCanvas.transform);
-      RectTransform baseRect = basePointer.GetComponent<RectTransform>();
-      basePointer.GetComponentInChildren<UnityEngine.UI.Image>().color = new Color(0, 0.7f, 1, 0.7f);
-      pointers.Add(Vector2.zero, baseRect);
+      //Depo pointer
+      GameObject newBasePointer = Object.Instantiate(pointer) as GameObject;
+      newBasePointer.transform.SetParent(parentCanvas.transform);
+
+      var basePointer = newBasePointer.GetComponent<Pointer>();
+      basePointer.SetBaseColor();
+
+      pointers.Add(Vector2.zero, basePointer);
     }
 
     private void LateUpdate()
     {
+      if (playerTransform == null) return;
       if (pointers.Count == 0) return;
 
       foreach (var pointer in pointers)
       {
-        Transform pointerTransform = pointer.Value;
         Vector2 targetPosition = pointer.Key;
+        var pointerInfo = pointer.Value;
+
+        var distance = (int)Vector2.Distance(targetPosition, playerTransform.position) / 5;
+
+        pointerInfo.UpdateTargetDistance(distance);
 
         Vector2 screenPosition = mainCamera.WorldToScreenPoint(targetPosition);
         Vector2 cappedScreenPosition = screenPosition;
@@ -100,7 +130,7 @@ namespace zephkelly
 
           float angleToStar = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-          pointerTransform.localEulerAngles = new Vector3(0, 0, angleToStar);
+          pointerInfo.PointerImageContainer.transform.rotation = Quaternion.Euler(0, 0, angleToStar);
         }
 
         void IsPointerOnScreen()
@@ -108,15 +138,15 @@ namespace zephkelly
           if (screenPosition.x > 0 && screenPosition.x < Screen.width &&
               screenPosition.y > 0 && screenPosition.y < Screen.height)
           {
-            if (!pointerTransform.gameObject.activeSelf) return;
+            if (!pointerInfo.PointerObject.activeSelf) return;
             isOnScreen = true;
-            pointer.Value.gameObject.SetActive(false);
+            pointerInfo.PointerObject.SetActive(false);
           }
           else
           {
-            if (pointerTransform.gameObject.activeSelf) return;
+            if (pointerInfo.PointerObject.activeSelf) return;
             isOnScreen = false;
-            pointer.Value.gameObject.SetActive(true);
+            pointerInfo.PointerObject.SetActive(true);
           }
         }
 
@@ -124,8 +154,8 @@ namespace zephkelly
         {
           if (!isOnScreen)
           {
-            float cappedPositionX = Mathf.Clamp(screenPosition.x, border, Screen.width - border);
-            float cappedPositionY = Mathf.Clamp(screenPosition.y, border, Screen.height - border);
+            float cappedPositionX = Mathf.Clamp(screenPosition.x, borderX, Screen.width - borderX);
+            float cappedPositionY = Mathf.Clamp(screenPosition.y, borderY, Screen.height - (borderY + 10f));
 
             cappedScreenPosition = new Vector2(cappedPositionX, cappedPositionY);
           }
@@ -135,13 +165,26 @@ namespace zephkelly
         {
           if (isOnScreen)
           {
-            pointerTransform.position = screenPosition;
+            pointerInfo.PointerObject.transform.position = screenPosition;
           }
           else
           {
-            pointerTransform.position = cappedScreenPosition;
+            pointerInfo.PointerObject.transform.position = cappedScreenPosition;
           }
         }
+      }
+    }
+
+    private Color GetPointerColor(StarType starType)
+    {
+      switch (starType)
+      {
+        case StarType.WhiteDwarf:
+          return new Color(1, 1f, 1, 0.7f);
+        case StarType.RedGiant:
+          return new Color(1, 0.2f, 0.2f, 0.7f);
+        default:
+          return new Color(1, 1f, 1, 0.7f);
       }
     }
   }

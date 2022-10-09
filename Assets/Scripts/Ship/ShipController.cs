@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.Events;
 
 namespace zephkelly
@@ -17,9 +18,13 @@ namespace zephkelly
 
     private Rigidbody2D playerRigid2D;
     private Transform playerTransform;
-    
     private Vector2 mouseDirection;
-    [SerializeField] float moveSpeed = 60f;
+
+    private Light2D shipExplosionLight;
+    private GameObject shipExplosion;
+
+    private ParticleSystem shipThrustersParticle;
+    private Light2D shipThrustersLight;
 
     //Orbiting Variables
     private StarController starController;
@@ -30,22 +35,29 @@ namespace zephkelly
     //----------------------------------------------------------------------------------------------
 
     public ShipConfiguration ShipConfig { get => shipConfiguration; }
+    public int EngineTopSpeed { get => shipConfiguration.EngineSpeed; }
+
     public int MaxHealth { get => shipConfiguration.HullStrengthMax; }
     public int Health { get => shipConfiguration.HullStrengthCurrent; }
+
     public float MaxFuel { get => shipConfiguration.FuelMax; }
     public float Fuel { get => shipConfiguration.FuelCurrent; }
-    public Inventory Inventory { get => playerInventory; }
 
-    public static event Action OnPlayerDied;
+    public int CargoCurrentCapacity { get => shipConfiguration.CargoBayCurrentCapacity; }
+    public int CargoMaxCapacity { get => shipConfiguration.CargoBayMaxCapacity; }
+    public Inventory Inventory { get => playerInventory; }
 
     private void Awake()
     {
       playerInventory = Resources.Load("ScriptableObjects/PlayerInventory") as Inventory;
-      playerInventory.ClearInventory();
-      playerInventory.ClearCredits();
-
       shipConfiguration = GetComponent<ShipConfiguration>();
       shipShoot = GetComponent<ShipShoot>();
+
+      shipExplosion = Resources.Load("Prefabs/ShipExplosion") as GameObject;
+
+      shipThrustersParticle = GameObject.FindGameObjectWithTag("ShipThruster").GetComponent<ParticleSystem>();
+      shipThrustersLight = GameObject.FindGameObjectWithTag("ShipThrusterLight").GetComponent<Light2D>();
+      shipThrustersLight.enabled = false;
 
       playerTransform = transform;
       playerRigid2D = GetComponent<Rigidbody2D>();
@@ -65,11 +77,21 @@ namespace zephkelly
       playerRigid2D.centerOfMass = Vector2.zero;
     }
 
-    public void Die()
+    public void Die(string deathMessage)
     {
-      OnPlayerDied?.Invoke();
+      Instantiate(shipExplosion, gameObject.transform.position, Quaternion.identity);
+
+      GameManager.Instance.GameOver(deathMessage);
+
+      if (zephkelly.AudioManager.Instance.IsSoundPlaying("ShipThrusters")) {
+        zephkelly.AudioManager.Instance.StopSound("ShipThrusters");
+      }
+
+      zephkelly.AudioManager.Instance.PlaySound("ShipExplosion");
+
       Destroy(gameObject);
     }
+
 
     public void CanShoot(bool toggleFire)
     {
@@ -80,16 +102,22 @@ namespace zephkelly
     {
       orbitingStar = _orbitingStar;
 
-      if (orbitingStar)
-      {
+      if (orbitingStar) {
         starController = _starController;
         orbitingStar = true;
-      }
-      else
-      {
+      } else {
         starController = null;
         orbitingStar = false;
       }
+    }
+
+    public void UpgradeEngine(Gradient newLifetimeColour)
+    {
+      var colourModule = shipThrustersParticle.colorOverLifetime;
+      var trailColourModule = shipThrustersParticle.trails.colorOverLifetime;
+
+      colourModule.color = newLifetimeColour;
+      trailColourModule.gradient = newLifetimeColour;
     }
 
     private void Update()
@@ -121,9 +149,34 @@ namespace zephkelly
     private void FixedUpdate()
     {
       if (Input.GetKey(KeyCode.LeftShift)) {
-        playerRigid2D.AddForce(playerInputs.KeyboardInput * (moveSpeed * 3), ForceMode2D.Force);
+
+        playerRigid2D.AddForce(playerInputs.KeyboardInput * EngineTopSpeed, ForceMode2D.Force);
       } else {
-        playerRigid2D.AddForce(playerInputs.KeyboardInput * moveSpeed, ForceMode2D.Force);
+
+        playerRigid2D.AddForce(playerInputs.KeyboardInput * 60, ForceMode2D.Force);
+      }
+
+      if (playerInputs.KeyboardInput != Vector2.zero && Input.GetKey(KeyCode.LeftShift)) {
+        if (!zephkelly.AudioManager.Instance.IsSoundPlaying("ShipThrusters")) {
+          zephkelly.AudioManager.Instance.PlaySound("ShipThrusters");
+        }
+
+        if (!shipThrustersLight.enabled)
+        {
+          shipThrustersParticle.Play();
+          shipThrustersLight.enabled = true;
+        }
+      } 
+      else {
+        if (zephkelly.AudioManager.Instance.IsSoundPlaying("ShipThrusters")) {
+          zephkelly.AudioManager.Instance.StopSound("ShipThrusters");
+        }
+
+        if (shipThrustersLight.enabled)
+        {
+          shipThrustersParticle.Stop();
+          shipThrustersLight.enabled = false;
+        }
       }
       
       if (orbitingStar) {
@@ -170,13 +223,13 @@ namespace zephkelly
       if (otherObject.CompareTag("Asteroid"))
       {
         var damage = 10;
-        var healthRemaining = shipConfiguration.TakeDamage(damage);
+        shipConfiguration.TakeDamage(damage);
         
         return;
       }
       else if (otherObject.CompareTag("Star"))
       {
-        Die();
+        Die("You fell into a star...");
         return;
       }
     }

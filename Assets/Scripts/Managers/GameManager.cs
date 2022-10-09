@@ -1,66 +1,162 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 namespace zephkelly
 {
-  //public enum GameState { Menu, Playing, Paused, GameOver }
-
   public class GameManager : MonoBehaviour
   {
     public static GameManager Instance;
-    private ChunkManager chunkManager;
+    private StatisticsManager statisticsManager;
 
-    private CameraController cameraController;
+    private GameObject player;
 
-    private GameObject playerPrefab;
+    private GameObject pauseMenu;
+    private GameObject optionsMenu;
+    private GameObject gameOverMenu;
 
+    private int currentSong;
+    private float songTimeRemaining;
+    private bool playingMusic = false;
+
+    private bool gamePaused = false;
+
+    public StatisticsManager StatisticsManager { get => statisticsManager; }
+    public bool GamePaused { get => gamePaused; }
 
     private void Awake()
     {
-      playerPrefab = Resources.Load<GameObject>("Prefabs/Player");
+      statisticsManager = Resources.Load("ScriptableObjects/StatisticsManager") as StatisticsManager;
+      player = GameObject.FindGameObjectWithTag("Player");
 
-      if (Instance == null) 
-      {
+      pauseMenu = GameObject.FindGameObjectWithTag("PauseMenu");
+      optionsMenu = GameObject.FindGameObjectWithTag("OptionsMenu");
+      gameOverMenu = GameObject.FindGameObjectWithTag("GameOverMenu");
+
+      if (Instance == null) {
         Instance = this;
       } else {
-        Destroy(gameObject);
+        Destroy(this);
       }
     }
 
     private void Start()
     {
-      cameraController = CameraController.Instance;
-      chunkManager = ChunkManager.Instance;
-      ShipController.OnPlayerDied += RespawnPlayer;
+      pauseMenu.SetActive(false);
+      optionsMenu.SetActive(false);
+      gameOverMenu.SetActive(false);
+
+      statisticsManager.Init();
+      //zephkelly.AudioManager.Instance.PlayMusic("Game_" + Random.Range(0, 2));
     }
 
-    private void RespawnPlayer()
+    private void Update()
     {
-      
-      StartCoroutine(RespawnPlayerCoroutine());
+      GameMusic();
 
-      IEnumerator RespawnPlayerCoroutine()
+      UpdateStatManager();
+
+      if (Input.GetKeyDown(KeyCode.Escape) && DepoUIManager.Instance.depotToggle != true) 
       {
-        yield return new WaitForSeconds(4f);
+        gamePaused = !gamePaused;
 
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-
-        /*
-        var respawnedPlayer = Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-        var playerNewTransform = respawnedPlayer.transform;
-
-        cameraController.ChangeFocus(playerNewTransform);
-        chunkManager.UpdatePlayerTransform(playerNewTransform);
-        OcclusionManager.Instance.UpdatePlayerTransform(playerNewTransform);
-        */
+        if (gamePaused) {
+          PauseGame();
+        } else {
+          ResumeGame();
+        }
       }
     }
 
-    private void OnApplicationQuit()
+    private void GameMusic()
     {
-      GameManager.Instance = null;
-    } 
+      if (playingMusic) 
+      {
+        songTimeRemaining -= Time.deltaTime;
+      }
+      else
+      {
+        playingMusic = true;
+
+        var randomMusic = Random.Range(0, 2);
+
+        if (randomMusic == currentSong) {
+          randomMusic = (randomMusic + 1) % 2;
+        }
+
+        currentSong = randomMusic;
+        zephkelly.AudioManager.Instance.PlayMusic("Game_" + currentSong);
+        songTimeRemaining = zephkelly.AudioManager.Instance.GetClipLength("Game_" + currentSong) + 8f;
+      }
+    }
+
+    private void UpdateStatManager()
+    {
+      statisticsManager.IncrementTimeAlive();
+
+      //increment distance to player
+      if (player == null) return;
+      var distance = (int)Vector2.Distance(player.transform.position, Vector2.zero);
+      statisticsManager.UpdateCurrentDistance(distance);
+    }
+
+    public void PauseGame()
+    {
+      Time.timeScale = 0;
+      pauseMenu.SetActive(true);
+
+      zephkelly.AudioManager.Instance.ToggleAllSounds(false);
+
+      gamePaused = true;
+    }
+
+    public void ResumeGame()
+    {
+      Time.timeScale = 1;
+      pauseMenu.SetActive(false);
+      optionsMenu.SetActive(false);
+
+      zephkelly.AudioManager.Instance.ToggleAllSounds(true);
+
+      gamePaused = false;
+    }
+
+    public void GameOver(string deathMessage)
+    {
+      pauseMenu.SetActive(false);
+      DepoUIManager.Instance.DisableMenu();
+
+      StartCoroutine(WaitAndLoadGameOver());
+
+      IEnumerator WaitAndLoadGameOver()
+      {
+        yield return new WaitForSeconds(3f);
+        
+        gameOverMenu.SetActive(true);
+        GameObject.Find("DeathMessage").GetComponent<TextMeshProUGUI>().text = deathMessage;
+        GameObject.Find("GameOverScoreText").GetComponent<TextMeshProUGUI>().text = statisticsManager.GetScore().ToString();
+      }
+    }
+
+    public void ReturnToMenu(bool saveScore = false)
+    {
+      if (saveScore) {
+        statisticsManager.SaveScore();
+      }
+
+      Time.timeScale = 1;
+      SceneManager.LoadScene("MenuScene");
+    }
+
+    public void RestartGame()
+    {
+      statisticsManager.SaveScore();
+
+      Time.timeScale = 1;
+      SceneManager.LoadScene("GameScene");
+    }
   }
 }

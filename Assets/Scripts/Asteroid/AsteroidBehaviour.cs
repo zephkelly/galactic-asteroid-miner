@@ -4,26 +4,85 @@ using UnityEngine;
 
 namespace zephkelly
 {
-  [CreateAssetMenu(fileName = "AsteroidBehaviour", menuName = "ScriptableObjects/AsteroidBehaviour")]
-  public class AsteroidBehaviour : ScriptableObject
+  public class AsteroidBehaviour : MonoBehaviour
   {
-    //Prefabs with variants
-    private GameObject asteroidPickupPrefab;
-    private GameObject smallAsteroidPrefab;
-    private GameObject mediumAsteroidPrefab;
-    private GameObject largeAsteroidPrefab;
-    private GameObject xLargeAsteroidPrefab;
+    #region Asteroid sprites
+    //Iron
+    private Sprite asteroidIron1;
+    private Sprite asteroidIron2;
+    private Sprite asteroidIron3;
+
+    //Platinum
+    private Sprite asteroidPlatinum1;
+    private Sprite asteroidPlatinum2;
+    private Sprite asteroidPlatinum3;
+
+    //Titanium
+    private Sprite asteroidTitanium1;
+    private Sprite asteroidTitanium2;
+    private Sprite asteroidTitanium3;
+
+    //Gold
+    private Sprite asteroidGold1;
+    private Sprite asteroidGold2;
+    private Sprite asteroidGold3;
+
+    //Palladium
+    private Sprite asteroidPalladium1;
+    private Sprite asteroidPalladium2;
+    private Sprite asteroidPalladium3;
+
+    //Cobalt
+    private Sprite asteroidCobalt1;
+    private Sprite asteroidCobalt2;
+    private Sprite asteroidCobalt3;
+
+    //Stellarite
+    private Sprite asteroidStellarite1;
+    private Sprite asteroidStellarite2;
+    private Sprite asteroidStellarite3;
+
+    //Darkore
+    private Sprite asteroidDarkore1;
+    private Sprite asteroidDarkore2;
+    private Sprite asteroidDarkore3;
+    #endregion
 
     //------------------------------------------------------------------------------
 
     private void Awake()
     {
-      //Grab our prefabs from resources folder
-      smallAsteroidPrefab = Resources.Load<GameObject>("Prefabs/Asteroids/Asteroid-S");
-      mediumAsteroidPrefab = Resources.Load<GameObject>("Prefabs/Asteroids/Asteroid-M");
-      largeAsteroidPrefab = Resources.Load<GameObject>("Prefabs/Asteroids/Asteroid-L");
-      xLargeAsteroidPrefab = Resources.Load<GameObject>("Prefabs/Asteroids/Asteroid-XL"); 
-      asteroidPickupPrefab = Resources.Load<GameObject>("Prefabs/Asteroids/AsteroidPickup");
+      asteroidIron1 = Resources.Load<Sprite>("Sprites/Asteroids/Iron/Iron_Asteroid_1");
+      asteroidIron2 = Resources.Load<Sprite>("Sprites/Asteroids/Iron/Iron_Asteroid_1_2");
+      asteroidIron3 = Resources.Load<Sprite>("Sprites/Asteroids/Iron/Iron_Asteroid_1_3");
+
+      asteroidPlatinum1 = Resources.Load<Sprite>("Sprites/Asteroids/Platinum/Platinum_Asteroid_1");
+      asteroidPlatinum2 = Resources.Load<Sprite>("Sprites/Asteroids/Platinum/Platinum_Asteroid_1_2");
+      asteroidPlatinum3 = Resources.Load<Sprite>("Sprites/Asteroids/Platinum/Platinum_Asteroid_1_3");
+
+      asteroidTitanium1 = Resources.Load<Sprite>("Sprites/Asteroids/Titanium/Titanium_Asteroid_1");
+      asteroidTitanium2 = Resources.Load<Sprite>("Sprites/Asteroids/Titanium/Titanium_Asteroid_1_2");
+      asteroidTitanium3 = Resources.Load<Sprite>("Sprites/Asteroids/Titanium/Titanium_Asteroid_1_3");
+
+      asteroidGold1 = Resources.Load<Sprite>("Sprites/Asteroids/Gold/Gold_Asteroid_1");
+      asteroidGold2 = Resources.Load<Sprite>("Sprites/Asteroids/Gold/Gold_Asteroid_1_2");
+      asteroidGold3 = Resources.Load<Sprite>("Sprites/Asteroids/Gold/Gold_Asteroid_1_3");
+
+      asteroidPalladium1 = Resources.Load<Sprite>("Sprites/Asteroids/Palladium/Palladium_Asteroid_1");
+      asteroidPalladium2 = Resources.Load<Sprite>("Sprites/Asteroids/Palladium/Palladium_Asteroid_1_2");
+      asteroidPalladium3 = Resources.Load<Sprite>("Sprites/Asteroids/Palladium/Palladium_Asteroid_1_3");
+
+      asteroidCobalt1 = Resources.Load<Sprite>("Sprites/Asteroids/Cobalt/Cobalt_Asteroid_1");
+      asteroidCobalt2 = Resources.Load<Sprite>("Sprites/Asteroids/Cobalt/Cobalt_Asteroid_1_2");
+      asteroidCobalt3 = Resources.Load<Sprite>("Sprites/Asteroids/Cobalt/Cobalt_Asteroid_1_3");
+
+      asteroidStellarite1 = Resources.Load<Sprite>("Sprites/Asteroids/Stellarite/Stellarite_Asteroid_1");
+      asteroidStellarite2 = Resources.Load<Sprite>("Sprites/Asteroids/Stellarite/Stellarite_Asteroid_1_2");
+      asteroidStellarite3 = Resources.Load<Sprite>("Sprites/Asteroids/Stellarite/Stellarite_Asteroid_1_3");
+
+      asteroidDarkore1 = Resources.Load<Sprite>("Sprites/Asteroids/Darkore/Darkore_Asteroid_1");
+      asteroidDarkore2 = Resources.Load<Sprite>("Sprites/Asteroids/Darkore/Darkore_Asteroid_1_2");
+      asteroidDarkore3 = Resources.Load<Sprite>("Sprites/Asteroids/Darkore/Darkore_Asteroid_1_3");
     }
 
     public int TakeDamage(Asteroid parentAsteroidInfo, int damage, Vector2 hitVector)
@@ -75,33 +134,37 @@ namespace zephkelly
           case AsteroidSize.ExtraLarge:
             newSize = AsteroidSize.Large;
 
-            newAsteroid = Instantiate(largeAsteroidPrefab, newRandomBoundsPosition, Quaternion.identity);
-            newAsteroidInfo = CreateAsteroidInfo(newAsteroid);
+            newAsteroidInfo = CreateAsteroidInfo();
+            newAsteroid = ChunkManager.Instance.Instantiator.GetAsteroid(newAsteroidInfo);
+            newAsteroidInfo.SetObject(newAsteroid);
             break;
 
           case AsteroidSize.Large:
             newSize = AsteroidSize.Medium;
 
-            newAsteroid = Instantiate(mediumAsteroidPrefab, newRandomBoundsPosition, Quaternion.identity);
-            newAsteroidInfo = CreateAsteroidInfo(newAsteroid);
+            newAsteroidInfo = CreateAsteroidInfo();
+            newAsteroid = ChunkManager.Instance.Instantiator.GetAsteroid(newAsteroidInfo);
+            newAsteroidInfo.SetObject(newAsteroid);
             break;
 
           case AsteroidSize.Medium:
             newSize = AsteroidSize.Small;
 
-            newAsteroid = Instantiate(smallAsteroidPrefab, newRandomBoundsPosition, Quaternion.identity);
-            newAsteroidInfo = CreateAsteroidInfo(newAsteroid);
+            newAsteroidInfo = CreateAsteroidInfo();
+            newAsteroid = ChunkManager.Instance.Instantiator.GetAsteroid(newAsteroidInfo);
+            newAsteroidInfo.SetObject(newAsteroid);
             break;
 
           case AsteroidSize.Small:
             newSize = AsteroidSize.Pickup;
 
-            newAsteroid = Instantiate(asteroidPickupPrefab, newRandomBoundsPosition, Quaternion.identity);
-            newAsteroidInfo = CreateAsteroidInfo(newAsteroid);
+            newAsteroidInfo = CreateAsteroidInfo();
+            newAsteroid = ChunkManager.Instance.Instantiator.GetAsteroid(newAsteroidInfo);
+            newAsteroidInfo.SetObject(newAsteroid);
             break;
         }
 
-        Asteroid CreateAsteroidInfo(GameObject _newAsteroid)
+        Asteroid CreateAsteroidInfo()
         {
           var asteroidInfo = new Asteroid(
             parentChunk,
@@ -111,7 +174,6 @@ namespace zephkelly
             GetHealth(newSize)
           );
 
-          asteroidInfo.SetObject(_newAsteroid);
           OcclusionManager.Instance.AddAsteroid.Add(asteroidInfo, parentChunk);
           return asteroidInfo;
         }
@@ -161,8 +223,9 @@ namespace zephkelly
         {
           rubbleSize = AsteroidSize.Pickup;
 
-          newRubble = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
-          newRubbleInfo = CreateRubbleInfo(newRubble);
+          newRubbleInfo = CreateRubbleInfo();
+          newRubble = ChunkManager.Instance.Instantiator.GetAsteroid(newRubbleInfo);
+          newRubbleInfo.SetObject(newRubble);
         }
       }
 
@@ -177,8 +240,9 @@ namespace zephkelly
         {
           rubbleSize = AsteroidSize.Pickup;
 
-          newRubble = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
-          newRubbleInfo = CreateRubbleInfo(newRubble);
+          newRubbleInfo = CreateRubbleInfo();
+          newRubble = ChunkManager.Instance.Instantiator.GetAsteroid(newRubbleInfo);
+          newRubbleInfo.SetObject(newRubble);
         }
       }
 
@@ -193,9 +257,9 @@ namespace zephkelly
         {
           rubbleSize = AsteroidSize.Pickup;
 
-          newRubble = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
-          newRubbleInfo = CreateRubbleInfo(newRubble);
-
+          newRubbleInfo = CreateRubbleInfo();
+          newRubble = ChunkManager.Instance.Instantiator.GetAsteroid(newRubbleInfo);
+          newRubbleInfo.SetObject(newRubble);
         }
 
         //Small asteroid chance
@@ -207,8 +271,9 @@ namespace zephkelly
           {
             rubbleSize = AsteroidSize.Small;
 
-            newRubble = Instantiate(smallAsteroidPrefab, hitVector, Quaternion.identity);
-            newRubbleInfo = CreateRubbleInfo(newRubble);
+            newRubbleInfo = CreateRubbleInfo();
+            newRubble = ChunkManager.Instance.Instantiator.GetAsteroid(newRubbleInfo);
+            newRubbleInfo.SetObject(newRubble);
           }
         }
       }
@@ -224,8 +289,9 @@ namespace zephkelly
         {
           rubbleSize = AsteroidSize.Pickup;
 
-          newRubble = Instantiate(asteroidPickupPrefab, hitVector, Quaternion.identity);
-          newRubbleInfo = CreateRubbleInfo(newRubble);
+          newRubbleInfo = CreateRubbleInfo();
+          newRubble = ChunkManager.Instance.Instantiator.GetAsteroid(newRubbleInfo);
+          newRubbleInfo.SetObject(newRubble);
         }
 
         //Small asteroid chance
@@ -237,8 +303,9 @@ namespace zephkelly
           {
             rubbleSize = AsteroidSize.Small;
 
-            newRubble = Instantiate(smallAsteroidPrefab, hitVector, Quaternion.identity);
-            newRubbleInfo = CreateRubbleInfo(newRubble);
+            newRubbleInfo = CreateRubbleInfo();
+            newRubble = ChunkManager.Instance.Instantiator.GetAsteroid(newRubbleInfo);
+            newRubbleInfo.SetObject(newRubble);
           }
         }
 
@@ -251,13 +318,14 @@ namespace zephkelly
           {
             rubbleSize = AsteroidSize.Medium;
 
-            newRubble = Instantiate(mediumAsteroidPrefab, hitVector, Quaternion.identity);
-            newRubbleInfo = CreateRubbleInfo(newRubble);
+            newRubbleInfo = CreateRubbleInfo();
+            newRubble = ChunkManager.Instance.Instantiator.GetAsteroid(newRubbleInfo);
+            newRubbleInfo.SetObject(newRubble);
           }
         }
       }
 
-      Asteroid CreateRubbleInfo(GameObject rubble)
+      Asteroid CreateRubbleInfo()
       {
         var asteroidInfo = new Asteroid(
           parentChunk,
@@ -267,7 +335,6 @@ namespace zephkelly
           GetHealth(rubbleSize)
         );
 
-        asteroidInfo.SetObject(rubble);
         OcclusionManager.Instance.AddAsteroid.Add(asteroidInfo, parentChunk);
         return asteroidInfo;
       }

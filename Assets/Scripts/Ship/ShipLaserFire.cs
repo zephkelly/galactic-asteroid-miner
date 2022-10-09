@@ -8,6 +8,7 @@ namespace zephkelly
   public class ShipLaserFire : MonoBehaviour
   {
     [SerializeField] ParticleSystem laserParticleSystem;
+    private ParticleSystemRenderer laserParticleRenderer;
     [SerializeField] GameObject explosionPrefab;
 
     [SerializeField] float explosionForce = 4f;
@@ -18,6 +19,7 @@ namespace zephkelly
     public void Awake()
     {
       laserParticleSystem = gameObject.GetComponent<ParticleSystem>();
+      laserParticleRenderer = gameObject.GetComponent<ParticleSystemRenderer>();
     }
 
     public void Start()
@@ -28,6 +30,18 @@ namespace zephkelly
     public void Shoot()
     {
       laserParticleSystem.Play();
+    }
+
+    public void SetProjectileMat(Material _material)
+    {
+      laserParticleRenderer.material = _material;
+      laserParticleRenderer.trailMaterial = _material;
+    }
+
+    public void SetProjectileSpeed(float _speed)
+    {
+      var main = laserParticleSystem.main;
+      main.startSpeed = _speed;
     }
 
     private void OnParticleCollision(GameObject hitObject)
@@ -54,7 +68,7 @@ namespace zephkelly
       {
         var asteroidInfo = hitObject.GetComponent<AsteroidController>().AsteroidInfo;
 
-        Destroy(hitObject);
+        OcclusionManager.Instance.RemoveAsteroid.Add(asteroidInfo, asteroidInfo.ParentChunk);
       }
 
       //Fade the explosion light over time and destroy when done
@@ -63,6 +77,8 @@ namespace zephkelly
 
     IEnumerator Explosion(float duration, Vector2 explosionPoint)
     {
+      zephkelly.AudioManager.Instance.PlaySoundRandomPitch("ShipShootImpact", 0.7f, 1.3f);
+
       GameObject explosion = Instantiate(explosionPrefab, explosionPoint, Quaternion.identity);
       var light = explosion.GetComponent<Light2D>();
 
@@ -73,7 +89,7 @@ namespace zephkelly
       {
         _lerp += Time.deltaTime / duration;
         light.intensity = Mathf.Lerp(startIntensity, 0, _lerp);
-        yield return null;
+        yield return new WaitForSeconds(0.1f);
       }
 
       Destroy(light.gameObject);

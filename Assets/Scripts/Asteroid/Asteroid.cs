@@ -96,6 +96,15 @@ namespace zephkelly
       currentPosition = asteroidTransform.position;
     }
 
+    public void NullObject()
+    {
+      asteroidObject = null;
+      asteroidTransform = null;
+      rigid2D = null;
+      collider2D = null;
+      renderer = null;
+    }
+
     public void IsRendered(bool _enabled)
     {
       if (renderer == null) 

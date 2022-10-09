@@ -8,20 +8,17 @@ namespace zephkelly
   {
     private void OnCollisionEnter2D(Collision2D collision)
     {
-      if (collision.gameObject.tag == "Asteroid")
+      if (collision.gameObject.tag == "Asteroid" || collision.gameObject.tag == "AsteroidPickup")
       {
         var asteroidInfo = collision.gameObject.GetComponent<AsteroidController>().AsteroidInfo;
 
+        if (OcclusionManager.Instance.RemoveAsteroid.ContainsKey(asteroidInfo))
+        {
+          Destroy(gameObject);
+          return;
+        }
         OcclusionManager.Instance.RemoveAsteroid.Add(asteroidInfo, asteroidInfo.ParentChunk);
       }
-
-      /*
-      if (collision.gameObject.tag == "Player")
-      {
-        Destroy(collision.gameObject);
-        Debug.Log("Player destroyed");
-      }
-      */
     }
   }
 }

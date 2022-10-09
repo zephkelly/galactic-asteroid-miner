@@ -9,25 +9,26 @@ namespace zephkelly
         //Stars
     //private static int starMinimumSeparation = 2400;
     //Minimum distances before a star can spawn
-    private static int starMinDistance1 = 300;   //WhiteDwarf - BrownDwarf
-    private static int starMinDistance2 = 600;   //RedDwarf - YellowDwarf
-    private static int starMinDistance3 = 900;   //BlueGiant - OrangeGiant
-    private static int starMinDistance4 = 1200;   //RedGiant - BlueSuperGiant
-    private static int starMinDistance5 = 1500;   //RedSuperGiant - BlueHyperGiant
-    private static int starMinDistance6 = 1800;   //RedHyperGiant
-    private static int starMinDistance7 = 2100;   //NeutronStar
-    private static int starMinDistance8 = 2400;   //BlackHole
+    private static int starMinDistance1 = 200;   //WhiteDwarf - BrownDwarf
+    private static int starMinDistance2 = 1000;   //RedDwarf - YellowDwarf
+    private static int starMinDistance3 = 1500;   //BlueGiant - OrangeGiant
+    private static int starMinDistance4 = 2000;   //RedGiant - BlueSuperGiant
+    private static int starMinDistance5 = 2500;   //RedSuperGiant - BlueHyperGiant
+    private static int starMinDistance6 = 3000;   //RedHyperGiant
+    private static int starMinDistance7 = 3500;   //NeutronStar
+    private static int starMinDistance8 = 4000;   //BlackHole
 
     //Asteroids
     private static int minAsteroids = 40;
     private static int maxAsteroids = 70;
     //Minimum distances before asteroids can spawn
     private static int asteroidMinDistance1 = 0;   //Iron - Platinum
-    private static int asteroidMinDistance2 = 300;   //Gold
-    private static int asteroidMinDistance3 = 600;   //Palladium
-    private static int asteroidMinDistance4 = 900;   //Cobalt
-    private static int asteroidMinDistance5 = 1200;   //Stellarite
-    private static int asteroidMinDistance6 = 1500;   //Darkore
+    private static int asteroidMinDistance2 = 150;   //Titanium
+    private static int asteroidMinDistance3 = 250;   //Gold
+    private static int asteroidMinDistance4 = 400;   //Palladium
+    private static int asteroidMinDistance5 = 800;   //Cobalt
+    private static int asteroidMinDistance6 = 1300;   //Stellarite
+    private static int asteroidMinDistance7 = 1600;   //Darkore
 
     //------------------------------------------------------------------------------
 
@@ -95,14 +96,14 @@ namespace zephkelly
       bool TryGenerateStar()
       {
         int shouldGenerateStar = Random.Range(0, 100);
-        if (shouldGenerateStar > 8) return false;   //8% chance
+        if (shouldGenerateStar > 10) return false;   //8% chance
 
         int starTypeGenerator = Random.Range(0, 1000);
 
-        float originDistance = Vector2.Distance(thisChunk.Position, Vector2.zero);
+        float originDistance = FastDistance(thisChunk.Position, Vector2.zero);
 
         //WhiteDwarf - BrownDwarf
-        if (originDistance > starMinDistance1)
+        if (originDistance >= starMinDistance1 && originDistance <= starMinDistance2)
         {
           if (starTypeGenerator < 100) {
             var whiteDwarf = new Star(thisChunk, StarType.WhiteDwarf);
@@ -117,7 +118,7 @@ namespace zephkelly
         }
 
         //RedDwarf - YellowDwarf
-        if (originDistance > starMinDistance2)
+        if (originDistance > starMinDistance2 && originDistance <= starMinDistance3)
         {
           if (starTypeGenerator < 300) {
             var redDwarf = new Star(thisChunk, StarType.RedDwarf);
@@ -132,7 +133,7 @@ namespace zephkelly
         }
 
         //BlueGiant - OrangeGiant
-        if (originDistance > starMinDistance3)
+        if (originDistance > starMinDistance3 && originDistance <= starMinDistance4)
         {
           if (starTypeGenerator < 500) {
             var blueGiant = new Star(thisChunk, StarType.BlueGiant);
@@ -147,7 +148,7 @@ namespace zephkelly
         }
 
         //RedGiant - BlueSuperGiant
-        if (originDistance > starMinDistance4)
+        if (originDistance > starMinDistance4 && originDistance <= starMinDistance5)
         {
           if (starTypeGenerator < 700) {
             var redGiant = new Star(thisChunk, StarType.RedGiant);
@@ -162,7 +163,7 @@ namespace zephkelly
         }
 
         //RedSuperGiant - BlueHyperGiant
-        if (originDistance > starMinDistance5)
+        if (originDistance > starMinDistance5 && originDistance <= starMinDistance6)
         {
           if (starTypeGenerator < 900) {
             var redSuperGiant = new Star(thisChunk, StarType.RedSuperGiant);
@@ -177,7 +178,7 @@ namespace zephkelly
         }
 
         //RedHyperGiant
-        if (originDistance > starMinDistance6)
+        if (originDistance > starMinDistance6 && originDistance <= starMinDistance7)
         {
           if (starTypeGenerator < 990) {
             var redHyperGiant = new Star(thisChunk, StarType.RedHyperGiant);
@@ -187,7 +188,7 @@ namespace zephkelly
         }
 
         //NeutroStar
-        if (originDistance > starMinDistance7)
+        if (originDistance > starMinDistance7 && originDistance <= starMinDistance8)
         {
           if (starTypeGenerator < 995) {
             var neutronStar = new Star(thisChunk, StarType.NeutronStar);
@@ -244,7 +245,7 @@ namespace zephkelly
       Asteroid CreateAsteroid(Vector2 _spawnPoint)
       {
         var randomSize = GetRandomSize();
-        var randomType = GetRandomType();
+        var randomType = GetRandomType(_spawnPoint);
         var health = GetAsteroidHealth(randomSize);
 
         return new Asteroid(
@@ -261,63 +262,76 @@ namespace zephkelly
         int randomSize = Random.Range(0, 100);
 
         if (randomSize <= 60) return AsteroidSize.Small;
-        else if (randomSize <= 85) return AsteroidSize.Medium;
+        else if (randomSize <= 80) return AsteroidSize.Medium;
         else if (randomSize <= 99) return AsteroidSize.Large;
         else return AsteroidSize.Huge;
       }
 
-      AsteroidType GetRandomType()
+      AsteroidType GetRandomType(Vector2 _position)
       {
         int gen = Random.Range(0, 100);
-        int originDistance = (int)Vector2.Distance(chunk.Position, Vector2.zero);
 
-        if (originDistance <= asteroidMinDistance1)
+        int originDistance = (int)FastDistance(_position, Vector2.zero);
+
+        if (originDistance > asteroidMinDistance1 && originDistance <= asteroidMinDistance2)
         {
-          if (gen <= 70) return AsteroidType.Iron;
+          if (gen <= 60) return AsteroidType.Iron;
           else return AsteroidType.Platinum;
         }
-        else if (originDistance <= asteroidMinDistance2)
+        else if (originDistance > asteroidMinDistance2 && originDistance <= asteroidMinDistance3)
         {
           if (gen <= 60) return AsteroidType.Iron;
           else if (gen <= 90) return AsteroidType.Platinum;
-          else return AsteroidType.Gold;
+          else return AsteroidType.Titanium;
         }
 
-        else if (originDistance <= asteroidMinDistance3)
+        else if (originDistance > asteroidMinDistance3 && originDistance <= asteroidMinDistance4)
         {
           if (gen <= 50) return AsteroidType.Iron;
           else if (gen <= 75) return AsteroidType.Platinum;
+          else if (gen <= 90) return AsteroidType.Titanium;
+          else return AsteroidType.Gold;
+        }
+
+        else if (originDistance > asteroidMinDistance4 && originDistance <= asteroidMinDistance5)
+        {
+          if (gen <= 40) return AsteroidType.Iron;
+          else if (gen <= 60) return AsteroidType.Platinum;
+          else if (gen <= 80) return AsteroidType.Titanium;
           else if (gen <= 90) return AsteroidType.Gold;
           else return AsteroidType.Palladium;
         }
 
-        else if (originDistance <= asteroidMinDistance4)
+        else if (originDistance > asteroidMinDistance5 && originDistance <= asteroidMinDistance6)
         {
-          if (gen <= 40) return AsteroidType.Iron;
-          else if (gen <= 60) return AsteroidType.Platinum;
+          if (gen <= 30) return AsteroidType.Iron;
+          else if (gen <= 50) return AsteroidType.Platinum;
+          else if (gen <= 70) return AsteroidType.Titanium;
           else if (gen <= 80) return AsteroidType.Gold;
           else if (gen <= 90) return AsteroidType.Palladium;
           else return AsteroidType.Cobalt;
         }
 
-        else if (originDistance <= asteroidMinDistance5)
+        else if (originDistance > asteroidMinDistance6 && originDistance <= asteroidMinDistance7)
         {
-          if (gen <= 30) return AsteroidType.Iron;
-          else if (gen <= 50) return AsteroidType.Platinum;
+          if (gen <= 20) return AsteroidType.Iron;
+          else if (gen <= 40) return AsteroidType.Platinum;
+          else if (gen <= 60) return AsteroidType.Titanium;
           else if (gen <= 70) return AsteroidType.Gold;
           else if (gen <= 80) return AsteroidType.Palladium;
           else if (gen <= 90) return AsteroidType.Cobalt;
           else return AsteroidType.Stellarite;
         }
 
-        else if (originDistance <= asteroidMinDistance6 || originDistance > asteroidMinDistance6)
+        else if (originDistance > asteroidMinDistance7)
         {
           if (gen <= 20) return AsteroidType.Iron;
           else if (gen <= 40) return AsteroidType.Platinum;
-          else if (gen <= 60) return AsteroidType.Gold;
-          else if (gen <= 70) return AsteroidType.Palladium;
-          else if (gen <= 80) return AsteroidType.Cobalt;
-          else if (gen <= 90) return AsteroidType.Stellarite;
+          else if (gen <= 60) return AsteroidType.Titanium;
+          else if (gen <= 70) return AsteroidType.Gold;
+          else if (gen <= 80) return AsteroidType.Palladium;
+          else if (gen <= 90) return AsteroidType.Cobalt;
+          else if (gen <= 95) return AsteroidType.Stellarite;
           else return AsteroidType.Darkore;
         }
         else
@@ -375,6 +389,14 @@ namespace zephkelly
 
         return health;
       }
+    }
+
+    private float FastDistance(Vector2 _point1, Vector2 _point2)
+    {
+      var x = _point1.x - _point2.x;
+      var y = _point1.y - _point2.y;
+
+      return Mathf.Sqrt(x * x + y * y);
     }
   }
 }

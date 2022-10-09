@@ -1,0 +1,32 @@
+-------------
+-- CREDITS --
+-------------
+Game by Zephyr
+find the full source code at:
+https://github.com/zephkelly
+
+
+--- MUSIC ---
+Maxstack - Through Space (menu_0)
+	 - Restoration Completed (menu_1)
+	 - The Client (game_1)
+https://opengameart.org/users/maxstack
+
+Arjen Schumacher - Deep Space (game_0)
+https://opengameart.org/users/onky
+
+--- SOUNDS --
+thruster loop - DJT4NN3R
+distant fireworks - ivolipa
+https://pixabay.com
+
+
+--- FONTS ---
+Pixeboy - Farhan Ramadhika
+https://www.dafont.com/pixeboy.font
+
+VCR OSD Mono - Riciery Leal
+https://www.dafont.com/vcr-osd-mono.font
+
+
+

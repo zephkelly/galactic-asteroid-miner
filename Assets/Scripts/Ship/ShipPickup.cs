@@ -7,11 +7,9 @@ namespace zephkelly
 {
   public class ShipPickup : MonoBehaviour
   {
-    [SerializeField] ShipController shipController;
-
     private Collider2D shipPickupTrigger;
     private Rigidbody2D rigid2D;
-    private const float pickupSpeed = 0.8f;
+    private const float pickupSpeed = 0.95f;
 
     private void Awake()
     {
@@ -30,8 +28,14 @@ namespace zephkelly
       Task lerpTask = PickupLerp(otherCollider.transform, asteroidInfo.Type);
       await Task.WhenAll(lerpTask);
 
+      zephkelly.AudioManager.Instance.PlaySoundRandomPitch("ShipPickup", 0.95f, 1.05f);
+
       //Add to inventory and destroy
-      shipController.Inventory.AddItem(asteroidInfo.Type.ToString(), 1);
+      ShipController.Instance.Inventory.AddItem(asteroidInfo.Type.ToString(), 1);
+      ShipUIManager.Instance.AddNewPickupText($"+{asteroidInfo.Type.ToString()}");
+
+      //Update stat manager
+      GameManager.Instance.StatisticsManager.IncrementPickupsCollected();
 
       if (OcclusionManager.Instance.RemoveAsteroid.ContainsKey(asteroidInfo)) return;
       OcclusionManager.Instance.RemoveAsteroid.Add(asteroidInfo, asteroidInfo.ParentChunk);
@@ -47,12 +51,7 @@ namespace zephkelly
       do
       {
         if (pickupTransform == null) break;
-        if (shipController == null)
-        {
-          Destroy(pickupTransform.gameObject);
-          Destroy(gameObject);
-          break;   //Exit if the player has been destroyed
-        }
+        if (rigid2D == null) break;
 
         shipPosition = rigid2D.position;
 
@@ -60,7 +59,7 @@ namespace zephkelly
         directionToPlayer.Normalize();
 
         distanceToPlayer = Vector2.Distance(this.transform.position, pickupTransform.position);
-        float force = 1 / distanceToPlayer;
+        float force = 2 / distanceToPlayer;
 
         //lerp from our position to player position by time and force
         pickupTransform.position = Vector2.Lerp(

@@ -26,7 +26,7 @@ namespace zephkelly
       {
         Instance = this;
       } else {
-        Destroy(gameObject);
+        Destroy(this);
       }
     }
 

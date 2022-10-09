@@ -191,6 +191,8 @@ GameObject:
   - component: {fileID: 1966893755498499277}
   - component: {fileID: 1966893755498499278}
   - component: {fileID: 3823206689823560768}
+  - component: {fileID: 1956480271}
+  - component: {fileID: 1956480270}
   m_Layer: 0
   m_Name: DepoStation
   m_TagString: Untagged
@@ -230,8 +232,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   innerTransform: {fileID: 1966893755584065825}
   outerTransform: {fileID: 1966893756066202336}
-  innerRotationSpeed: 2
-  outerRotationSpeed: 3
+  innerRotationSpeed: 4
+  outerRotationSpeed: 6
   innerRotationDirection: 1
   outerRotationDirection: -1
 --- !u!114 &1966893755498499278
@@ -248,8 +250,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   depoOuterLayerTransform: {fileID: 1966893756066202336}
   depoInnerLayerTransform: {fileID: 1966893755584065825}
-  parallaxFactorOuter: 10
-  parallaxFactorInner: 9.5
+  parallaxFactorOuter: 9.5
+  parallaxFactorInner: 9.1
 --- !u!58 &3823206689823560768
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -265,7 +267,40 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 5
+  m_Radius: 8
+--- !u!50 &1956480271
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1966893755498499267}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &1956480270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1966893755498499267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10227f426e7bf5a4697e8d0c6d4bf5ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1966893755584065824
 GameObject:
   m_ObjectHideFlags: 0

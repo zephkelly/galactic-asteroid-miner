@@ -12,6 +12,12 @@ TagManager:
   - Station
   - StarCore
   - UIManager
+  - PauseMenu
+  - ShipThruster
+  - ShipThrusterLight
+  - GameOverMenu
+  - OptionsMenu
+  - MainMenu
   layers:
   - Default
   - TransparentFX
@@ -21,7 +27,7 @@ TagManager:
   - UI
   - Player
   - Pickup
-  - 
+  - Minimap
   - 
   - 
   - 
@@ -55,9 +61,9 @@ TagManager:
   - name: Asteroids
     uniqueID: 1494104147
     locked: 0
-  - name: Player
-    uniqueID: 1555942171
-    locked: 0
   - name: Weapons
     uniqueID: 655645123
+    locked: 0
+  - name: Player
+    uniqueID: 1555942171
     locked: 0

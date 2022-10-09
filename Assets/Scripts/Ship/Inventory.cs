@@ -8,18 +8,27 @@ namespace zephkelly
   public class Inventory : ScriptableObject
   {
     private Dictionary <string, int> inventory = new Dictionary<string, int>();
-    public int credits = 0;
+    public long credits = 0;
 
     //------------------------------------------------------------------------------
 
+    public long GetCreditsAmount { get => credits; }
+
     public void AddItem(string item, int amount)
     {
+      var shipConfig = ShipController.Instance.ShipConfig;
+
       if (inventory.ContainsKey(item))
       {
+        if (shipConfig.CargoBayCurrentCapacity >= shipConfig.CargoBayMaxCapacity) {
+          return;
+        }
+
         inventory[item] += amount;
+        shipConfig.AddItemToCargo(amount);
+        DepoUIManager.Instance.OnUpdateCargo?.Invoke();
       }
-      else
-      {
+      else {
         inventory.Add(item, amount);
       }
     }
@@ -39,16 +48,16 @@ namespace zephkelly
     public void AddMoney(int amount)
     {
       credits += amount;
+
+      GameManager.Instance.StatisticsManager.IncrementCreditsGained(amount);
     }
 
     public void RemoveMoney(int amount)
     {
       credits -= amount;
-    }
 
-    public int GetCreditsAmount()
-    {
-      return credits;
+      //Update stats manager
+      GameManager.Instance.StatisticsManager.IncrementCreditsSpent(amount);
     }
 
     public int GetItemAmount(string item)
@@ -74,6 +83,7 @@ namespace zephkelly
 
     public void ClearInventory()
     {
+      ShipController.Instance.ShipConfig.ClearCargoBay();
       inventory.Clear();
 
       AddItem(AsteroidType.Iron.ToString(), 0);
@@ -89,12 +99,6 @@ namespace zephkelly
     public void ClearCredits()
     {
       credits = 0;
-    }
-
-    private void OnApplicationQuit()
-    {
-      ClearInventory();
-      ClearCredits();
     }
   }
 }

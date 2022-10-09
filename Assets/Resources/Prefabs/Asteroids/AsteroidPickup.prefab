@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 269125552462368942}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_LocalScale: {x: 0.08, y: 0.08, z: 0.08}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3038497058306479868}
@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 1494104147
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 83d3d9d6eb913ac47afdc55900f58045, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 1a74d4f876d8c604e8949bff2d44af2e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 8310338067648253354}
   - component: {fileID: 8874523443404751}
   - component: {fileID: 7943300297583722401}
+  - component: {fileID: 9157726415300127730}
   m_Layer: 7
   m_Name: AsteroidPickup
   m_TagString: AsteroidPickup
@@ -166,15 +167,23 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.09487593, y: 0.1164943}
-      - {x: 0.049557917, y: 0.14746732}
-      - {x: -0.06743204, y: 0.13873571}
-      - {x: -0.13263208, y: 0.0023078397}
-      - {x: -0.1779542, y: -0.097495906}
-      - {x: -0.07093528, y: -0.16459107}
-      - {x: 0.0772202, y: -0.15189397}
-      - {x: 0.16154036, y: -0.0834007}
-      - {x: 0.17210118, y: 0.017078057}
+    - - {x: 0.12188369, y: 0.13993347}
+      - {x: 0.069645464, y: 0.17492276}
+      - {x: 0.021007642, y: 0.19062471}
+      - {x: -0.017267749, y: 0.17128159}
+      - {x: -0.054816805, y: 0.15666263}
+      - {x: -0.0912045, y: 0.10349591}
+      - {x: -0.11522154, y: 0.09771033}
+      - {x: -0.14370768, y: 0.06600084}
+      - {x: -0.17114177, y: 0.011603277}
+      - {x: -0.20631646, y: -0.014253041}
+      - {x: -0.16932271, y: -0.12007054}
+      - {x: -0.109822035, y: -0.18776956}
+      - {x: 0.012059696, y: -0.18583778}
+      - {x: 0.060830895, y: -0.16523965}
+      - {x: 0.1150659, y: -0.15122999}
+      - {x: 0.16618809, y: -0.083400704}
+      - {x: 0.20131542, y: -0.023423493}
 --- !u!114 &8874523443404751
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,3 +211,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   asteroidSpriteRenderer: {fileID: 735372372295908565}
+--- !u!114 &9157726415300127730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239589416757620075}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 025ca366fa8499046b95cfbe7c4454a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  asteroidIron1: {fileID: 0}
+  asteroidIron2: {fileID: 0}
+  asteroidIron3: {fileID: 0}
+  asteroidPlatinum1: {fileID: 0}
+  asteroidPlatinum2: {fileID: 0}
+  asteroidPlatinum3: {fileID: 0}
+  asteroidTitanium1: {fileID: 0}
+  asteroidTitanium2: {fileID: 0}
+  asteroidTitanium3: {fileID: 0}
+  asteroidGold1: {fileID: 0}
+  asteroidGold2: {fileID: 0}
+  asteroidGold3: {fileID: 0}
+  asteroidPalladium1: {fileID: 0}
+  asteroidPalladium2: {fileID: 0}
+  asteroidPalladium3: {fileID: 0}
+  asteroidCobalt1: {fileID: 0}
+  asteroidCobalt2: {fileID: 0}
+  asteroidCobalt3: {fileID: 0}
+  asteroidStellarite1: {fileID: 0}
+  asteroidStellarite2: {fileID: 0}
+  asteroidStellarite3: {fileID: 0}
+  asteroidDarkore1: {fileID: 0}
+  asteroidDarkore2: {fileID: 0}
+  asteroidDarkore3: {fileID: 0}

@@ -10,11 +10,13 @@ namespace zephkelly
     [SerializeField] GameObject laserObject; //Set in inspector
     [SerializeField] ShipLaserFire laserWeapon;
 
-    private const float fireTime = 0.40f;
+    private float fireRate = 0.40f;
     private float _fireTimer;
     private bool canFire = true;
 
     public bool ToggleFiring { get => canFire; set => canFire = value; }
+
+    public ShipLaserFire LaserWeaponInfo { get => laserWeapon; }
 
     public void Start()
     {
@@ -23,6 +25,8 @@ namespace zephkelly
 
     public void Update()
     {
+      if (GameManager.Instance.GamePaused) return;
+
       if (_fireTimer > 0)
       {
         _fireTimer -= Time.deltaTime;
@@ -33,9 +37,26 @@ namespace zephkelly
 
       if (Input.GetKey(KeyCode.Space) || Input.GetMouseButton(0))
       {
-        _fireTimer = fireTime;
+        zephkelly.AudioManager.Instance.PlaySoundRandomPitch("ShipShoot", 0.6f, 0.8f);
+
+        _fireTimer = fireRate;
         laserWeapon.Shoot();
       }
-    }  
+    }
+
+    public void SetFireRate(float _fireRate)
+    {
+      fireRate = _fireRate;
+    }
+
+    public void SetProjectileMat(Material _material)
+    {
+      laserWeapon.SetProjectileMat(_material);
+    }
+
+    public void SetProjectileSpeed(float _speed)
+    {
+      laserWeapon.SetProjectileSpeed(_speed);
+    }
   }
 }
