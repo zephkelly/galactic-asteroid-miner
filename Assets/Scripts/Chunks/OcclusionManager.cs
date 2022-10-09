@@ -12,7 +12,7 @@ namespace zephkelly
 
     private Transform playerTransform;
     private const int starOcclusionRadius = 650;   //Should make it the largest star radius + players viewport size
-    private const int asteroidOcclusionDistance = 60;
+    private const int asteroidOcclusionDistance = 75;
 
     Dictionary<Vector2Int, Chunk> currentActiveChunks = new Dictionary<Vector2Int, Chunk>();
     Dictionary<Vector2Int, Chunk> currentLazyChunks = new Dictionary<Vector2Int, Chunk>();
@@ -135,6 +135,7 @@ namespace zephkelly
         foreach (var asteroid in asteroidToChangeChunk)
         {
           if (asteroid.Key == null) continue;
+          asteroid.Key.UpdateCurrentPosition();
           asteroid.Key.ParentChunk.Asteroids.Remove(asteroid.Key);
 
           asteroid.Key.NewParentChunk(asteroid.Value);
@@ -150,6 +151,7 @@ namespace zephkelly
         foreach (var asteroid in asteoridToRemove)
         {
           if (asteroid.Key == null) continue;
+          asteroid.Key.UpdateCurrentPosition();
           asteroid.Value.Asteroids.Remove(asteroid.Key);
 
           chunkManager.Instantiator.ReturnAsteroid(asteroid.Key);
@@ -170,6 +172,7 @@ namespace zephkelly
         foreach (var asteroid in asteroidToAdd)
         {
           if (asteroid.Key == null) continue;
+          asteroid.Key.UpdateCurrentPosition();
           asteroid.Value.Asteroids.Add(asteroid.Key);
 
           GetActiveAsteroids();
@@ -225,30 +228,31 @@ namespace zephkelly
     {
       foreach (var lazyAsteroid in lazyAsteroids)
       {
-        var asteroidDistance = FastDistance(lazyAsteroid.Key.CurrentPosition, playerTransform.position);
-
         //Make object if null
         if (lazyAsteroid.Key.AttachedObject == null)
         {
           var asteroidObject = instantiator.GetAsteroid(lazyAsteroid.Key);
           lazyAsteroid.Key.SetObject(asteroidObject);
-          lazyAsteroid.Key.IsRendered(false);
         }
         else {
           lazyAsteroid.Key.UpdateCurrentPosition();
         }
+
+        var asteroidDistance = FastDistance(lazyAsteroid.Key.CurrentPosition, playerTransform.position);
 
         if (asteroidDistance < asteroidOcclusionDistance)
         {
           if (lazyAsteroid.Key.AttachedObject == null) continue;
           if (lazyAsteroid.Key.RendererStatus) continue;
           lazyAsteroid.Key.IsRendered(true);
+          lazyAsteroid.Key.UpdateCurrentPosition();
         }
         else
         {
           if (lazyAsteroid.Key.AttachedObject == null) continue;
           if (!lazyAsteroid.Key.RendererStatus) continue;
           lazyAsteroid.Key.IsRendered(false);
+          lazyAsteroid.Key.UpdateCurrentPosition();
         }
       }
     }

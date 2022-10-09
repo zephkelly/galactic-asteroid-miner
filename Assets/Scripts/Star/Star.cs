@@ -56,10 +56,12 @@ namespace zephkelly
     {
       parentChunk = _parentChunk;
 
-      starPosition = new Vector2(
+      starPosition = 
+      new Vector2(
             UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.x, _parentChunk.ChunkBounds.max.x),
             UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.y, _parentChunk.ChunkBounds.max.y)
           );
+    
 
       starType = _type;
       SetStarProperties();

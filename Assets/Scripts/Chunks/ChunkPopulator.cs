@@ -6,9 +6,10 @@ namespace zephkelly
 {
   public class ChunkPopulator
   {
-        //Stars
+    //Stars
     //private static int starMinimumSeparation = 2400;
     //Minimum distances before a star can spawn
+    private static int starSpawnChance = 20;
     private static int starMinDistance1 = 200;   //WhiteDwarf - BrownDwarf
     private static int starMinDistance2 = 1000;   //RedDwarf - YellowDwarf
     private static int starMinDistance3 = 1500;   //BlueGiant - OrangeGiant
@@ -61,14 +62,13 @@ namespace zephkelly
 
       //------------------------------------------------------------------------------
 
-      //This function makes me want to vomit
       bool GetStarDistances()
       {
-        Vector2Int starCheckKey = new Vector2Int(thisChunk.Key.x - 3, thisChunk.Key.y - 3);
+        Vector2Int starCheckKey = new Vector2Int(thisChunk.Key.x - 2, thisChunk.Key.y - 2);
 
-        for (int y = 0; y < 7; y++)
+        for (int y = 0; y < 5; y++)
         {
-          for (int x = 0; x < 7; x++)
+          for (int x = 0; x < 5; x++)
           {
             if (ChunkManager.Instance.AllChunks.ContainsKey(starCheckKey))
             {
@@ -87,7 +87,7 @@ namespace zephkelly
           }
 
           starCheckKey.y++;
-          starCheckKey.x -= 7;
+          starCheckKey.x -= 5;
         }
 
         return false;
@@ -96,7 +96,7 @@ namespace zephkelly
       bool TryGenerateStar()
       {
         int shouldGenerateStar = Random.Range(0, 100);
-        if (shouldGenerateStar > 10) return false;   //8% chance
+        if (shouldGenerateStar > starSpawnChance) return false;   //8% chance
 
         int starTypeGenerator = Random.Range(0, 1000);
 
@@ -273,7 +273,7 @@ namespace zephkelly
 
         int originDistance = (int)FastDistance(_position, Vector2.zero);
 
-        if (originDistance > asteroidMinDistance1 && originDistance <= asteroidMinDistance2)
+        if (originDistance >= asteroidMinDistance1 && originDistance <= asteroidMinDistance2)
         {
           if (gen <= 60) return AsteroidType.Iron;
           else return AsteroidType.Platinum;
@@ -336,7 +336,7 @@ namespace zephkelly
         }
         else
         {
-          Debug.LogError("Random index out of range " + originDistance);
+          Debug.LogWarning("Random index out of range " + originDistance);
           return AsteroidType.Iron;
         }
       }

@@ -17,7 +17,7 @@ namespace zephkelly
     private int creditsGainedTotal;
     private int creditsSpentTotal;
 
-    private Dictionary<int, int> scores = new Dictionary<int, int>();
+    private Dictionary<int, long> scores = new Dictionary<int, long>();
 
     public int FurthestDistanceTravelled { get => furthestDistanceTravelled; }
     public int AsteroidsDestroyed { get => asteroidsDestroyedTotal; }
@@ -76,7 +76,7 @@ namespace zephkelly
       GetScore();
     }
 
-    public int GetScore()
+    public long GetScore()
     {
       var asteroidsDestroyedScore = asteroidsDestroyedTotal * 40;
       var playerDistance = furthestDistanceTravelled * 10;
@@ -85,7 +85,7 @@ namespace zephkelly
       var creditsSpentScore = creditsSpentTotal * 100;
       //var timeAliveScore = (int)timeAliveTotal * 10;
 
-      int highScore = asteroidsDestroyedScore
+      long highScore = asteroidsDestroyedScore
         + playerDistance
         + pickupsCollectedScore
         + creditsGainedScore
@@ -97,10 +97,10 @@ namespace zephkelly
 
     public void SaveScore()
     {
-      var scoresLength = scores.Count + 1;
+      var scoreIndexer = scores.Count + 1;
       var score = GetScore();
 
-      scores.Add(scoresLength, score);
+      scores.Add(scoreIndexer, score);
     }
   }
 }

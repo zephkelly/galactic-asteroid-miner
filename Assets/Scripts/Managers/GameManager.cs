@@ -18,7 +18,7 @@ namespace zephkelly
     private GameObject optionsMenu;
     private GameObject gameOverMenu;
 
-    private int currentSong;
+    private int currentSong = 0;
     private float songTimeRemaining;
     private bool playingMusic = false;
 
@@ -81,12 +81,17 @@ namespace zephkelly
       if (playingMusic) 
       {
         songTimeRemaining -= Time.deltaTime;
+
+        if (songTimeRemaining <= 0)
+        {
+          playingMusic = false;
+        }
       }
       else
       {
         playingMusic = true;
 
-        var randomMusic = Random.Range(0, 2);
+        var randomMusic = UnityEngine.Random.Range(0, 2);
 
         if (randomMusic == currentSong) {
           randomMusic = (randomMusic + 1) % 2;
