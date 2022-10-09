@@ -122,10 +122,22 @@ namespace zephkelly
       {
         Destroy(gameObject);
       }
+
+      #region Ship Setup
+      fuelSlider = GameObject.Find("ShipFuelUI").GetComponent<Slider>();
+      healthSlider = GameObject.Find("ShipHullUI").GetComponent<Slider>();
+      cargoSlider = GameObject.Find("ShipBayUI").GetComponent<Slider>();
+
+      OnUpdateFuel.AddListener(UpdateFuelUI);
+      OnUpdateHull.AddListener(UpdateHullUI);
+      OnUpdateCargo.AddListener(UpdateCargoUI);
+      #endregion
     }
 
     private void Start()
     {
+      UpdateCargoUI();
+      
       playerCreditsAmount = GameObject.Find("CreditsAmount").GetComponent<TextMeshProUGUI>();
       playerInventory = ShipController.Instance.Inventory;
       tooltipUIElement = GameObject.Find("TooltipUI").GetComponent<TextMeshProUGUI>();
@@ -218,17 +230,6 @@ namespace zephkelly
 
       depotUIObject = GameObject.Find("DepotUI");
       depotUIObject.SetActive(false);
-      #endregion
-
-      #region Ship Setup
-      fuelSlider = GameObject.Find("ShipFuelUI").GetComponent<Slider>();
-      healthSlider = GameObject.Find("ShipHullUI").GetComponent<Slider>();
-      cargoSlider = GameObject.Find("ShipBayUI").GetComponent<Slider>();
-
-      OnUpdateFuel.AddListener(UpdateFuelUI);
-      OnUpdateHull.AddListener(UpdateHullUI);
-      OnUpdateCargo.AddListener(UpdateCargoUI);
-      UpdateCargoUI();
       #endregion
     }
 

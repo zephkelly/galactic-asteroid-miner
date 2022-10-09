@@ -12,3 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b34971c1795fe35459b26e23a61d4f9e, type: 3}
   m_Name: AudioSettings
   m_EditorClassIdentifier: 
+  masterEffectsVolume: 0.5
+  masterMusicVolume: 0.5
+  isMusicOn: 1
+  isEffectOn: 1

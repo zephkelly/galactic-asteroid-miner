@@ -71,6 +71,11 @@ namespace zephkelly
       }
     }
 
+    public void QuitGame()
+    {
+      Application.Quit();
+    }
+
     private void GameMusic()
     {
       if (playingMusic) 
