@@ -10,8 +10,20 @@ namespace zephkelly
   public class ShipUIManager : MonoBehaviour
   {
     public static ShipUIManager Instance;
+    private AudioManager audioManager;
 
+    private TextMeshProUGUI fuelStatusText;
+      internal Color fuelNormalTextColor = new Color(1f, 1f, 1f, 1f);
+      internal Color fuelCriticalTextColor = new Color(0.36f, 1f, 1f, 1f);
+
+    private TextMeshProUGUI healthStatusText;
+      internal Color healthNormalTextColor = new Color(1f, 1f, 1f, 1f);
+      internal Color healthCriticalTextColor = new Color(1f, 0f, 0f, 1f);
+
+    //Cargo works differently to the other UI elements
     private TextMeshProUGUI fullCargoText;
+      internal Color hiddenFullCargoTextColor = new Color(1f, 0, 0, 0f);
+      internal Color fullCargoTextColor = new Color(1f, 0, 0, 1f);
 
     private TextMeshProUGUI pickupText1;
     private TextMeshProUGUI pickupText2;
@@ -35,6 +47,10 @@ namespace zephkelly
 
     public UnityEvent OnCargoFull;
     public UnityEvent OnEmptyCargo;
+    public UnityEvent OnCriticalFuel;
+    public UnityEvent OnNormalFuel;
+    public UnityEvent OnCriticalHull;
+    public UnityEvent OnNormalHull;
 
     private void Awake()
     {
@@ -44,13 +60,10 @@ namespace zephkelly
       } else {
         Destroy(gameObject);
       }
-    }
 
-    private void Start()
-    {
-      fullCargoText = GameObject.Find("FullCargoText").GetComponent<TextMeshProUGUI>();
-      fullCargoText.color = new Color(fullCargoText.color.r, fullCargoText.color.g, fullCargoText.color.b, 0f);
-
+      fuelStatusText = GameObject.Find("FuelStatusText").GetComponent<TextMeshProUGUI>();
+      healthStatusText = GameObject.Find("HullStatusText").GetComponent<TextMeshProUGUI>();
+      
       pickupText1 = GameObject.Find("PickupText1").GetComponent<TextMeshProUGUI>();
       pickupText2 = GameObject.Find("PickupText2").GetComponent<TextMeshProUGUI>();
       pickupText3 = GameObject.Find("PickupText3").GetComponent<TextMeshProUGUI>();
@@ -58,6 +71,13 @@ namespace zephkelly
       pickupText5 = GameObject.Find("PickupText5").GetComponent<TextMeshProUGUI>();
       pickupText6 = GameObject.Find("PickupText6").GetComponent<TextMeshProUGUI>();
 
+      fullCargoText = GameObject.Find("FullCargoText").GetComponent<TextMeshProUGUI>();
+      fullCargoText.color = hiddenFullCargoTextColor;
+    }
+
+    private void Start()
+    {
+      audioManager = zephkelly.AudioManager.Instance;
 
       pickupTexts.Add(0, pickupText1);
       pickupTexts.Add(1, pickupText2);
@@ -73,8 +93,14 @@ namespace zephkelly
       textFadeTimers.Add(4, textFadeTimer5);
       textFadeTimers.Add(5, textFadeTimer6);
 
-      OnCargoFull.AddListener(DisplayFullCargo);
-      OnEmptyCargo.AddListener(DisplayPickups);
+      OnCargoFull.AddListener(DisplayCargoFullStatus);
+      OnEmptyCargo.AddListener(DisplayCargoNormalStatus);
+
+      OnCriticalFuel.AddListener(DisplayFuelCriticalStatus);
+      OnNormalFuel.AddListener(DisplayFuelNormalStatus);
+
+      OnCriticalHull.AddListener(DisplayHealthCriticalStatus);
+      OnNormalHull.AddListener(DisplayHealthNormalStatus);
     }
 
     private void Update()
@@ -139,31 +165,73 @@ namespace zephkelly
       }
     }
 
-    private void DisplayFullCargo()
+    private void DisplayCargoFullStatus()
     {
       canDisplayPickup = false;
 
-      fullCargoText.color = new Color(
-        fullCargoText.color.r,
-        fullCargoText.color.g,
-        fullCargoText.color.b, 1f
-      );
+      fullCargoText.color = fullCargoTextColor;
 
       foreach (var pickupText in pickupTexts)
       {
         pickupText.Value.text = "";
       }
+
+      //audioManager.PlaySound("ErrorSound");
     }
 
-    private void DisplayPickups()
+
+    private void DisplayCargoNormalStatus()
     {
       canDisplayPickup = true;
+      fullCargoText.color = hiddenFullCargoTextColor;
+    }
 
-      fullCargoText.color = new Color(
-        fullCargoText.color.r,
-        fullCargoText.color.g,
-        fullCargoText.color.b, 0f
-      );
+
+    internal bool fuelCritical = false;
+    private void DisplayFuelNormalStatus()
+    {
+      if (!fuelCritical) return;
+      fuelCritical = false;
+
+      fuelStatusText.color = fuelNormalTextColor;
+      fuelStatusText.text = "FUEL";
+
+      //audioManager.StopSound("CritialFuel");
+    }
+
+    private void DisplayFuelCriticalStatus()
+    {
+      if (fuelCritical) return;
+      fuelCritical = true;
+
+      fuelStatusText.color = fuelCriticalTextColor;
+      fuelStatusText.text = "FUEL CRITICAL";
+
+      //audioManager.PlaySound("CritialFuel");
+    }
+
+    internal bool healthCritical = false;
+    private void DisplayHealthNormalStatus()
+    {
+      if (!healthCritical) return;
+      healthCritical = false;
+
+      healthStatusText.color = healthNormalTextColor;
+      healthStatusText.text = "HULL";
+
+      //audioManager.StopSound("CriticalHull");
+
+    }
+
+    private void DisplayHealthCriticalStatus()
+    {
+      if (healthCritical) return;
+      healthCritical = true;
+
+      healthStatusText.color = healthCriticalTextColor;
+      healthStatusText.text = "HULL CRITICAL";
+
+      //audioManager.PlaySound("CriticalHull");
     }
   }
 }

@@ -19,9 +19,9 @@ namespace zephkelly
     public UnityEvent OnUpdateHull;
     public UnityEvent OnUpdateCargo;
 
-    private Slider healthSlider;
     private Slider fuelSlider;
     private Slider cargoSlider;
+    private Slider healthSlider;
 
     #region Depot UI
     private GameObject depotMenuObject;
@@ -136,8 +136,6 @@ namespace zephkelly
 
     private void Start()
     {
-      UpdateCargoUI();
-      
       playerCreditsAmount = GameObject.Find("CreditsAmount").GetComponent<TextMeshProUGUI>();
       playerInventory = ShipController.Instance.Inventory;
       tooltipUIElement = GameObject.Find("TooltipUI").GetComponent<TextMeshProUGUI>();
@@ -230,6 +228,8 @@ namespace zephkelly
 
       depotUIObject = GameObject.Find("DepotUI");
       depotUIObject.SetActive(false);
+
+      MadeAPurchase();
       #endregion
     }
 
@@ -846,7 +846,7 @@ namespace zephkelly
       switch (ship.ShipsFuelTank)
       {
         case ShipFuelTank.SmallTank:
-          currentTankText.text = "Tank: Smallk";
+          currentTankText.text = "Tank: Small";
           break;
         case ShipFuelTank.MediumTank:
           currentTankText.text = "Tank: Medium";

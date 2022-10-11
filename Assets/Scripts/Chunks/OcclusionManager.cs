@@ -151,7 +151,7 @@ namespace zephkelly
         foreach (var asteroid in asteoridToRemove)
         {
           if (asteroid.Key == null) continue;
-          asteroid.Key.UpdateCurrentPosition();
+          if (asteroid.Key.AttachedObject != null) asteroid.Key.UpdateCurrentPosition();
           asteroid.Value.Asteroids.Remove(asteroid.Key);
 
           chunkManager.Instantiator.ReturnAsteroid(asteroid.Key);
@@ -229,7 +229,7 @@ namespace zephkelly
       foreach (var lazyAsteroid in lazyAsteroids)
       {
         //Make object if null
-        if (lazyAsteroid.Key.AttachedObject == null)
+        if (lazyAsteroid.Key.AttachedObject == null )
         {
           var asteroidObject = instantiator.GetAsteroid(lazyAsteroid.Key);
           lazyAsteroid.Key.SetObject(asteroidObject);

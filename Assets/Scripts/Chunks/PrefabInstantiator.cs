@@ -184,7 +184,7 @@ namespace zephkelly
       }, asteroid =>
       {
         Destroy(asteroid);
-      }, false, 80, 120);
+      }, true, 80, 150);
 
       asteroidSmallPool = new ObjectPool<GameObject>(() =>
       {
@@ -199,7 +199,7 @@ namespace zephkelly
       }, asteroid =>
       {
         Destroy(asteroid);
-      }, false, 80, 120);
+      }, true, 80, 150);
 
       asteroidMediumPool = new ObjectPool<GameObject>(() =>
       {
@@ -214,7 +214,7 @@ namespace zephkelly
       }, asteroid =>
       {
         Destroy(asteroid);
-      }, false, 80, 120);
+      }, true, 80, 150);
 
       asteroidLargePool = new ObjectPool<GameObject>(() =>
       {
@@ -229,7 +229,7 @@ namespace zephkelly
       }, asteroid =>
       {
         Destroy(asteroid);
-      }, false, 80, 120);
+      }, true, 80, 150);
 
       asteroidHugePool = new ObjectPool<GameObject>(() =>
       {
@@ -244,7 +244,7 @@ namespace zephkelly
       }, asteroid =>
       {
         Destroy(asteroid);
-      }, false, 80, 120);
+      }, true, 80, 150);
     }
 
     public GameObject GetStar(Star _starInfo)

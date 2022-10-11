@@ -48,7 +48,7 @@ namespace zephkelly
     public void PlayGame()
     {
       audioManager.SaveOptionsOnScriptable();
-      SceneManager.LoadScene("GameScene");
+      SceneManager.LoadScene(1);
       audioManager.SaveOptionsOnScriptable();
     }
 

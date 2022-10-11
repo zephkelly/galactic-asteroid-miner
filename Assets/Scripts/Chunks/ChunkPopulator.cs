@@ -9,7 +9,7 @@ namespace zephkelly
     //Stars
     //private static int starMinimumSeparation = 2400;
     //Minimum distances before a star can spawn
-    private static int starSpawnChance = 20;
+    private static int starSpawnChance = 15;
     private static int starMinDistance1 = 200;   //WhiteDwarf - BrownDwarf
     private static int starMinDistance2 = 1000;   //RedDwarf - YellowDwarf
     private static int starMinDistance3 = 1500;   //BlueGiant - OrangeGiant
@@ -295,43 +295,43 @@ namespace zephkelly
 
         else if (originDistance > asteroidMinDistance4 && originDistance <= asteroidMinDistance5)
         {
-          if (gen <= 40) return AsteroidType.Iron;
-          else if (gen <= 60) return AsteroidType.Platinum;
-          else if (gen <= 80) return AsteroidType.Titanium;
-          else if (gen <= 90) return AsteroidType.Gold;
+          if (gen <= 45) return AsteroidType.Iron;
+          else if (gen <= 70) return AsteroidType.Platinum;
+          else if (gen <= 87) return AsteroidType.Titanium;
+          else if (gen <= 97) return AsteroidType.Gold;
           else return AsteroidType.Palladium;
         }
 
         else if (originDistance > asteroidMinDistance5 && originDistance <= asteroidMinDistance6)
         {
-          if (gen <= 30) return AsteroidType.Iron;
+          if (gen <= 40) return AsteroidType.Iron;
           else if (gen <= 50) return AsteroidType.Platinum;
-          else if (gen <= 70) return AsteroidType.Titanium;
-          else if (gen <= 80) return AsteroidType.Gold;
-          else if (gen <= 90) return AsteroidType.Palladium;
+          else if (gen <= 65) return AsteroidType.Titanium;
+          else if (gen <= 85) return AsteroidType.Gold;
+          else if (gen <= 97) return AsteroidType.Palladium;
           else return AsteroidType.Cobalt;
         }
 
         else if (originDistance > asteroidMinDistance6 && originDistance <= asteroidMinDistance7)
         {
-          if (gen <= 20) return AsteroidType.Iron;
-          else if (gen <= 40) return AsteroidType.Platinum;
-          else if (gen <= 60) return AsteroidType.Titanium;
-          else if (gen <= 70) return AsteroidType.Gold;
-          else if (gen <= 80) return AsteroidType.Palladium;
-          else if (gen <= 90) return AsteroidType.Cobalt;
+          if (gen <= 35) return AsteroidType.Iron;
+          else if (gen <= 50) return AsteroidType.Platinum;
+          else if (gen <= 66) return AsteroidType.Titanium;
+          else if (gen <= 75) return AsteroidType.Gold;
+          else if (gen <= 84) return AsteroidType.Palladium;
+          else if (gen <= 97) return AsteroidType.Cobalt;
           else return AsteroidType.Stellarite;
         }
 
         else if (originDistance > asteroidMinDistance7)
         {
-          if (gen <= 20) return AsteroidType.Iron;
-          else if (gen <= 40) return AsteroidType.Platinum;
-          else if (gen <= 60) return AsteroidType.Titanium;
-          else if (gen <= 70) return AsteroidType.Gold;
-          else if (gen <= 80) return AsteroidType.Palladium;
-          else if (gen <= 90) return AsteroidType.Cobalt;
-          else if (gen <= 95) return AsteroidType.Stellarite;
+          if (gen <= 28) return AsteroidType.Iron;
+          else if (gen <= 45) return AsteroidType.Platinum;
+          else if (gen <= 67) return AsteroidType.Titanium;
+          else if (gen <= 76) return AsteroidType.Gold;
+          else if (gen <= 85) return AsteroidType.Palladium;
+          else if (gen <= 91) return AsteroidType.Cobalt;
+          else if (gen <= 97) return AsteroidType.Stellarite;
           else return AsteroidType.Darkore;
         }
         else

@@ -87,6 +87,7 @@ namespace zephkelly
   {
     private ShipController shipController;
     private Inventory playerInventory;
+    private ShipUIManager shipUIManager;
 
     private ShipWeapon shipWeapon;
     private ShipShoot shipShootScript;
@@ -129,43 +130,43 @@ namespace zephkelly
 
     //Ore Values
     public int ironPrice = 4;
-    public int platinumPrice = 6;
-    public int titaniumPrice = 11;
+    public int platinumPrice = 7;
+    public int titaniumPrice = 12;
     public int goldPrice = 16;
-    public int palladiumPrice = 23;
-    public int cobaltPrice = 35;
-    public int stellaritePrice = 50;
-    public int darkorePrice = 80;
+    public int palladiumPrice = 21;
+    public int cobaltPrice = 32;
+    public int stellaritePrice = 45;
+    public int darkorePrice = 67;
 
     //Engine Costs
     public int impulseEngineCost = 1200;
-    public int ionEngineCost = 2500;
-    public int warpDriveCost = 3800;
-    public int hyperDriveCost = 5300;
+    public int ionEngineCost = 2700;
+    public int warpDriveCost = 4400;
+    public int hyperDriveCost = 7200;
 
     //Weapon Costs
     public int photonWeaponCost = 1000;
-    public int plasmaWeaponCost = 2200;
-    public int ionWeaponCost = 3800;
-    public int darkWeaponCost = 5200;
+    public int plasmaWeaponCost = 2700;
+    public int ionWeaponCost = 4700;
+    public int darkWeaponCost = 8000;
 
     //Hull Costs
     public int titaniumHullCost = 1200;
-    public int cobaltHullCost = 2500;
-    public int stellariteHullCost = 3000;
-    public int darkoreHullCost = 5500;
+    public int cobaltHullCost = 2700;
+    public int stellariteHullCost = 4800;
+    public int darkoreHullCost = 9500;
 
     //FuelTank Costs
     public int mediumTankCost = 1000;
-    public int largeTankCost = 1800;
-    public int hugeTankCost = 2500;
-    public int megaTankCost = 5000;
+    public int largeTankCost = 3000;
+    public int hugeTankCost = 5600;
+    public int megaTankCost = 10000;
 
     //CargoBay Costs
     public int smallCargoBayCost = 1500;
-    public int mediumCargoBayCost = 2200;
-    public int largeCargoBayCost = 3400;
-    public int hugeCargoBayCost = 4800;
+    public int mediumCargoBayCost = 2800;
+    public int largeCargoBayCost = 4800;
+    public int hugeCargoBayCost = 9800;
 
     public ShipEngine ShipEngine { get => shipEngine; }
     public int EngineSpeed { get => engineSpeed; }
@@ -191,12 +192,16 @@ namespace zephkelly
 
     //----------------------------------------------------------------------------------------------
 
-    private void Start()
+    private void Awake()
     {
       shipController = GetComponent<ShipController>();
       shipShootScript = GetComponent<ShipShoot>();
-      ShipUIManager.Instance = gameObject.GetComponent<ShipUIManager>();
+    }
+
+    private void Start()
+    {
       playerInventory = shipController.Inventory;
+      shipUIManager = ShipUIManager.Instance;
 
       shipEngine = ShipEngine.RocketEngine;
       shipWeapon = ShipWeapon.StandardPhaser;
@@ -363,14 +368,14 @@ namespace zephkelly
 
       if (cargoBayCurrentCapacity == cargoBayMaxCapacity)
       {
-        ShipUIManager.Instance.OnCargoFull?.Invoke();
+        shipUIManager.OnCargoFull?.Invoke();
       }
     }
 
     public void ClearCargoBay()
     {
       cargoBayCurrentCapacity = 0;
-      ShipUIManager.Instance.OnEmptyCargo?.Invoke();
+      shipUIManager.OnEmptyCargo?.Invoke();
     }
 
     public void RefuelShip(int type)
@@ -411,6 +416,12 @@ namespace zephkelly
       }
 
       fuelTankCurrent = Mathf.Clamp(fuelTankCurrent, 0, fuelTankMaxCapacity);
+
+      if (fuelTankCurrent < 15) {
+        shipUIManager.OnCriticalFuel?.Invoke();
+      } else {
+        shipUIManager.OnNormalFuel?.Invoke();
+      }
 
       DepoUIManager.Instance.OnUpdateFuel?.Invoke();
       DepoUIManager.Instance.MadeAPurchase();
@@ -455,6 +466,12 @@ namespace zephkelly
 
       hullStrengthCurrent = Mathf.Clamp(hullStrengthCurrent, 0, hullStrengthMax);
 
+      if (hullStrengthCurrent < 20) {
+        shipUIManager.OnCriticalHull?.Invoke();
+      } else {
+        shipUIManager.OnNormalHull?.Invoke();
+      }
+
       DepoUIManager.Instance.OnUpdateHull?.Invoke();
       DepoUIManager.Instance.MadeAPurchase();
     }
@@ -491,7 +508,7 @@ namespace zephkelly
 
       playerInventory.AddMoney(totalPrice);
       playerInventory.ClearInventory();
-      ShipUIManager.Instance.OnEmptyCargo?.Invoke();
+      shipUIManager.OnEmptyCargo?.Invoke();
       DepoUIManager.Instance.MadeAPurchase();
       DepoUIManager.Instance.OnUpdateCargo?.Invoke();
     }
@@ -505,6 +522,12 @@ namespace zephkelly
       DepoUIManager.Instance.OnUpdateHull?.Invoke();
 
       zephkelly.AudioManager.Instance.PlaySound("ShipDamage");
+
+      if (hullStrengthCurrent <= 20) {
+        shipUIManager.OnCriticalHull?.Invoke();
+      } else {
+        shipUIManager.OnNormalHull?.Invoke();
+      }
 
       if (hullStrengthCurrent <= 0) {
         StartCoroutine(DeathDelay());
@@ -563,6 +586,12 @@ namespace zephkelly
     {
       fuelTankCurrent -= fuelUsage * Time.deltaTime;
       fuelTankCurrent = Mathf.Clamp(fuelTankCurrent, 0, fuelTankMaxCapacity);
+
+      if (fuelTankCurrent <= 15) {
+        shipUIManager.OnCriticalFuel?.Invoke();
+      } else {
+        shipUIManager.OnNormalFuel?.Invoke();
+      }
 
       if (fuelTankCurrent <= 0) {
         shipController.Die("You ran out of fuel...");
@@ -641,7 +670,7 @@ namespace zephkelly
           break;
 
         case ShipEngine.HyperDrive:
-          engineSpeed = 360;
+          engineSpeed = 340;
 
           var newGradient5 = new Gradient();
           color1 = Color.white;
@@ -672,18 +701,18 @@ namespace zephkelly
           shipShootScript.SetProjectileMat(photonWeaponMaterial);
           break;
         case ShipWeapon.PlasmaCannon:
-          shipShootScript.SetFireRate(0.18f);
-          shipShootScript.SetProjectileSpeed(80f);
+          shipShootScript.SetFireRate(0.20f);
+          shipShootScript.SetProjectileSpeed(75f);
           shipShootScript.SetProjectileMat(plasmaWeaponMaterial);
           break;
         case ShipWeapon.IonCannon:
-          shipShootScript.SetFireRate(0.12f);
-          shipShootScript.SetProjectileSpeed(100f);
+          shipShootScript.SetFireRate(0.18f);
+          shipShootScript.SetProjectileSpeed(90f);
           shipShootScript.SetProjectileMat(ionWeaponMaterial);
           break;
         case ShipWeapon.DarkCannon:
-          shipShootScript.SetFireRate(0.09f);
-          shipShootScript.SetProjectileSpeed(120f);
+          shipShootScript.SetFireRate(0.13f);
+          shipShootScript.SetProjectileSpeed(110f);
           shipShootScript.SetProjectileMat(darkWeaponMaterial);
           break;
       }
@@ -697,16 +726,16 @@ namespace zephkelly
           cargoBayMaxCapacity = 50;
           break;
         case ShipCargoBay.SmallCargoBay:
-          cargoBayMaxCapacity = 100;
+          cargoBayMaxCapacity = 80;
           break;
         case ShipCargoBay.MediumCargoBay:
-          cargoBayMaxCapacity = 150;
+          cargoBayMaxCapacity = 120;
           break;
         case ShipCargoBay.LargeCargoBay:
-          cargoBayMaxCapacity = 300;
+          cargoBayMaxCapacity = 160;
           break;
         case ShipCargoBay.HugeCargoBay:
-          cargoBayMaxCapacity = 500;
+          cargoBayMaxCapacity = 220;
           break;
       }
     }
@@ -775,13 +804,13 @@ namespace zephkelly
           fuelTankMaxCapacity = 140;
           break;
         case ShipFuelTank.LargeTank:
-          fuelTankMaxCapacity = 260;
+          fuelTankMaxCapacity = 200;
           break;
         case ShipFuelTank.MegaTank:
-          fuelTankMaxCapacity = 380;
+          fuelTankMaxCapacity = 260;
           break;
         case ShipFuelTank.HugeTank:
-          fuelTankMaxCapacity = 600;
+          fuelTankMaxCapacity = 320;
           break;
       }
 

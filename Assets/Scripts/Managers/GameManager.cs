@@ -158,7 +158,7 @@ namespace zephkelly
       }
 
       Time.timeScale = 1;
-      SceneManager.LoadScene("MenuScene");
+      SceneManager.LoadScene(0);
     }
 
     public void RestartGame()
@@ -166,7 +166,7 @@ namespace zephkelly
       statisticsManager.SaveScore();
 
       Time.timeScale = 1;
-      SceneManager.LoadScene("GameScene");
+      SceneManager.LoadScene(1);
     }
   }
 }

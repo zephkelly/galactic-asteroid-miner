@@ -94,6 +94,7 @@ namespace zephkelly
     public void UpdateCurrentPosition()
     {
       currentPosition = asteroidTransform.position;
+      spawnPosition = asteroidTransform.position;
     }
 
     public void NullObject()
