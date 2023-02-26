@@ -13,11 +13,6 @@ I've been tinkering inside the unity engine for 6+ years, and to show that I am 
 
 <br>
 
-![White Dwarf](https://img.itch.zone/aW1hZ2UvMTc0MDIyMS8xMDI1MjYwNS5qcGc=/original/z%2FaKXM.jpg)
-
-<br>
-
-
 ## Technologies
 
 - Unity3D
@@ -27,8 +22,21 @@ I've been tinkering inside the unity engine for 6+ years, and to show that I am 
 
 <br>
 
+![White Dwarf](https://img.itch.zone/aW1hZ2UvMTc0MDIyMS8xMDI1MjYwNS5qcGc=/original/z%2FaKXM.jpg)
 
-## Game sytems
+<br>
+
+## Game systems
+
+The following are some of the systems implemented to realise this project:
+
+- Infinite procedural generation: custom generation algorithm without pseudo-random generators such as `perlin noise`
+- Spatial hashing: implemented using a dictionary, could be converted to hashmap
+- Chunking System
+- Occlusion Culling
+- Realistic 2D Newtonian physics
+
+<br>
 
 Every line of code is my own work. my own implementations and solutions to problems I encounterd. There were a number of 
 hurdles I had to overcome, mostly involving the physics system and largescale gravity simulations.
@@ -39,10 +47,9 @@ hurdles I had to overcome, mostly involving the physics system and largescale gr
 
 <br>
 
-The following are some of the systems implemented to realise this project:
+## In-Development
+### Multiplayer
 
-- Infinite procedural generation: custom generation algorithm without pseudo-random generators such as `perlin noise`
-- Spatial hashing: implemented using a dictionary, could be converted to hashmap
-- Chunking System
-- Occlusion Culling
-- Realistic 2D Newtonian physics
+Multiplayer is front and center on the next update to the game. This involves a total rework of the game systems from the ground up. Using the `Mirror` library, which itself is built ontop of Unity's now depreciated `UNET` library, the game works by making RPC calls between client / server / and host versions of the client. All information is serialised through a KCP transport (essentially just a C# implementation of a TCP transport).
+
+![Multiplayer mirror](https://imgur.com/JQPTlFD.jpg)
