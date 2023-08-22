@@ -232,6 +232,42 @@ namespace zephkelly
       if (toggleFuel) UseFuel();
 
       if (invulnerabilityTimer > 0) invulnerabilityTimer -= Time.deltaTime;
+
+      //if we press control+shift+q, we give the ship max upgrades
+      if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Q))
+      {
+        shipEngine = ShipEngine.HyperDrive;
+        shipWeapon = ShipWeapon.DarkCannon;
+        shipHull = ShipHull.DarkoreHull;
+        shipRadiator = ShipRadiator.StellariteRadiator;
+        shipCargoBay = ShipCargoBay.HugeCargoBay;
+        shipFuelTank = ShipFuelTank.MegaTank;
+
+        SetEngine();
+        SetCargoBay();
+        SetWeapon();
+        SetHull();
+        SetRadiator();
+        SetFuelTank();
+      }
+
+      //if we press control+shift+r we reset ship to normal
+      if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.R))
+      {
+        shipEngine = ShipEngine.RocketEngine;
+        shipWeapon = ShipWeapon.StandardPhaser;
+        shipHull = ShipHull.SteelHull;
+        shipRadiator = ShipRadiator.SteelRadiator;
+        shipCargoBay = ShipCargoBay.TinyCargoBay;
+        shipFuelTank = ShipFuelTank.SmallTank;
+
+        SetEngine();
+        SetCargoBay();
+        SetWeapon();
+        SetHull();
+        SetRadiator();
+        SetFuelTank();
+      }
     }
 
     #region Setters
@@ -798,19 +834,19 @@ namespace zephkelly
       switch (shipFuelTank)
       {
         case ShipFuelTank.SmallTank:
-          fuelTankMaxCapacity = 40;
+          fuelTankMaxCapacity = 100;
           break;
         case ShipFuelTank.MediumTank:
-          fuelTankMaxCapacity = 140;
+          fuelTankMaxCapacity = 220;
           break;
         case ShipFuelTank.LargeTank:
-          fuelTankMaxCapacity = 200;
+          fuelTankMaxCapacity = 360;
           break;
         case ShipFuelTank.MegaTank:
-          fuelTankMaxCapacity = 260;
+          fuelTankMaxCapacity = 500;
           break;
         case ShipFuelTank.HugeTank:
-          fuelTankMaxCapacity = 320;
+          fuelTankMaxCapacity = 920;
           break;
       }
 
