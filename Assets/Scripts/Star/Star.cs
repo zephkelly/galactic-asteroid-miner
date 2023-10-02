@@ -80,8 +80,8 @@ namespace zephkelly
     public void DisposeObject()
     {
       if (starObject == null) return;
-      Debug.Log("Disposing star object");
 
+      UnityEngine.Object.Destroy(starObject);
       starObject = null;
       starRenderer = null;
     }

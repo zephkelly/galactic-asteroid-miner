@@ -10,7 +10,9 @@ namespace zephkelly
     private Transform playerTransform;
     private Camera mainCamera;
     private Transform cameraTransform;
-    private GameObject pointer;
+    private GameObject pointerStar;
+    private GameObject pointerDepo;
+
 
     [SerializeField] Canvas parentCanvas;
     private float borderX = 25f;
@@ -23,7 +25,8 @@ namespace zephkelly
 
     private void Awake()
     {
-      pointer = Resources.Load<GameObject>("Prefabs/UI/StarPointer");
+      pointerStar = Resources.Load<GameObject>("Prefabs/UI/StarPointer");
+      pointerDepo = Resources.Load<GameObject>("Prefabs/UI/DepoPointer");
 
       mainCamera = Camera.main;
       cameraTransform = mainCamera.transform;
@@ -38,13 +41,14 @@ namespace zephkelly
     {
       ResetCurrentPointers();
       GetActiveStars();
+      // GetActiveDepos();
     }
 
     private void ResetCurrentPointers()
     {
-      foreach (var pointer in pointers)
+      foreach (var pointerStar in pointers)
       {
-        Destroy(pointer.Value.gameObject);
+        Destroy(pointerStar.Value.gameObject);
       }
 
       pointers.Clear();
@@ -60,7 +64,7 @@ namespace zephkelly
         var starPosition = lazyChunk.Value.ChunkStar.SpawnPoint;
         var starType = lazyChunk.Value.ChunkStar.Type;
 
-        GameObject newStarPointer = Object.Instantiate(pointer) as GameObject;
+        GameObject newStarPointer = Object.Instantiate(pointerStar) as GameObject;
         newStarPointer.transform.SetParent(parentCanvas.transform);
 
         var starPointer = newStarPointer.GetComponent<Pointer>();
@@ -78,7 +82,7 @@ namespace zephkelly
         var starPosition = activeChunk.Value.ChunkStar.SpawnPoint;
         var starType = activeChunk.Value.ChunkStar.Type;
 
-        GameObject newStarPointer = Object.Instantiate(pointer) as GameObject;
+        GameObject newStarPointer = Object.Instantiate(pointerStar) as GameObject;
         newStarPointer.transform.SetParent(parentCanvas.transform);
 
         var starPointer = newStarPointer.GetComponent<Pointer>();
@@ -87,8 +91,42 @@ namespace zephkelly
         pointers.Add(starPosition, starPointer);
       }
 
-      //Depo pointer
-      GameObject newBasePointer = Object.Instantiate(pointer) as GameObject;
+      //Lazy Depos
+      foreach (var lazyChunk in ChunkManager.Instance.LazyChunks)
+      {
+        if (pointers.ContainsKey(lazyChunk.Value.Position)) continue;
+        if (lazyChunk.Value.HasDepo == false) continue;
+
+        var depoPosition = lazyChunk.Value.Position;
+
+        GameObject newDepoPointer = Object.Instantiate(pointerDepo) as GameObject;
+        newDepoPointer.transform.SetParent(parentCanvas.transform);
+
+        var depoPointer = newDepoPointer.GetComponent<Pointer>();
+        depoPointer.SetBaseColor();
+
+        pointers.Add(depoPosition, depoPointer);
+      }
+
+      //Active Depos
+      foreach (var activeChunk in ChunkManager.Instance.ActiveChunks)
+      {
+        if (pointers.ContainsKey(activeChunk.Value.Position)) continue;
+        if (activeChunk.Value.HasDepo == false) continue;
+
+        var depoPosition = activeChunk.Value.ChunkDepo.AttachedObject.transform.position;
+
+        GameObject newDepoPointer = Object.Instantiate(pointerDepo) as GameObject;
+        newDepoPointer.transform.SetParent(parentCanvas.transform);
+
+        var depoPointer = newDepoPointer.GetComponent<Pointer>();
+        depoPointer.SetBaseColor();
+
+        pointers.Add(depoPosition, depoPointer);
+      }
+
+      //Depo pointerStar
+      GameObject newBasePointer = Object.Instantiate(pointerDepo) as GameObject;
       newBasePointer.transform.SetParent(parentCanvas.transform);
 
       var basePointer = newBasePointer.GetComponent<Pointer>();
@@ -102,10 +140,10 @@ namespace zephkelly
       if (playerTransform == null) return;
       if (pointers.Count == 0) return;
 
-      foreach (var pointer in pointers)
+      foreach (var pointerStar in pointers)
       {
-        Vector2 targetPosition = pointer.Key;
-        var pointerInfo = pointer.Value;
+        Vector2 targetPosition = pointerStar.Key;
+        var pointerInfo = pointerStar.Value;
 
         var distance = (int)Vector2.Distance(targetPosition, playerTransform.position) / 5;
 
@@ -123,7 +161,7 @@ namespace zephkelly
 
         //----------------------------------------------------------------------------
 
-        void RotatePointer()   //Get direction and rotate pointer to angle
+        void RotatePointer()   //Get direction and rotate pointerStar to angle
         {
           Vector2 direction = targetPosition - (Vector2)cameraTransform.position;
           direction.Normalize();

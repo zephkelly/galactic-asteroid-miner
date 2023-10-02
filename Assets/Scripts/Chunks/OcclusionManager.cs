@@ -28,6 +28,8 @@ namespace zephkelly
     private Dictionary<Star, Chunk> activeStars = new Dictionary<Star, Chunk>();
     //private Dictionary<Star, Chunk> inactiveStars = new Dictionary<Star, Chunk>();
 
+    private Dictionary<Depo, Chunk> activeDepos = new Dictionary<Depo, Chunk>();
+
     //------------------------------------------------------------------------------
 
     public Dictionary<Asteroid, Chunk> ChangeAsteroidChunk { get => activeAsteroids; set => activeAsteroids = value; }
@@ -61,8 +63,26 @@ namespace zephkelly
       lazyAsteroids.Clear();
 
       GetActiveStars();
+      GetActiveDepos();
       GetLazyAsteroids();
       GetActiveAsteroids();
+    }
+
+    private void GetActiveDepos()
+    {
+      foreach (var lazyChunk in currentLazyChunks)
+      {
+        if (!lazyChunk.Value.HasDepo) continue;
+        if (activeDepos.ContainsKey(lazyChunk.Value.ChunkDepo)) continue;
+        activeDepos.Add(lazyChunk.Value.ChunkDepo, lazyChunk.Value);
+      }
+
+      foreach (var activeChunk in currentActiveChunks)
+      {
+        if (!activeChunk.Value.HasDepo) continue;
+        if (activeDepos.ContainsKey(activeChunk.Value.ChunkDepo)) continue;
+        activeDepos.Add(activeChunk.Value.ChunkDepo, activeChunk.Value);
+      }
     }
 
     private void GetActiveStars()
@@ -118,6 +138,7 @@ namespace zephkelly
 
       UpdateChunkContents();
 
+      ActiveDepoOcclusion();
       ActiveStarOcclusion();
       LazyAsteroidOcclusion();
       ActiveAsteroidOcclusion();
@@ -180,6 +201,18 @@ namespace zephkelly
         }
 
         asteroidToAdd.Clear();
+      }
+    }
+
+    private void ActiveDepoOcclusion() 
+    {
+      foreach (var activeDepo in activeDepos)
+      {
+        if (activeDepo.Key.AttachedObject == null)
+        {
+          var depoObject = instantiator.GetDepo(activeDepo.Key);
+          activeDepo.Key.SetDepoObject(depoObject);
+        }
       }
     }
 

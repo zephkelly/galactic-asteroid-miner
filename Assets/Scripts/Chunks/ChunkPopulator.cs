@@ -6,22 +6,26 @@ namespace zephkelly
 {
   public class ChunkPopulator
   {
+    //Depo
+    private static int depoSpawnChance = 2;
+
     //Stars
     //private static int starMinimumSeparation = 2400;
     //Minimum distances before a star can spawn
-    private static int starSpawnChance = 15;
+    private static int starSpawnChance = 12;
     private static int starMinDistance1 = 200;   //WhiteDwarf - BrownDwarf
-    private static int starMinDistance2 = 1000;   //RedDwarf - YellowDwarf
-    private static int starMinDistance3 = 1500;   //BlueGiant - OrangeGiant
-    private static int starMinDistance4 = 2000;   //RedGiant - BlueSuperGiant
-    private static int starMinDistance5 = 2500;   //RedSuperGiant - BlueHyperGiant
-    private static int starMinDistance6 = 3000;   //RedHyperGiant
-    private static int starMinDistance7 = 3500;   //NeutronStar
-    private static int starMinDistance8 = 4000;   //BlackHole
+    private static int starMinDistance2 = 500;   //RedDwarf - YellowDwarf
+    private static int starMinDistance3 = 1000;   //BlueGiant - OrangeGiant
+    private static int starMinDistance4 = 1000;   //RedGiant - BlueSuperGiant
+    private static int starMinDistance5 = 1500;   //RedSuperGiant - BlueHyperGiant
+    private static int starMinDistance6 = 2000;   //RedHyperGiant
+    private static int starMinDistance7 = 2500;   //NeutronStar
+    private static int starMinDistance8 = 3000;   //BlackHole
 
     //Asteroids
     private static int minAsteroids = 40;
     private static int maxAsteroids = 70;
+
     //Minimum distances before asteroids can spawn
     private static int asteroidMinDistance1 = 0;   //Iron - Platinum
     private static int asteroidMinDistance2 = 150;   //Titanium
@@ -37,9 +41,20 @@ namespace zephkelly
     {
       var hasStar = GenerateStars(lazyChunk);
 
-      if (!hasStar) return;
+      if (hasStar)
+      {
+        GenerateAsteroids(lazyChunk, hasStar:true);
+        return;
+      }
 
-      GenerateAsteroids(lazyChunk, true);
+      var hasDepo = GenerateDepos(lazyChunk);
+
+      if (hasDepo) 
+      {
+        Debug.Log("Depo generated");
+        GenerateAsteroids(lazyChunk, hasDepo:true);
+        return;
+      }
     }
 
     public void PopulateSmallBodies(Chunk activeChunk)
@@ -49,6 +64,60 @@ namespace zephkelly
       GenerateAsteroids(activeChunk);
 
       activeChunk.SetPopulated();
+    }
+
+    private bool GenerateDepos(Chunk thisChunk)
+    {
+      if (thisChunk.Key == Vector2.zero) return false;
+
+      bool starNearby = GetStarDistances();
+
+      if (starNearby) return false;
+      return TryGenerateDepo();
+
+      //------------------------------------------------------------------------------
+
+      bool GetStarDistances()
+      {
+        Vector2Int starCheckKey = new Vector2Int(thisChunk.Key.x - 2, thisChunk.Key.y - 2);
+
+        for (int y = 0; y < 5; y++)
+        {
+          for (int x = 0; x < 5; x++)
+          {
+            if (ChunkManager.Instance.AllChunks.ContainsKey(starCheckKey))
+            {
+              if (starCheckKey != thisChunk.Key)
+              {
+                var chunk = ChunkManager.Instance.AllChunks[starCheckKey];
+
+                if (chunk.HasStar)
+                {
+                  return true;
+                }
+              }
+            }
+
+            starCheckKey.x++;
+          }
+
+          starCheckKey.y++;
+          starCheckKey.x -= 5;
+        }
+
+        return false;
+      }
+
+      bool TryGenerateDepo()
+      {
+        int shouldGenerateDepo = Random.Range(0, 200);
+        if (shouldGenerateDepo > depoSpawnChance) return false;
+
+        float originDistance = FastDistance(thisChunk.Position, Vector2.zero);
+
+        thisChunk.SetDepo(new Depo(thisChunk, DepoType.Standard));
+        return true;
+      }
     }
 
     private bool GenerateStars(Chunk thisChunk)
@@ -211,7 +280,7 @@ namespace zephkelly
       }
     }
 
-    private void GenerateAsteroids(Chunk chunk, bool hasStar = false)
+    private void GenerateAsteroids(Chunk chunk, bool hasStar = false, bool hasDepo = false)
     {
       //if (chunk.Key == Vector2.zero) return;
 
@@ -221,7 +290,7 @@ namespace zephkelly
 
       var spawnPoint = Vector2.zero;
 
-      if (hasStar == true)   //Generate around stars
+      if (hasStar == true)   //Generate around star or depo
       {
         for (int i = 0; i < asteroidCount; i++)
         {
@@ -275,7 +344,7 @@ namespace zephkelly
 
         if (originDistance >= asteroidMinDistance1 && originDistance <= asteroidMinDistance2)
         {
-          if (gen <= 60) return AsteroidType.Iron;
+          if (gen <= 50) return AsteroidType.Iron;
           else return AsteroidType.Platinum;
         }
         else if (originDistance > asteroidMinDistance2 && originDistance <= asteroidMinDistance3)

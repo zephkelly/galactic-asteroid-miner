@@ -11,10 +11,13 @@ namespace zephkelly
     private Vector2 chunkWorldPosition;
     private bool hasBeenPopulated;
 
-    private GameObject attackedObject;
+    private GameObject attachedObject;
     private Bounds chunkBounds;
 
     private List<Asteroid> asteroids = new List<Asteroid>();
+
+    private Depo depo;
+    private bool hasDepo;
 
     private Star star;
     private bool hasStar;
@@ -25,7 +28,7 @@ namespace zephkelly
     public Vector2 Position { get => chunkWorldPosition; }
 
     public Bounds ChunkBounds { get => chunkBounds; }
-    public GameObject AttachedObject { get => attackedObject; }
+    public GameObject AttachedObject { get => attachedObject; }
 
     public List<Asteroid> Asteroids { 
       get => asteroids; 
@@ -34,6 +37,9 @@ namespace zephkelly
 
     public Star ChunkStar { get => star; }
     public bool HasStar { get => hasStar; }
+
+    public Depo ChunkDepo { get => depo; }
+    public bool HasDepo { get => hasDepo; }
     public bool HasBeenPopulated { get => hasBeenPopulated; }
 
     //------------------------------------------------------------------------------
@@ -43,12 +49,18 @@ namespace zephkelly
       chunkKey = _chunkKey;
       chunkWorldPosition = chunkKey * _chunkDiameter;
 
-      attackedObject = _object;
+      attachedObject = _object;
       chunkBounds =  new Bounds(chunkWorldPosition, Vector2.one * _chunkDiameter);
 
       hasStar = false;
       hasBeenPopulated = false;
       star = null;
+    }
+
+    public void SetDepo(Depo _depo)
+    {
+      depo = _depo;
+      hasDepo = true;
     }
 
     public void SetStar(Star _star)

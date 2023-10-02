@@ -62,6 +62,8 @@ namespace zephkelly
     private Sprite asteroidDarkore3;
     #endregion
 
+    private GameObject depoStation;
+
     private GameObject whiteDwarf;
     private GameObject brownDwarf;
     private GameObject redDwarf;
@@ -84,6 +86,8 @@ namespace zephkelly
     public GameObject AsteroidMedium { get => asteroidMedium; }
     public GameObject AsteroidLarge { get => asteroidLarge; }
     public GameObject AsteroidHuge { get => asteroidHuge; }
+
+    public GameObject Depo { get => depoStation; }
 
     //Stars
     public GameObject WhiteDwarf { get => whiteDwarf; }
@@ -152,6 +156,8 @@ namespace zephkelly
       asteroidDarkore2 = Resources.Load<Sprite>("Sprites/Asteroids/Darkore/Darkore_Asteroid_1_2");
       asteroidDarkore3 = Resources.Load<Sprite>("Sprites/Asteroids/Darkore/Darkore_Asteroid_1_3");
       #endregion
+
+      depoStation = Resources.Load<GameObject>("Prefabs/Stations/Depos/DepoStation");
 
       whiteDwarf = Resources.Load<GameObject>("Prefabs/Stars/WhiteDwarf");
       brownDwarf = Resources.Load<GameObject>("Prefabs/Stars/BrownDwarf");
@@ -245,6 +251,12 @@ namespace zephkelly
       {
         Destroy(asteroid);
       }, true, 80, 150);
+    }
+
+    public GameObject GetDepo(Depo _depoInfo)
+    {
+      //Switch statement for depo type
+      return GameObject.Instantiate(Depo);
     }
 
     public GameObject GetStar(Star _starInfo)
