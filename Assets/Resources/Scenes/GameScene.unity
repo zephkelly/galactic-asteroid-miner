@@ -31936,7 +31936,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: megaTankCost
-      value: 10000
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: ionEngineCost
