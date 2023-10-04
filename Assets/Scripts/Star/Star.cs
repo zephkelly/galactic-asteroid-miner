@@ -58,10 +58,10 @@ namespace zephkelly
 
       starPosition = 
       new Vector2(
-            UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.x, _parentChunk.ChunkBounds.max.x),
-            UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.y, _parentChunk.ChunkBounds.max.y)
+            UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.x + 20, _parentChunk.ChunkBounds.max.x + 20),
+            UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.y + 20, _parentChunk.ChunkBounds.max.y + 20)
           );
-    
+      // starPosition = _parentChunk.Position;
 
       starType = _type;
       SetStarProperties();
@@ -107,39 +107,39 @@ namespace zephkelly
           starTemperature = 400000;
           break;
         case StarType.BlueGiant:
-          starMaxRadius = 250;
+          starMaxRadius = 140;
           starTemperature = 800000;
           break;
         case StarType.OrangeGiant:
-          starMaxRadius = 300;
+          starMaxRadius = 140;
           starTemperature = 1000000;
           break;
         case StarType.RedGiant:
-          starMaxRadius = 350;
+          starMaxRadius = 140;
           starTemperature = 5000000;
           break;
         case StarType.BlueSuperGiant:
-          starMaxRadius = 400;
+          starMaxRadius = 140;
           starTemperature = 15000000;
           break;
         case StarType.RedSuperGiant:
-          starMaxRadius = 450;
+          starMaxRadius = 140;
           starTemperature = 25000000;
           break;
         case StarType.BlueHyperGiant:
-          starMaxRadius = 500;
+          starMaxRadius = 140;
           starTemperature = 40000000;
           break;
         case StarType.RedHyperGiant:
-          starMaxRadius = 600;
+          starMaxRadius = 140;
           starTemperature = 48000000;
           break;
         case StarType.NeutronStar:
-          starMaxRadius = 300;
+          starMaxRadius = 140;
           starTemperature = 50000000;
           break;
         case StarType.BlackHole:
-          starMaxRadius = 300;
+          starMaxRadius = 140;
           starTemperature = 15000000;
           break;
       }

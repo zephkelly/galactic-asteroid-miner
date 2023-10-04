@@ -12,7 +12,7 @@ namespace zephkelly
     private PrefabInstantiator prefabInstantiator;
     private ShipStarCompass shipStarCompass;
 
-    [SerializeField] int chunkDiameter = 100;
+    [SerializeField] int chunkDiameter = 160;
     internal int chunkNumber;
 
     private Transform playerTransform;

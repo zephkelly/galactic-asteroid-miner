@@ -110,7 +110,7 @@ namespace zephkelly
 
       bool TryGenerateDepo()
       {
-        int shouldGenerateDepo = Random.Range(0, 200);
+        int shouldGenerateDepo = Random.Range(0, 250);
         if (shouldGenerateDepo > depoSpawnChance) return false;
 
         float originDistance = FastDistance(thisChunk.Position, Vector2.zero);
@@ -141,8 +141,7 @@ namespace zephkelly
           {
             if (ChunkManager.Instance.AllChunks.ContainsKey(starCheckKey))
             {
-              if (starCheckKey != thisChunk.Key)
-              {
+              if (starCheckKey != thisChunk.Key)              {
                 var chunk = ChunkManager.Instance.AllChunks[starCheckKey];
 
                 if (chunk.HasStar)
@@ -172,7 +171,7 @@ namespace zephkelly
         float originDistance = FastDistance(thisChunk.Position, Vector2.zero);
 
         //WhiteDwarf - BrownDwarf
-        if (originDistance >= starMinDistance1 && originDistance <= starMinDistance2)
+        if (originDistance >= starMinDistance1)
         {
           if (starTypeGenerator < 100) {
             var whiteDwarf = new Star(thisChunk, StarType.WhiteDwarf);
@@ -187,7 +186,7 @@ namespace zephkelly
         }
 
         //RedDwarf - YellowDwarf
-        if (originDistance > starMinDistance2 && originDistance <= starMinDistance3)
+        if (originDistance > starMinDistance2)
         {
           if (starTypeGenerator < 300) {
             var redDwarf = new Star(thisChunk, StarType.RedDwarf);
@@ -202,7 +201,7 @@ namespace zephkelly
         }
 
         //BlueGiant - OrangeGiant
-        if (originDistance > starMinDistance3 && originDistance <= starMinDistance4)
+        if (originDistance > starMinDistance3)
         {
           if (starTypeGenerator < 500) {
             var blueGiant = new Star(thisChunk, StarType.BlueGiant);
@@ -217,7 +216,7 @@ namespace zephkelly
         }
 
         //RedGiant - BlueSuperGiant
-        if (originDistance > starMinDistance4 && originDistance <= starMinDistance5)
+        if (originDistance > starMinDistance4)
         {
           if (starTypeGenerator < 700) {
             var redGiant = new Star(thisChunk, StarType.RedGiant);
@@ -232,7 +231,7 @@ namespace zephkelly
         }
 
         //RedSuperGiant - BlueHyperGiant
-        if (originDistance > starMinDistance5 && originDistance <= starMinDistance6)
+        if (originDistance > starMinDistance5)
         {
           if (starTypeGenerator < 900) {
             var redSuperGiant = new Star(thisChunk, StarType.RedSuperGiant);
@@ -247,7 +246,7 @@ namespace zephkelly
         }
 
         //RedHyperGiant
-        if (originDistance > starMinDistance6 && originDistance <= starMinDistance7)
+        if (originDistance > starMinDistance6)
         {
           if (starTypeGenerator < 990) {
             var redHyperGiant = new Star(thisChunk, StarType.RedHyperGiant);
@@ -257,7 +256,7 @@ namespace zephkelly
         }
 
         //NeutroStar
-        if (originDistance > starMinDistance7 && originDistance <= starMinDistance8)
+        if (originDistance > starMinDistance7)
         {
           if (starTypeGenerator < 995) {
             var neutronStar = new Star(thisChunk, StarType.NeutronStar);
@@ -285,7 +284,7 @@ namespace zephkelly
       //if (chunk.Key == Vector2.zero) return;
 
       int minimum = Random.Range(minAsteroids - 10, minAsteroids + 10);
-      int maximum = Random.Range(maxAsteroids - 10, maxAsteroids + 10);
+      int maximum = Random.Range(maxAsteroids - 20, maxAsteroids + 20);
       int asteroidCount = Random.Range(minimum, maximum);
 
       var spawnPoint = Vector2.zero;

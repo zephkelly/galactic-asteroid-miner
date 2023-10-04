@@ -13,7 +13,7 @@ namespace zephkelly
     [SerializeField] int starsMax = 100;
     [SerializeField] float starSizeMin = 0.15f;
     [SerializeField] float starSizeMax = 0.4f;
-    [SerializeField] float starSpawnRadius = 10;
+    [SerializeField] float starSpawnRadius = 100;
     [SerializeField] float parallaxFactor = 0.9f;
 
     private float starDistanceSqr;

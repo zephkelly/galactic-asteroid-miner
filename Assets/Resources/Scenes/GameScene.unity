@@ -17565,7 +17565,7 @@ MonoBehaviour:
   starsMax: 80
   starSizeMin: 0.05
   starSizeMax: 0.2
-  starSpawnRadius: 45
+  starSpawnRadius: 80
   parallaxFactor: 45
 --- !u!1 &822668131
 GameObject:
@@ -25778,7 +25778,7 @@ MonoBehaviour:
   starsMax: 80
   starSizeMin: 0.05
   starSizeMax: 0.2
-  starSpawnRadius: 45
+  starSpawnRadius: 80
   parallaxFactor: 49.5
 --- !u!199 &1513829207
 ParticleSystemRenderer:
@@ -31910,6 +31910,38 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1535600495, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535600495, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535600495, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535600496, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_Intensity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535600496, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_FalloffIntensity
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535600496, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_PointLightInnerAngle
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535600496, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_PointLightOuterAngle
+      value: 360
+      objectReference: {fileID: 0}
+    - target: {fileID: 1535600496, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_PointLightOuterRadius
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 1928648050, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_CollisionDetection
       value: 1
@@ -32013,6 +32045,18 @@ PrefabInstance:
     - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: stellariteHullCost
       value: 4800
+      objectReference: {fileID: 0}
+    - target: {fileID: 8786214872139874556, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_FalloffIntensity
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8786214872139874556, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_PointLightOuterAngle
+      value: 132.90495
+      objectReference: {fileID: 0}
+    - target: {fileID: 8786214872139874556, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: m_PointLightOuterRadius
+      value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_RootOrder
@@ -32263,7 +32307,7 @@ MonoBehaviour:
   starsMax: 80
   starSizeMin: 0.05
   starSizeMax: 0.2
-  starSpawnRadius: 45
+  starSpawnRadius: 80
   parallaxFactor: 48.5
 --- !u!199 &1663101734
 ParticleSystemRenderer:
@@ -45550,7 +45594,7 @@ MonoBehaviour:
   starsMax: 40
   starSizeMin: 0.05
   starSizeMax: 0.1
-  starSpawnRadius: 45
+  starSpawnRadius: 80
   parallaxFactor: 20
 --- !u!1 &1978804339
 GameObject:

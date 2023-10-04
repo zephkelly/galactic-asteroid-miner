@@ -12,6 +12,9 @@ namespace zephkelly
     private Transform cameraTransform;
 
     private Transform target;
+    private Rigidbody2D playerRigidbody;
+    private float playerVelocityMagnitude;
+
     private Vector3 mouseLerpPosition;
     private Vector3 currentOffsetAmount;
 
@@ -41,6 +44,7 @@ namespace zephkelly
     private void Start()
     {
       target = GameObject.Find("Player").transform;
+      playerRigidbody = target.GetComponent<Rigidbody2D>();
       inputs = InputManager.Instance;
     }
 
@@ -50,18 +54,28 @@ namespace zephkelly
 
       mouseLerpPosition = (mainCamera.ScreenToWorldPoint(Input.mousePosition) - target.position).normalized;
       mouseLerpPosition.y = mouseLerpPosition.y * 1.4f;   //beacuse the camera is wider than it is tall
+
+      playerVelocityMagnitude = playerRigidbody.velocity.magnitude;
+
+      if (playerVelocityMagnitude > (playerVelocityMagnitude * 0.85f)) {
+        mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, 22 + (playerVelocityMagnitude * 0.2f), 0.1f);
+      }
     }
 
     private void FixedUpdate()
     {
       if (target == null) return;
 
-      Vector3 targetVector = target.position + currentOffsetAmount + (mouseLerpPosition * mouseInterpolateDistance);
+      Vector3 targetVector = target.position + currentOffsetAmount + (mouseLerpPosition * mouseInterpolateDistance * (playerVelocityMagnitude * 0.05f));      
+
       targetVector.z = cameraTransform.position.z;
 
       Vector3 cameraLastPosition = cameraTransform.position;
-      cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetVector, cameraPanSpeed);
+      cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetVector, cameraPanSpeed * (Mathf.Clamp(playerVelocityMagnitude, 30, 40) * 0.03f));
 
+      //add a min and max value to playervelocty magnitude
+      Mathf.Clamp(playerVelocityMagnitude, 0, 100);
+      
       UpdateParllaxing(cameraLastPosition);
     }
 
