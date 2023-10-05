@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 
 namespace zephkelly
@@ -72,6 +73,7 @@ namespace zephkelly
       shipStarCompass.UpdateCompass();
     }
 
+    int frameCounter = 0;
     private void Update()
     {
       if (playerTransform == null) return;
@@ -86,16 +88,31 @@ namespace zephkelly
 
         OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
         shipStarCompass.UpdateCompass();
+        frameCounter = 0;
+      }
+      else 
+      {
+        if (frameCounter == 10)
+        {
+          OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
+          frameCounter = 0;
+        }
+        frameCounter++;
       }
 
       playerLastChunkPosition = playerChunkPosition;
     }
 
-    public Vector2Int GetChunkPosition(Vector2 position)
+    public Vector2Int GetChunkPosition(UnityEngine.Vector3 position)
     {
+      // return new Vector2Int(
+      //   Mathf.RoundToInt(position.x / chunkDiameter),
+      //   Mathf.RoundToInt(position.y / chunkDiameter)
+      // );
+
       return new Vector2Int(
-        Mathf.RoundToInt(position.x / chunkDiameter),
-        Mathf.RoundToInt(position.y / chunkDiameter)
+        Mathf.RoundToInt((position.x + (chunkDiameter / 2)) / chunkDiameter),
+        Mathf.RoundToInt((position.y + (chunkDiameter / 2)) / chunkDiameter)
       );
     }
 
@@ -159,10 +176,16 @@ namespace zephkelly
           {
             GameObject newChunk = new GameObject("Chunk " + chunkNumber);
             newChunk.transform.parent = this.transform;
-            newChunk.SetActive(false);
+            // newChunk.SetActive(false);
 
             Chunk newChunkInfo = new Chunk(lazyGridKey, chunkDiameter, newChunk);
             chunkNumber++;
+
+            //add a collider the size of the chunk to the chunk gameobject
+            newChunk.transform.position = newChunkInfo.Position;
+            BoxCollider2D chunkCollider = newChunk.AddComponent<BoxCollider2D>();
+            chunkCollider.isTrigger = true;
+            chunkCollider.size = new UnityEngine.Vector2(chunkDiameter, chunkDiameter);
 
             chunkPopulator.PopulateLargeBodies(newChunkInfo);
 

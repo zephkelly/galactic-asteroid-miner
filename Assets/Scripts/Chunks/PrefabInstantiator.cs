@@ -190,7 +190,7 @@ namespace zephkelly
       }, asteroid =>
       {
         Destroy(asteroid);
-      }, true, 80, 150);
+      }, true, 100, 200);
 
       asteroidSmallPool = new ObjectPool<GameObject>(() =>
       {
@@ -205,7 +205,7 @@ namespace zephkelly
       }, asteroid =>
       {
         Destroy(asteroid);
-      }, true, 80, 150);
+      }, true, 100, 200);
 
       asteroidMediumPool = new ObjectPool<GameObject>(() =>
       {
@@ -220,7 +220,7 @@ namespace zephkelly
       }, asteroid =>
       {
         Destroy(asteroid);
-      }, true, 80, 150);
+      }, true, 100, 200);
 
       asteroidLargePool = new ObjectPool<GameObject>(() =>
       {
@@ -235,7 +235,7 @@ namespace zephkelly
       }, asteroid =>
       {
         Destroy(asteroid);
-      }, true, 80, 150);
+      }, true, 100, 200);
 
       asteroidHugePool = new ObjectPool<GameObject>(() =>
       {
@@ -250,13 +250,15 @@ namespace zephkelly
       }, asteroid =>
       {
         Destroy(asteroid);
-      }, true, 80, 150);
+      }, true, 100, 200);
     }
 
     public GameObject GetDepo(Depo _depoInfo)
     {
       //Switch statement for depo type
-      return GameObject.Instantiate(Depo);
+      var depo = GameObject.Instantiate(Depo);
+      depo.transform.position = _depoInfo.SpawnPoint;
+      return depo;
     }
 
     public GameObject GetStar(Star _starInfo)

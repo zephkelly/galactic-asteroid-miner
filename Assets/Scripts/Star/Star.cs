@@ -29,8 +29,8 @@ namespace zephkelly
 
     private float starMaxRadius;
     private float starTemperature;
-    private float beltMin = 30;
-    private float beltMax = 60;
+    private float beltMin = 50;
+    private float beltMax = 85;
 
     private GameObject starObject;
     private Renderer starRenderer;
@@ -58,10 +58,9 @@ namespace zephkelly
 
       starPosition = 
       new Vector2(
-            UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.x + 20, _parentChunk.ChunkBounds.max.x + 20),
-            UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.y + 20, _parentChunk.ChunkBounds.max.y + 20)
+            UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.x + 30, _parentChunk.ChunkBounds.max.x - 30),
+            UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.y + 30, _parentChunk.ChunkBounds.max.y - 30)
           );
-      // starPosition = _parentChunk.Position;
 
       starType = _type;
       SetStarProperties();
@@ -93,14 +92,20 @@ namespace zephkelly
         case StarType.WhiteDwarf:
           starMaxRadius = 60;
           starTemperature = 50000;
+          beltMin = 30;
+          beltMax = 50;
           break;
         case StarType.BrownDwarf:
           starMaxRadius = 80;
           starTemperature = 80000;
+          beltMin = 30;
+          beltMax = 50;
           break;
         case StarType.RedDwarf:
           starMaxRadius = 100;
           starTemperature = 100000;
+          beltMin = 60;
+          beltMax = 75;
           break;
         case StarType.YellowDwarf:
           starMaxRadius = 140;
@@ -111,27 +116,27 @@ namespace zephkelly
           starTemperature = 800000;
           break;
         case StarType.OrangeGiant:
-          starMaxRadius = 140;
+          starMaxRadius = 160;
           starTemperature = 1000000;
           break;
         case StarType.RedGiant:
-          starMaxRadius = 140;
+          starMaxRadius = 160;
           starTemperature = 5000000;
           break;
         case StarType.BlueSuperGiant:
-          starMaxRadius = 140;
+          starMaxRadius = 180;
           starTemperature = 15000000;
           break;
         case StarType.RedSuperGiant:
-          starMaxRadius = 140;
+          starMaxRadius = 180;
           starTemperature = 25000000;
           break;
         case StarType.BlueHyperGiant:
-          starMaxRadius = 140;
+          starMaxRadius = 180;
           starTemperature = 40000000;
           break;
         case StarType.RedHyperGiant:
-          starMaxRadius = 140;
+          starMaxRadius = 180;
           starTemperature = 48000000;
           break;
         case StarType.NeutronStar:

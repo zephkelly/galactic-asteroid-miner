@@ -71,10 +71,7 @@ namespace zephkelly
       targetVector.z = cameraTransform.position.z;
 
       Vector3 cameraLastPosition = cameraTransform.position;
-      cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetVector, cameraPanSpeed * (Mathf.Clamp(playerVelocityMagnitude, 30, 40) * 0.03f));
-
-      //add a min and max value to playervelocty magnitude
-      Mathf.Clamp(playerVelocityMagnitude, 0, 100);
+      cameraTransform.position = Vector3.Lerp(cameraTransform.position, targetVector, cameraPanSpeed * (Mathf.Clamp(playerVelocityMagnitude, 25, 50) * 0.03f));
       
       UpdateParllaxing(cameraLastPosition);
     }

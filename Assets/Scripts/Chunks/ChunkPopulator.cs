@@ -7,12 +7,12 @@ namespace zephkelly
   public class ChunkPopulator
   {
     //Depo
-    private static int depoSpawnChance = 2;
+    private static int depoSpawnChance = 40;
 
     //Stars
     //private static int starMinimumSeparation = 2400;
     //Minimum distances before a star can spawn
-    private static int starSpawnChance = 12;
+    private static int starSpawnChance = 110;
     private static int starMinDistance1 = 200;   //WhiteDwarf - BrownDwarf
     private static int starMinDistance2 = 500;   //RedDwarf - YellowDwarf
     private static int starMinDistance3 = 1000;   //BlueGiant - OrangeGiant
@@ -23,8 +23,8 @@ namespace zephkelly
     private static int starMinDistance8 = 3000;   //BlackHole
 
     //Asteroids
-    private static int minAsteroids = 40;
-    private static int maxAsteroids = 70;
+    private static int minAsteroids = 20;
+    private static int maxAsteroids = 55;
 
     //Minimum distances before asteroids can spawn
     private static int asteroidMinDistance1 = 0;   //Iron - Platinum
@@ -46,12 +46,11 @@ namespace zephkelly
         GenerateAsteroids(lazyChunk, hasStar:true);
         return;
       }
-
+    
       var hasDepo = GenerateDepos(lazyChunk);
 
       if (hasDepo) 
       {
-        Debug.Log("Depo generated");
         GenerateAsteroids(lazyChunk, hasDepo:true);
         return;
       }
@@ -110,7 +109,7 @@ namespace zephkelly
 
       bool TryGenerateDepo()
       {
-        int shouldGenerateDepo = Random.Range(0, 250);
+        int shouldGenerateDepo = Random.Range(0, 1000);
         if (shouldGenerateDepo > depoSpawnChance) return false;
 
         float originDistance = FastDistance(thisChunk.Position, Vector2.zero);
@@ -163,7 +162,7 @@ namespace zephkelly
 
       bool TryGenerateStar()
       {
-        int shouldGenerateStar = Random.Range(0, 100);
+        int shouldGenerateStar = Random.Range(0, 1000);
         if (shouldGenerateStar > starSpawnChance) return false;   //8% chance
 
         int starTypeGenerator = Random.Range(0, 1000);
@@ -279,12 +278,14 @@ namespace zephkelly
       }
     }
 
+    private Vector2 lastRandPosition = Vector2.zero;
+    private Vector2 lastOrbitPosition = Vector2.zero;
     private void GenerateAsteroids(Chunk chunk, bool hasStar = false, bool hasDepo = false)
     {
       //if (chunk.Key == Vector2.zero) return;
 
-      int minimum = Random.Range(minAsteroids - 10, minAsteroids + 10);
-      int maximum = Random.Range(maxAsteroids - 20, maxAsteroids + 20);
+      int minimum = Random.Range(minAsteroids - 15, minAsteroids + 5);
+      int maximum = Random.Range(maxAsteroids - 20, maxAsteroids + 10);
       int asteroidCount = Random.Range(minimum, maximum);
 
       var spawnPoint = Vector2.zero;
@@ -329,7 +330,7 @@ namespace zephkelly
       {
         int randomSize = Random.Range(0, 100);
 
-        if (randomSize <= 60) return AsteroidSize.Small;
+        if (randomSize <= 40) return AsteroidSize.Small;
         else if (randomSize <= 80) return AsteroidSize.Medium;
         else if (randomSize <= 99) return AsteroidSize.Large;
         else return AsteroidSize.Huge;
@@ -393,13 +394,13 @@ namespace zephkelly
 
         else if (originDistance > asteroidMinDistance7)
         {
-          if (gen <= 28) return AsteroidType.Iron;
-          else if (gen <= 45) return AsteroidType.Platinum;
-          else if (gen <= 67) return AsteroidType.Titanium;
-          else if (gen <= 76) return AsteroidType.Gold;
-          else if (gen <= 85) return AsteroidType.Palladium;
-          else if (gen <= 91) return AsteroidType.Cobalt;
-          else if (gen <= 97) return AsteroidType.Stellarite;
+          if (gen <= 20) return AsteroidType.Iron;
+          else if (gen <= 35) return AsteroidType.Platinum;
+          else if (gen <= 62) return AsteroidType.Titanium;
+          else if (gen <= 74) return AsteroidType.Gold;
+          else if (gen <= 80) return AsteroidType.Palladium;
+          else if (gen <= 85) return AsteroidType.Cobalt;
+          else if (gen <= 95) return AsteroidType.Stellarite;
           else return AsteroidType.Darkore;
         }
         else
@@ -411,23 +412,53 @@ namespace zephkelly
 
       Vector2 GetRandomPosition(Bounds chunkBounds)
       {
-        return new Vector2(
-            Random.Range(chunkBounds.min.x, chunkBounds.max.x),
-            Random.Range(chunkBounds.min.y, chunkBounds.max.y)
-          );
+        var randomPosition = new Vector2(
+          Random.Range(chunkBounds.min.x, chunkBounds.max.x),
+          Random.Range(chunkBounds.min.y, chunkBounds.max.y)
+        );
+
+        int randomNum = Random.Range(0, 7);
+
+        if (randomNum == 0) 
+        {
+          return randomPosition;
+        }
+        else if (randomNum <= 3)
+        {
+          randomPosition.x = (lastRandPosition.x + randomPosition.x) / 2;
+          randomPosition.y = (lastRandPosition.y + randomPosition.y) / 2;
+        } 
+        else if(randomNum <= 6) 
+        {
+          randomPosition.x = lastRandPosition.x + Random.Range(-40, 40);
+          randomPosition.y = lastRandPosition.y + Random.Range(-40, 40);
+        }
+
+        lastRandPosition = randomPosition;
+        return randomPosition;
       }
 
       Vector2 GetPositionAroundStar(Star orbitingStar)
       {
-        var randomAngle = Random.Range(0f, (2 * Mathf.PI));
-
+        var randomAngle = Random.Range(0f, 2 * Mathf.PI);
         Vector2 starPosition = orbitingStar.SpawnPoint;
+        float orbitRadius;
 
-        float orbitRadius = Random.Range(
-          orbitingStar.AsteroidBeltRadius.x,
-          orbitingStar.AsteroidBeltRadius.y
-        );
-        
+        float asteroidBeltProbability = 0.85f; // 20% chance for an asteroid to be in the belt
+        if (Random.value < asteroidBeltProbability)
+        {
+            // Place asteroid in the asteroid belt
+            orbitRadius = (orbitingStar.AsteroidBeltRadius.x + orbitingStar.AsteroidBeltRadius.y) / 2; // Midpoint of the defined asteroid belt range
+        }
+        else
+        {
+            // Place asteroid at a random distance
+            orbitRadius = Random.Range(
+              orbitingStar.AsteroidBeltRadius.x,
+              orbitingStar.AsteroidBeltRadius.y
+            );
+        }
+
         var positionX = orbitRadius * Mathf.Cos(randomAngle);
         var positionY = orbitRadius * Mathf.Sin(randomAngle);
 

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.ComponentModel.Design;
 
 namespace zephkelly
 {
@@ -21,6 +22,9 @@ namespace zephkelly
     private Dictionary<Vector2, Pointer> pointers =
       new Dictionary<Vector2, Pointer>();
 
+    private Pointer closestBasePointer;
+    private Pointer closestStarPointer;
+
     //------------------------------------------------------------------------------
 
     private void Awake()
@@ -37,117 +41,17 @@ namespace zephkelly
       playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
-    public void UpdateCompass()
-    {
-      ResetCurrentPointers();
-      GetActiveStars();
-      // GetActiveDepos();
-    }
-
-    private void ResetCurrentPointers()
-    {
-      foreach (var pointerStar in pointers)
-      {
-        Destroy(pointerStar.Value.gameObject);
-      }
-
-      pointers.Clear();
-    }
-
-    private void GetActiveStars()
-    {
-      //lazyStars
-      foreach (var lazyChunk in ChunkManager.Instance.LazyChunks)
-      {
-        if (lazyChunk.Value.HasStar == false) continue;
-
-        var starPosition = lazyChunk.Value.ChunkStar.SpawnPoint;
-        var starType = lazyChunk.Value.ChunkStar.Type;
-
-        GameObject newStarPointer = Object.Instantiate(pointerStar) as GameObject;
-        newStarPointer.transform.SetParent(parentCanvas.transform);
-
-        var starPointer = newStarPointer.GetComponent<Pointer>();
-        starPointer.SetPointerColor(starType);
-
-        pointers.Add(starPosition, starPointer);
-      }
-
-      //ActiveStars
-      foreach (var activeChunk in ChunkManager.Instance.ActiveChunks)
-      {
-        if (pointers.ContainsKey(activeChunk.Value.Position)) continue;
-        if (activeChunk.Value.HasStar == false) continue;
-
-        var starPosition = activeChunk.Value.ChunkStar.SpawnPoint;
-        var starType = activeChunk.Value.ChunkStar.Type;
-
-        GameObject newStarPointer = Object.Instantiate(pointerStar) as GameObject;
-        newStarPointer.transform.SetParent(parentCanvas.transform);
-
-        var starPointer = newStarPointer.GetComponent<Pointer>();
-        starPointer.SetPointerColor(starType);
-
-        pointers.Add(starPosition, starPointer);
-      }
-
-      //Lazy Depos
-      foreach (var lazyChunk in ChunkManager.Instance.LazyChunks)
-      {
-        if (pointers.ContainsKey(lazyChunk.Value.Position)) continue;
-        if (lazyChunk.Value.HasDepo == false) continue;
-
-        var depoPosition = lazyChunk.Value.Position;
-
-        GameObject newDepoPointer = Object.Instantiate(pointerDepo) as GameObject;
-        newDepoPointer.transform.SetParent(parentCanvas.transform);
-
-        var depoPointer = newDepoPointer.GetComponent<Pointer>();
-        depoPointer.SetBaseColor();
-
-        pointers.Add(depoPosition, depoPointer);
-      }
-
-      //Active Depos
-      foreach (var activeChunk in ChunkManager.Instance.ActiveChunks)
-      {
-        if (pointers.ContainsKey(activeChunk.Value.Position)) continue;
-        if (activeChunk.Value.HasDepo == false) continue;
-
-        var depoPosition = activeChunk.Value.ChunkDepo.AttachedObject.transform.position;
-
-        GameObject newDepoPointer = Object.Instantiate(pointerDepo) as GameObject;
-        newDepoPointer.transform.SetParent(parentCanvas.transform);
-
-        var depoPointer = newDepoPointer.GetComponent<Pointer>();
-        depoPointer.SetBaseColor();
-
-        pointers.Add(depoPosition, depoPointer);
-      }
-
-      //Depo pointerStar
-      GameObject newBasePointer = Object.Instantiate(pointerDepo) as GameObject;
-      newBasePointer.transform.SetParent(parentCanvas.transform);
-
-      var basePointer = newBasePointer.GetComponent<Pointer>();
-      basePointer.SetBaseColor();
-
-      pointers.Add(Vector2.zero, basePointer);
-    }
-
     private void LateUpdate()
     {
       if (playerTransform == null) return;
       if (pointers.Count == 0) return;
 
-      foreach (var pointerStar in pointers)
+      foreach (var pointer in pointers)
       {
-        Vector2 targetPosition = pointerStar.Key;
-        var pointerInfo = pointerStar.Value;
+        Vector2 targetPosition = pointer.Key;
+        Pointer pointerInfo = pointer.Value;
 
-        var distance = (int)Vector2.Distance(targetPosition, playerTransform.position) / 5;
-
-        pointerInfo.UpdateTargetDistance(distance);
+        pointerInfo.UpdateTargetInfo(Vector2.Distance(targetPosition, playerTransform.position), targetPosition);
 
         Vector2 screenPosition = mainCamera.WorldToScreenPoint(targetPosition);
         Vector2 cappedScreenPosition = screenPosition;
@@ -158,8 +62,7 @@ namespace zephkelly
         IsPointerOnScreen();
         ClampPointerToScreen();
         MovePointer();
-
-        //----------------------------------------------------------------------------
+        CheckForClosestPointers();
 
         void RotatePointer()   //Get direction and rotate pointerStar to angle
         {
@@ -210,6 +113,137 @@ namespace zephkelly
             pointerInfo.PointerObject.transform.position = cappedScreenPosition;
           }
         }
+
+        void CheckForClosestPointers()
+        {
+          switch (pointer.Value.PointerType)
+          {
+            case PointerType.Star:
+              if (closestStarPointer == null) 
+              {
+                closestStarPointer = pointer.Value;
+                return;
+              }
+              if (pointer.Value.PointerDistance < closestStarPointer.PointerDistance)
+              {
+                closestStarPointer = pointer.Value;
+              }
+              break;
+            case PointerType.Station:
+              if (closestBasePointer == null) 
+              {
+                closestBasePointer = pointer.Value;
+                return;
+              }
+              if (pointer.Value.PointerDistance < closestBasePointer.PointerDistance)
+              {
+                closestBasePointer = pointer.Value;
+              }
+              break;
+          }
+        }
+      }
+    }
+
+    public void UpdateCompass()
+    {
+      ResetCurrentPointers();
+      GetActiveStars();
+      // GetActiveDepos();
+    }
+
+    private void ResetCurrentPointers()
+    {
+      var disposablePointers = new List<Vector2>();
+
+      foreach (var pointerStar in pointers)
+      {
+        if (pointerStar.Value == closestBasePointer || pointerStar.Value == closestStarPointer) continue;
+
+        disposablePointers.Add(pointerStar.Key);
+        Destroy(pointerStar.Value.gameObject);
+      }
+
+      foreach (var pointer in disposablePointers)
+      {
+        pointers.Remove(pointer);
+      }
+    }
+
+    private void GetActiveStars()
+    {
+      //lazyStars
+      foreach (var lazyChunk in ChunkManager.Instance.LazyChunks)
+      {
+        if (lazyChunk.Value.HasStar == false) continue;
+        if (lazyChunk.Value.ChunkStar.SpawnPoint != null && pointers.ContainsKey(lazyChunk.Value.ChunkStar.SpawnPoint)) continue;
+        if (pointers.ContainsKey(lazyChunk.Value.Position)) continue;
+
+        var starPosition = lazyChunk.Value.ChunkStar.SpawnPoint;
+        var starType = lazyChunk.Value.ChunkStar.Type;
+
+        GameObject newStarPointer = Object.Instantiate(pointerStar) as GameObject;
+        newStarPointer.transform.SetParent(parentCanvas.transform);
+
+        var starPointer = newStarPointer.GetComponent<Pointer>();
+        starPointer.SetupStarPointer(starType);
+
+        pointers.Add(starPosition, starPointer);
+      }
+
+      //ActiveStars
+      foreach (var activeChunk in ChunkManager.Instance.ActiveChunks)
+      {
+        if (activeChunk.Value.HasStar == false) continue;
+        if (activeChunk.Value.ChunkStar.SpawnPoint != null && pointers.ContainsKey(activeChunk.Value.ChunkStar.SpawnPoint)) continue;
+        if (pointers.ContainsKey(activeChunk.Value.Position)) continue;
+
+        var starPosition = activeChunk.Value.ChunkStar.SpawnPoint;
+        var starType = activeChunk.Value.ChunkStar.Type;
+
+        GameObject newStarPointer = Object.Instantiate(pointerStar) as GameObject;
+        newStarPointer.transform.SetParent(parentCanvas.transform);
+
+        var starPointer = newStarPointer.GetComponent<Pointer>();
+        starPointer.SetupStarPointer(starType);
+
+        pointers.Add(starPosition, starPointer);
+      }
+
+      //Lazy Depos
+      foreach (var lazyChunk in ChunkManager.Instance.LazyChunks)
+      {
+        if (lazyChunk.Value.HasDepo == false) continue;
+        if (lazyChunk.Value.ChunkDepo.SpawnPoint != null && pointers.ContainsKey(lazyChunk.Value.ChunkDepo.SpawnPoint)) continue;
+        if (pointers.ContainsKey(lazyChunk.Value.Position)) continue;
+
+        var depoPosition = lazyChunk.Value.ChunkDepo.SpawnPoint;
+
+        GameObject newDepoPointer = Object.Instantiate(pointerDepo) as GameObject;
+        newDepoPointer.transform.SetParent(parentCanvas.transform);
+
+        var depoPointer = newDepoPointer.GetComponent<Pointer>();
+        depoPointer.SetupDepoPointer();
+
+        pointers.Add(depoPosition, depoPointer);
+      }
+
+      //Active Depos
+      foreach (var activeChunk in ChunkManager.Instance.ActiveChunks)
+      {
+        if (activeChunk.Value.HasDepo == false) continue;
+        if (activeChunk.Value.ChunkDepo.SpawnPoint != null && pointers.ContainsKey(activeChunk.Value.ChunkDepo.SpawnPoint)) continue;
+        if (pointers.ContainsKey(activeChunk.Value.Position)) continue;
+
+        var depoPosition = activeChunk.Value.ChunkDepo.SpawnPoint;
+
+        GameObject newDepoPointer = Object.Instantiate(pointerDepo) as GameObject;
+        newDepoPointer.transform.SetParent(parentCanvas.transform);
+
+        var depoPointer = newDepoPointer.GetComponent<Pointer>();
+        depoPointer.SetupDepoPointer();
+
+        pointers.Add(depoPosition, depoPointer);
       }
     }
 

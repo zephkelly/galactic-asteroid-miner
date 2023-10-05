@@ -11,8 +11,8 @@ namespace zephkelly
     private PrefabInstantiator instantiator;
 
     private Transform playerTransform;
-    private const int starOcclusionRadius = 650;   //Should make it the largest star radius + players viewport size
-    private const int asteroidOcclusionDistance = 75;
+    private const int starOcclusionRadius = 320;   //Should make it the largest star radius + players viewport size
+    private const int asteroidOcclusionDistance = 80;
 
     Dictionary<Vector2Int, Chunk> currentActiveChunks = new Dictionary<Vector2Int, Chunk>();
     Dictionary<Vector2Int, Chunk> currentLazyChunks = new Dictionary<Vector2Int, Chunk>();
@@ -52,6 +52,17 @@ namespace zephkelly
       chunkManager = ChunkManager.Instance;
       instantiator = ChunkManager.Instance.Instantiator;
       playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+    }
+
+    private void Update()
+    {
+      if (playerTransform == null) return;
+
+      UpdateChunkContents();
+      ActiveDepoOcclusion();
+      ActiveStarOcclusion();
+      LazyAsteroidOcclusion();
+      ActiveAsteroidOcclusion();
     }
 
     public void UpdateChunks(Dictionary<Vector2Int, Chunk> activeChunks, Dictionary<Vector2Int, Chunk> lazyChunks)
@@ -119,9 +130,14 @@ namespace zephkelly
 
     private void GetActiveAsteroids()
     {
+      List<Chunk> starChunks = new List<Chunk>();
+
       foreach (var activeChunk in currentActiveChunks)
       {
-        if (activeChunk.Value.HasStar) continue;
+        if (activeChunk.Value.HasStar) {
+          starChunks.Add(activeChunk.Value);
+          continue;
+        }
         if (activeChunk.Value.Asteroids.Count == 0) continue;
 
         foreach (var activeAsteroid in activeChunk.Value.Asteroids)
@@ -130,18 +146,44 @@ namespace zephkelly
           activeAsteroids.Add(activeAsteroid, activeChunk.Value);
         }
       }
-    }
 
-    private void Update()
-    {
-      if (playerTransform == null) return;
+      foreach (var starChunk in starChunks)
+      {
+        Vector2Int gridKey = new Vector2Int(starChunk.Key.x -5, starChunk.Key.y -5);
 
-      UpdateChunkContents();
+        for (int y = 0; y < 5; y++)
+        {
+          for (int x = 0; x < 5; x++)
+          {
+            if (currentLazyChunks.ContainsKey(gridKey))
+            {
+              if (currentLazyChunks[gridKey].Asteroids.Count == 0) continue;
 
-      ActiveDepoOcclusion();
-      ActiveStarOcclusion();
-      LazyAsteroidOcclusion();
-      ActiveAsteroidOcclusion();
+              foreach (var lazyAsteroid in currentLazyChunks[gridKey].Asteroids)
+              {
+                if (activeAsteroids.ContainsKey(lazyAsteroid)) continue;
+                activeAsteroids.Add(lazyAsteroid, currentLazyChunks[gridKey]);
+              }
+            }
+
+            if (currentActiveChunks.ContainsKey(gridKey))
+            {
+              if (currentActiveChunks[gridKey].Asteroids.Count == 0) continue;
+
+              foreach (var activeAsteroid in currentActiveChunks[gridKey].Asteroids)
+              {
+                if (activeAsteroids.ContainsKey(activeAsteroid)) continue;
+                activeAsteroids.Add(activeAsteroid, currentActiveChunks[gridKey]);
+              }
+            }
+
+            gridKey.x++;
+          }
+
+          gridKey.x -= 5;
+          gridKey.y++;
+        }
+      }
     }
 
     private void UpdateChunkContents()

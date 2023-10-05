@@ -6,13 +6,27 @@ using TMPro;
 
 namespace zephkelly
 {
+  public enum PointerType
+  {
+    Star,
+    Planet,
+    Moon,
+    Asteroid,
+    Station,
+    Player
+  }
+
   public class Pointer : MonoBehaviour
   {
+    private PointerType pointerType;
     private GameObject _pointerObject;
     [SerializeField] TextMeshProUGUI _text;
     [SerializeField] Image _pointerImage;
     [SerializeField] Transform _pointerImageContainer;
 
+    public Vector2 PointerWorldPosition { get; private set;}
+    public float PointerDistance { get; private set;}
+    public PointerType PointerType { get => pointerType; }
     public Image PointerImage { get => _pointerImage; }
     public GameObject PointerObject { get => _pointerObject; }
     public Transform PointerImageContainer { get => _pointerImageContainer; }
@@ -23,13 +37,18 @@ namespace zephkelly
       _pointerObject = this.gameObject;
     }
 
-    public void UpdateTargetDistance(float distance)
+    public void UpdateTargetInfo(float distance, Vector2 position)
     {
+      PointerWorldPosition = position;
+      PointerDistance = distance;
+      distance = (int)distance / 3;
       _text.text = $"{distance.ToString()}Km";
     }
 
-    public void SetPointerColor(StarType starType)
+    public void SetupStarPointer(StarType starType)
     {
+      pointerType = PointerType.Star;
+
       switch (starType)
       {
         case StarType.WhiteDwarf:
@@ -78,8 +97,9 @@ namespace zephkelly
       }
     }
 
-    public void SetBaseColor()
+    public void SetupDepoPointer()
     {
+      pointerType = PointerType.Station;
       _pointerImage.color = new Color(0.25f, 1f, 1f, 0.7f);
     }
   }

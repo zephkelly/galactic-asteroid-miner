@@ -18,18 +18,24 @@ namespace zephkelly
     private GameObject depoObject;
 
     public GameObject AttachedObject { get => depoObject; }
-
+    public Vector2 SpawnPoint { get; private set; }
 
     public Depo(Chunk _parentChunk, DepoType _type)
     {
       parentChunk = _parentChunk;
       depoType = _type;
+
+      SpawnPoint = 
+      new Vector2(
+            UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.x + 20, _parentChunk.ChunkBounds.max.x + 20),
+            UnityEngine.Random.Range(_parentChunk.ChunkBounds.min.y + 20, _parentChunk.ChunkBounds.max.y + 20)
+          );
     }
 
     public void SetDepoObject(GameObject _depoObject)
     {
       depoObject = _depoObject;
-      depoObject.transform.position = parentChunk.Position;
+      depoObject.transform.position = SpawnPoint;
     }
 
     public void DisposeObject()

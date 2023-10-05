@@ -787,13 +787,13 @@ namespace zephkelly
           hullStrengthMax = 60;
           break;
         case ShipHull.CobaltHull:
-          hullStrengthMax = 80;
-          break;
-        case ShipHull.StellariteHull:
           hullStrengthMax = 100;
           break;
+        case ShipHull.StellariteHull:
+          hullStrengthMax = 140;
+          break;
         case ShipHull.DarkoreHull:
-          hullStrengthMax = 120;
+          hullStrengthMax = 200;
           break;
       }
 

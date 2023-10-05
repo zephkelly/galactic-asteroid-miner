@@ -9,6 +9,11 @@ namespace zephkelly
   {
     private void OnTriggerEnter2D(Collider2D other)
     {
+      if (other.CompareTag("Star"))
+      {
+        Debug.Log("Depo entered star");
+      }
+
       if (!other.CompareTag("Player")) return;
 
       DepoUIManager.Instance.OnHoverDepo?.Invoke();
