@@ -9,7 +9,7 @@ Play the game for yourself on [Itch.io](https://zephyrmg.itch.io/galactic-astero
 
 <br>
 
-I've been tinkering inside the unity engine for 6+ years, and to show that I am capable of taking a concept from idea to a finished product, I stuck to one idea and published it.
+I've been tinkering inside the unity engine for 6+ years and wanted to show that I am capable of taking a concept from idea to a finished product.
 
 <br>
 
@@ -34,12 +34,7 @@ The following are some of the systems implemented to realise this project:
 - Spatial hashing: implemented using a dictionary, could be converted to hashmap
 - Chunking System
 - Occlusion Culling
-- Realistic 2D Newtonian physics
-
-<br>
-
-Every line of code is my own work. my own implementations and solutions to problems I encounterd. There were a number of 
-hurdles I had to overcome, mostly involving the physics system and largescale gravity simulations.
+- Newtonian-like 2D physics
 
 <br>
 
@@ -50,6 +45,6 @@ hurdles I had to overcome, mostly involving the physics system and largescale gr
 ## In-Development
 ### Multiplayer
 
-Multiplayer is front and center on the next update to the game. This involves a total rework of the game systems from the ground up. Using the `Mirror` library, which itself is built ontop of Unity's now depreciated `UNET` library, the game works by making RPC calls between client / server / and host versions of the client. All information is serialised through a KCP transport (essentially just a C# implementation of a TCP transport).
+Multiplayer is front and center on the next update to the game. This involves a total rework of the game systems from the ground up. By using the `Mirror` library, the game makes RPC calls between client / server / and host versions of the client. All information is serialised through a KCP transport.
 
 ![Multiplayer mirror](https://imgur.com/JQPTlFD.jpg)
