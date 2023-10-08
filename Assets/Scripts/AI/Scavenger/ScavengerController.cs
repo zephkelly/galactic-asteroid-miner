@@ -8,6 +8,9 @@ public class ScavengerController : MonoBehaviour
   private GameObject playerObject;
   private Transform playerTransform;
 
+  [SerializeField] public Vector3[] positiveAngles = new Vector3[12];
+  [SerializeField] public Vector3[] negativeAngles = new Vector3[12];
+
   public void ChangeState(IState newState)
   {
     stateMachine.ChangeState(newState);
