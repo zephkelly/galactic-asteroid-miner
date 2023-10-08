@@ -21,6 +21,11 @@ public class ScavengerIdleState : IState
 
   }
 
+  public void FixedUpdate()
+  {
+
+  }
+
   public void Exit()
   {
 
