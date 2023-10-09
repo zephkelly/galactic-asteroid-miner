@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class ScavengerController : MonoBehaviour
 {
@@ -8,6 +9,9 @@ public class ScavengerController : MonoBehaviour
   private Rigidbody2D scavengerRigid2D;
   private GameObject playerObject;
   private Transform playerTransform;
+
+  public ParticleSystem scavengerThrusterParticle;
+  public Light2D scavengerThrusterLight;
 
   [SerializeField] public Vector3[] positiveAngles = new Vector3[16];
   [SerializeField] public Vector3[] negativeAngles = new Vector3[16];

@@ -10774,10 +10774,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5083416880733018965, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
-      propertyPath: m_AngularDrag
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5669869464088341632, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
       propertyPath: m_Name
       value: Scavenger
@@ -31685,134 +31681,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1928648050, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: goldPrice
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: cobaltPrice
-      value: 32
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: darkorePrice
-      value: 67
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: hugeTankCost
-      value: 5600
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: megaTankCost
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: ionEngineCost
-      value: 2700
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: ionWeaponCost
-      value: 4700
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: largeTankCost
-      value: 3000
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: platinumPrice
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: titaniumPrice
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: warpDriveCost
-      value: 4400
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: cobaltHullCost
-      value: 2700
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: darkWeaponCost
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: hyperDriveCost
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: palladiumPrice
-      value: 21
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: darkoreHullCost
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: stellaritePrice
-      value: 45
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: hugeCargoBayCost
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: plasmaWeaponCost
-      value: 2700
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: titaniumHullCost
-      value: 1200
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: impulseEngineCost
-      value: 1200
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: largeCargoBayCost
-      value: 4800
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: mediumCargoBayCost
-      value: 2800
-      objectReference: {fileID: 0}
-    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: stellariteHullCost
-      value: 4800
-      objectReference: {fileID: 0}
-    - target: {fileID: 8786214872139874556, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: m_FalloffIntensity
-      value: 0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 8786214872139874556, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: m_PointLightOuterAngle
-      value: 227.78674
-      objectReference: {fileID: 0}
-    - target: {fileID: 8786214872139874556, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: m_PointLightOuterRadius
-      value: 65
-      objectReference: {fileID: 0}
-    - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: m_RootOrder
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 1.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1.6
-      objectReference: {fileID: 0}
     - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.09
@@ -31856,10 +31724,6 @@ PrefabInstance:
     - target: {fileID: 8847222160136322754, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 8847222160136322754, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
-      propertyPath: m_Layer
-      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

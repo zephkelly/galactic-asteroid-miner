@@ -105,15 +105,15 @@ namespace zephkelly
 
     public Vector2Int GetChunkPosition(UnityEngine.Vector3 position)
     {
-      // return new Vector2Int(
-      //   Mathf.RoundToInt(position.x / chunkDiameter),
-      //   Mathf.RoundToInt(position.y / chunkDiameter)
-      // );
-
       return new Vector2Int(
-        Mathf.RoundToInt((position.x + (chunkDiameter / 2)) / chunkDiameter),
-        Mathf.RoundToInt((position.y + (chunkDiameter / 2)) / chunkDiameter)
+        Mathf.RoundToInt(position.x / chunkDiameter),
+        Mathf.RoundToInt(position.y / chunkDiameter)
       );
+
+      // return new Vector2Int(
+      //   Mathf.RoundToInt((position.x + (chunkDiameter / 2)) / chunkDiameter),
+      //   Mathf.RoundToInt((position.y + (chunkDiameter / 2)) / chunkDiameter)
+      // );
     }
 
     public Chunk GetChunk(Vector2Int chunkKey)
