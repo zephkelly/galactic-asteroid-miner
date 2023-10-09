@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class ScavengerChaseState : IState
@@ -13,11 +14,10 @@ public class ScavengerChaseState : IState
   private Vector2 lastKnownPlayerPosition = Vector2.zero;
   private Vector2 weightedDirection = Vector2.zero;
 
-  private int numberOfRays = 24;
-  private float chaseRadius = 60f;
+  private int numberOfRays = 28;
+  private float chaseRadius = 100f;
   private float collisionCheckRadius = 8f;
   private float returnToIdleTimer = 0f;
-
   public ScavengerChaseState(ScavengerController scavenger, Transform playerTransform, Rigidbody2D scavengerRigid2D)
   {
     this.scavenger = scavenger;
@@ -87,49 +87,63 @@ public class ScavengerChaseState : IState
     {
       float angle = i * 2 * Mathf.PI / numberOfRays;
       Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-      RaycastHit2D hit = Physics2D.Raycast(scavengerTransform.position, direction, collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)), whichLayers);
 
-      Debug.Log(1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude));
+      float angleBetween = Vector2.Angle(direction, lastKnownPlayerPosition - (Vector2)scavengerTransform.position);
+      float weight = 1f - (angleBetween / 180f);
+
+      RaycastHit2D hit = Physics2D.Raycast(scavengerTransform.position, direction, collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * weight, whichLayers);
 
       if (hit.collider == null)
       {
-        //find the angle between the direction, and the lastknowPlayerPosition
-        float angleBetween = Vector2.Angle(direction, lastKnownPlayerPosition - (Vector2)scavengerTransform.position);
-        float weight = 1f - (angleBetween / 180f);
         scavenger.positiveAngles[i] = direction;
-        scavenger.positiveAngles[i].z = weight;
 
-        //the lower the weight, the shorter the raycast
-        Debug.DrawRay(scavengerTransform.position, direction * collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * weight , Color.green);
+        if (scavenger.positiveAngles[i].z == 0)
+        {
+          scavenger.positiveAngles[i].z = weight;
+        }
+        else
+        {
+          scavenger.positiveAngles[i].z = (scavenger.positiveAngles[i].z + weight) / 2;
+        }
       }
       else 
       {
-        scavenger.negativeAngles[i] = direction;
+        scavenger.positiveAngles[i] = direction;
 
-        float angleBetween = Vector2.Angle(direction, hit.centroid - (Vector2)scavengerTransform.position);
-        float weight = 1f - (angleBetween / 180f);
-
-        scavenger.negativeAngles[i].z = weight;
-        scavenger.negativeAngles[(i + 1 + numberOfRays) % numberOfRays].z = (scavenger.negativeAngles[(i + 1 + numberOfRays) % numberOfRays].z + (weight * 0.3f)) / 2;
-        scavenger.negativeAngles[(i + 1 + numberOfRays) % numberOfRays].z = (scavenger.negativeAngles[(i + 1 + numberOfRays) % numberOfRays].z + (weight * 0.3f)) / 2;
-        scavenger.negativeAngles[(i + 2 + numberOfRays) % numberOfRays].z = (scavenger.negativeAngles[(i + 2 + numberOfRays) % numberOfRays].z + (weight * 0.15f)) / 2;
-        scavenger.negativeAngles[(i + 2 + numberOfRays) % numberOfRays].z = (scavenger.negativeAngles[(i + 2 + numberOfRays) % numberOfRays].z + (weight * 0.15f)) / 2;
-        
-        Debug.DrawRay(scavengerTransform.position, direction * collisionCheckRadius * 0.1f, Color.red);
+        float normalizedDistance = 1f - (hit.distance / collisionCheckRadius);
+        scavenger.positiveAngles[i].z = -normalizedDistance; // This will be between 0 (far) and -1 (close)
       }
     }
 
-    float totalWeight = 0f;
     for (int i = 0; i < numberOfRays; i++)
     {
-      totalWeight += scavenger.positiveAngles[i].z;
+      if (scavenger.positiveAngles[i].z <= 0)
+      {
+        //on each index next to current index, disinhibit
+        scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z - 0.1f) / 2;
+        scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z - 0.1f) / 2;
+        scavenger.positiveAngles[(i + 2 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + 2 + numberOfRays) % numberOfRays].z - 0.4f) / 2;
+        scavenger.positiveAngles[(i - 2 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i - 2 + numberOfRays) % numberOfRays].z - 0.4f) / 2;
+
+        // scavenger.positiveAngles[(i + (numberOfRays / 2) + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + (numberOfRays / 2) + numberOfRays) % numberOfRays].z + 2f) / 2;
+      }
     }
 
-    totalWeight = totalWeight / numberOfRays;
     for (int i = 0; i < numberOfRays; i++)
     {
-      weightedDirection += (Vector2)scavenger.positiveAngles[i] * (scavenger.positiveAngles[i].z);
-      weightedDirection -= (Vector2)scavenger.negativeAngles[i] * (scavenger.negativeAngles[i].z);
+      if (scavenger.positiveAngles[i].z > 0.7)
+      {
+        Debug.DrawRay(scavengerTransform.position, (Vector2)scavenger.positiveAngles[i] * collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * scavenger.positiveAngles[i].z, Color.green);
+      }
+      else 
+      {
+        Debug.DrawRay(scavengerTransform.position, (Vector2)scavenger.positiveAngles[i] * collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * scavenger.positiveAngles[i].z, Color.red);
+      }
+    }
+   
+    for (int i = 0; i < numberOfRays; i++)
+    {
+      weightedDirection += (Vector2)scavenger.positiveAngles[i] * scavenger.positiveAngles[i].z;
     }
 
     weightedDirection.Normalize();
@@ -142,6 +156,7 @@ public class ScavengerChaseState : IState
 
     if (Vector2.Distance(scavengerTransform.position, playerTransform.position) > chaseRadius && returnToIdleTimer > 20f)
     {
+      returnToIdleTimer = 0f;
       scavenger.ChangeState(new ScavengerIdleState(scavenger));
     }
   }

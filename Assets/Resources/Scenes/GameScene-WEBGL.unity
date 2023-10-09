@@ -9058,6 +9058,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 543154920}
   m_CullTransparentMesh: 1
+--- !u!212 &560646368 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3761668487450831188, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
+  m_PrefabInstance: {fileID: 679979921}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &564948858
 GameObject:
   m_ObjectHideFlags: 0
@@ -10774,6 +10779,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 552012604753449322, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
+      propertyPath: scavengerSpriteRenderer
+      value: 
+      objectReference: {fileID: 560646368}
     - target: {fileID: 5669869464088341632, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
       propertyPath: m_Name
       value: Scavenger
@@ -31681,6 +31690,78 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: hugeTankCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: ionEngineCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: ionWeaponCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: largeTankCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: warpDriveCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: cobaltHullCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: darkWeaponCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: hyperDriveCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: mediumTankCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: darkoreHullCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: photonWeaponCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: plasmaWeaponCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: titaniumHullCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: impulseEngineCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: largeCargoBayCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: smallCargoBayCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: mediumCargoBayCost
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
+      propertyPath: stellariteHullCost
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8847222160136322753, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: m_LocalPosition.x
       value: -14.09

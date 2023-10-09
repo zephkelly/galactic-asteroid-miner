@@ -144,6 +144,7 @@ namespace zephkelly
       float ambientTemperature = starController.OrbitingBehaviour.GetThermalGradient(distanceToStar);
 
       shipConfiguration.SetAmbientTemperature = ambientTemperature;
+      Debug.Log(ambientTemperature);
     }
 
     private void FixedUpdate()
