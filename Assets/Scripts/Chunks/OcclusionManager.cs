@@ -11,7 +11,7 @@ namespace zephkelly
     private PrefabInstantiator instantiator;
 
     private Transform playerTransform;
-    private const int starOcclusionRadius = 320;   //Should make it the largest star radius + players viewport size
+    private const int starOcclusionRadius = 350;   //Should make it the largest star radius + players viewport size
     private const int asteroidOcclusionDistance = 80;
 
     Dictionary<Vector2Int, Chunk> currentActiveChunks = new Dictionary<Vector2Int, Chunk>();

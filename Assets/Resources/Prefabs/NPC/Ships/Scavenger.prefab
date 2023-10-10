@@ -10077,7 +10077,7 @@ GameObject:
   - component: {fileID: 5083416880733018965}
   - component: {fileID: 202037330794467110}
   - component: {fileID: 552012604753449322}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Scavenger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10212,7 +10212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 490cf7c2fca9fe94687f21d183140d0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scavengerSpriteRenderer: {fileID: 0}
+  scavengerSpriteRenderer: {fileID: 3761668487450831188}
   scavengerThrusterParticle: {fileID: 7175571070298795270}
   scavengerThrusterLight: {fileID: 1056114491304572297}
   positiveAngles:

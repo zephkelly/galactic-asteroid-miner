@@ -251,38 +251,6 @@ namespace zephkelly
       {
         Destroy(asteroid);
       }, true, 100, 200);
-
-      InitObjectPools();
-    }
-
-    private void InitObjectPools()
-    {
-      for (int i = 0; i < 150; i++)
-      {
-        switch(Random.Range(0, 6))
-        {
-          case 0:
-            var asteroidPickup = asteroidPickupPool.Get();
-            asteroidPickupPool.Release(asteroidPickup);
-            break;
-          case 1:
-            var asteroidSmall = asteroidSmallPool.Get();
-            asteroidSmallPool.Release(asteroidSmall);
-            break;
-          case 2:
-            var asteroidMedium = asteroidMediumPool.Get();
-            asteroidMediumPool.Release(asteroidMedium);
-            break;
-          case 3:
-            var asteroidLarge = asteroidLargePool.Get();
-            asteroidLargePool.Release(asteroidLarge);
-            break;
-          case 4:
-            var asteroidHuge = asteroidHugePool.Get();
-            asteroidHugePool.Release(asteroidHuge);
-            break;
-        }
-      }
     }
 
     public GameObject GetDepo(Depo _depoInfo)

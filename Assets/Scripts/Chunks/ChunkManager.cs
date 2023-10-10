@@ -73,7 +73,6 @@ namespace zephkelly
       shipStarCompass.UpdateCompass();
     }
 
-    int frameCounter = 0;
     private void Update()
     {
       if (playerTransform == null) return;
@@ -88,16 +87,10 @@ namespace zephkelly
 
         OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
         shipStarCompass.UpdateCompass();
-        frameCounter = 0;
       }
       else 
       {
-        if (frameCounter == 10)
-        {
-          OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
-          frameCounter = 0;
-        }
-        frameCounter++;
+        OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
       }
 
       playerLastChunkPosition = playerChunkPosition;

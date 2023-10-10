@@ -61,7 +61,7 @@ public class ScavengerChaseState : IState
 
   private void RaycastToPlayer() 
   {
-    RaycastHit2D hit = Physics2D.Raycast(scavengerTransform.position, playerTransform.position - scavengerTransform.position, chaseRadius, whichLayers);
+    RaycastHit2D hit = Physics2D.Raycast(scavengerTransform.position + (Vector3)scavengerTransform.up * 2f, playerTransform.position - scavengerTransform.position, chaseRadius, whichLayers);
 
     if (hit.collider == null) {
       return;
@@ -82,16 +82,21 @@ public class ScavengerChaseState : IState
   private void RaycastRadially()
   {
     scavenger.positiveAngles = new Vector3[numberOfRays];
+    Vector2 direction = Vector2.zero;
+    Vector2 rayStartPosition = Vector2.zero;
 
     for (int i = 0; i < numberOfRays; i++)
     {
       float angle = i * 2 * Mathf.PI / numberOfRays;
-      Vector2 direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+      direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+      direction.Normalize();
+
+      // rayStartPosition = (Vector2)scavengerTransform.position + (direction * 2);
 
       float angleBetween = Vector2.Angle(direction, lastKnownPlayerPosition - (Vector2)scavengerTransform.position);
-      float weight = 1f - (angleBetween / 180f);
+      float weight = Mathf.Pow(1f - (angleBetween / 180f), 2f);
 
-      RaycastHit2D hit = Physics2D.Raycast(scavengerTransform.position, direction, collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * weight, whichLayers);
+      RaycastHit2D hit = Physics2D.Raycast((Vector2)scavengerTransform.position, direction, collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * weight, whichLayers);
       scavenger.positiveAngles[i] = direction;
 
       if (hit.collider == null)
@@ -110,22 +115,20 @@ public class ScavengerChaseState : IState
       if (scavenger.positiveAngles[i].z <= 0)
       {
         //on each index next to current index, disinhibit
-        scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z - 0.8f) / 2;
-        scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z - 0.8f) / 2;
-        scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z - 0.2f) / 2;
-        scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z - 0.2f) / 2;
+        scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z - 0.6f) / 2;
+        scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z - 0.6f) / 2;
       }
     }
 
     for (int i = 0; i < numberOfRays; i++)
     {
-      if (scavenger.positiveAngles[i].z > 0.7)
+      if (scavenger.positiveAngles[i].z > 0.6)
       {
-        Debug.DrawRay(scavengerTransform.position, (Vector2)scavenger.positiveAngles[i] * collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * scavenger.positiveAngles[i].z, Color.green);
+        Debug.DrawRay((Vector2)scavengerTransform.position, (Vector2)scavenger.positiveAngles[i] * collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * scavenger.positiveAngles[i].z, Color.green);
       }
       else 
       {
-        Debug.DrawRay(scavengerTransform.position, (Vector2)scavenger.positiveAngles[i] * collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * scavenger.positiveAngles[i].z, Color.red);
+        Debug.DrawRay((Vector2)scavengerTransform.position, (Vector2)scavenger.positiveAngles[i] * collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * scavenger.positiveAngles[i].z, Color.red);
       }
     }
    
