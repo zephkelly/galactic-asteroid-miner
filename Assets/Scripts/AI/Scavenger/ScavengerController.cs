@@ -19,7 +19,9 @@ public class ScavengerController : MonoBehaviour
   [SerializeField] public Vector3[] negativeAngles = new Vector3[16];
 
   private int maxHealth = 100;
-  private int health = 100;
+  public int health { get; private set; } = 100;
+
+  public float scavengerSpeed { get; private set; } = 100f;
 
   private void Awake()
   {

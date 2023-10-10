@@ -46,6 +46,7 @@ public class ScavengerChaseState : IState
 
     RaycastToPlayer();
     RaycastRadially();
+
     ShouldReturnToIdleState();
   }
 
@@ -54,7 +55,7 @@ public class ScavengerChaseState : IState
     Vector2 lerpVector = Vector2.Lerp(scavengerTransform.up, weightedDirection, 0.7f);
     Vector2 visualLerpVector = Vector2.Lerp(scavengerTransform.up, weightedDirection, 0.15f);
 
-    scavengerRigid2D.AddForce(lerpVector * 100f, ForceMode2D.Force);
+    scavengerRigid2D.AddForce(lerpVector * scavenger.scavengerSpeed, ForceMode2D.Force);
     scavengerTransform.up = visualLerpVector;
   }
 
@@ -74,14 +75,13 @@ public class ScavengerChaseState : IState
     else
     {
       Debug.DrawRay(scavengerTransform.position, playerTransform.position - scavengerTransform.position, Color.red);
-      Debug.DrawRay(lastKnownPlayerPosition, Vector2.one, Color.blue);
+      Debug.DrawRay(lastKnownPlayerPosition, Vector2.one * 0.5f, Color.green);
     }
   }
 
   private void RaycastRadially()
   {
     scavenger.positiveAngles = new Vector3[numberOfRays];
-    scavenger.negativeAngles = new Vector3[numberOfRays];
 
     for (int i = 0; i < numberOfRays; i++)
     {
@@ -92,24 +92,14 @@ public class ScavengerChaseState : IState
       float weight = 1f - (angleBetween / 180f);
 
       RaycastHit2D hit = Physics2D.Raycast(scavengerTransform.position, direction, collisionCheckRadius * (1 + Mathf.InverseLerp(0, 10, scavengerRigid2D.velocity.magnitude)) * weight, whichLayers);
+      scavenger.positiveAngles[i] = direction;
 
       if (hit.collider == null)
       {
-        scavenger.positiveAngles[i] = direction;
-
-        if (scavenger.positiveAngles[i].z == 0)
-        {
-          scavenger.positiveAngles[i].z = weight;
-        }
-        else
-        {
-          scavenger.positiveAngles[i].z = (scavenger.positiveAngles[i].z + weight) / 2;
-        }
+        scavenger.positiveAngles[i].z = weight;
       }
       else 
       {
-        scavenger.positiveAngles[i] = direction;
-
         float normalizedDistance = 1f - (hit.distance / collisionCheckRadius);
         scavenger.positiveAngles[i].z = -normalizedDistance; // This will be between 0 (far) and -1 (close)
       }
@@ -120,12 +110,10 @@ public class ScavengerChaseState : IState
       if (scavenger.positiveAngles[i].z <= 0)
       {
         //on each index next to current index, disinhibit
-        scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z - 0.1f) / 2;
-        scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z - 0.1f) / 2;
-        scavenger.positiveAngles[(i + 2 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + 2 + numberOfRays) % numberOfRays].z - 0.4f) / 2;
-        scavenger.positiveAngles[(i - 2 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i - 2 + numberOfRays) % numberOfRays].z - 0.4f) / 2;
-
-        // scavenger.positiveAngles[(i + (numberOfRays / 2) + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + (numberOfRays / 2) + numberOfRays) % numberOfRays].z + 2f) / 2;
+        scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z - 0.8f) / 2;
+        scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z - 0.8f) / 2;
+        scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i + 1 + numberOfRays) % numberOfRays].z - 0.2f) / 2;
+        scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z = (scavenger.positiveAngles[(i - 1 + numberOfRays) % numberOfRays].z - 0.2f) / 2;
       }
     }
 
@@ -152,12 +140,15 @@ public class ScavengerChaseState : IState
 
   private void ShouldReturnToIdleState()
   {
-    returnToIdleTimer += Time.deltaTime;
-
-    if (Vector2.Distance(scavengerTransform.position, playerTransform.position) > chaseRadius && returnToIdleTimer > 20f)
+    if (Vector2.Distance(scavengerTransform.position, playerTransform.position) > chaseRadius)
     {
-      returnToIdleTimer = 0f;
-      scavenger.ChangeState(new ScavengerIdleState(scavenger));
+      returnToIdleTimer += Time.deltaTime;
+
+      if (returnToIdleTimer > 20f)
+      {
+        returnToIdleTimer = 0f;
+        scavenger.ChangeState(new ScavengerIdleState(scavenger));
+      }
     }
   }
 
