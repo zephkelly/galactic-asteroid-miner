@@ -3,7 +3,7 @@ using System.Collections;
 
 namespace zephkelly
 {
-  public class ParallaxStarfield : MonoBehaviour {
+  public class ParallaxGasCloud : MonoBehaviour {
 
     private ParticleSystem startfieldParticleSystem;
     private ParticleSystem.Particle[] stars;
@@ -16,9 +16,11 @@ namespace zephkelly
     [SerializeField] float starSpawnRadius = 100;
     [SerializeField] float parallaxFactor = 0.9f;
 
+    private Vector2 lastPosition = Vector2.zero;
+
     private float starDistanceSqr;
     private float starClipDistanceSqr;
-    [SerializeField] private static int particleZ = 2;
+    [SerializeField] private int particleZ = 2;
     
     //----------------------------------------------------------------------------------------------
 
@@ -31,19 +33,23 @@ namespace zephkelly
 
     private void Start () 
     {
-      CreateStars();
+      CreateCloud();
     }
 
-    private void CreateStars()
+    private void CreateCloud()
     {
       stars = new ParticleSystem.Particle[starsMax];
 
       for (int i = 0; i < starsMax; i++)
       {
-        stars[i].position = ((Vector3)Random.insideUnitCircle * starSpawnRadius) + cameraTransform.position;
+        stars[i].position = lastPosition + (Vector2)(((Vector3)Random.insideUnitCircle * starSpawnRadius) + cameraTransform.position) / 2;
         stars[i].position = new Vector3(stars[i].position.x, stars[i].position.y, particleZ);
-        stars[i].startColor = new Color(1,1,1, 1);
+        stars[i].rotation3D = new Vector3(0, 0, Random.Range(0, 360));
+        //orange startColor
+        stars[i].startColor = new Color(1, 1, 1, Random.Range(0.05f, 0.2f));
         stars[i].startSize = Random.Range(starSizeMin, starSizeMax);
+
+        lastPosition = stars[i].position;
       }
 
       startfieldParticleSystem.SetParticles(stars, stars.Length);

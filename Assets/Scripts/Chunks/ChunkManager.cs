@@ -176,11 +176,11 @@ namespace zephkelly
             Chunk newChunkInfo = new Chunk(lazyGridKey, chunkDiameter, newChunk);
             chunkNumber++;
 
-            //add a collider the size of the chunk to the chunk gameobject
-            newChunk.transform.position = newChunkInfo.Position;
-            BoxCollider2D chunkCollider = newChunk.AddComponent<BoxCollider2D>();
-            chunkCollider.isTrigger = true;
-            chunkCollider.size = new UnityEngine.Vector2(chunkDiameter, chunkDiameter);
+            // //add a collider the size of the chunk to the chunk gameobject
+            // newChunk.transform.position = newChunkInfo.Position;
+            // BoxCollider2D chunkCollider = newChunk.AddComponent<BoxCollider2D>();
+            // chunkCollider.isTrigger = true;
+            // chunkCollider.size = new UnityEngine.Vector2(chunkDiameter, chunkDiameter);
 
             chunkPopulator.PopulateLargeBodies(newChunkInfo);
 

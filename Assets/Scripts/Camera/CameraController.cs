@@ -24,6 +24,7 @@ namespace zephkelly
     //Parallaxing-layers----------------------------------------------------------------------------
 
     [SerializeField] ParallaxStarfield[] starfieldsLayers;
+    [SerializeField] ParallaxGasCloud[] gasCloudLayers;
     [SerializeField] DepoParallax depoParallax;
 
     //----------------------------------------------------------------------------------------------
@@ -58,7 +59,7 @@ namespace zephkelly
       playerVelocityMagnitude = playerRigidbody.velocity.magnitude;
 
       if (playerVelocityMagnitude > (playerVelocityMagnitude * 0.85f)) {
-        mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, 22 + (playerVelocityMagnitude * 0.2f), 0.1f);
+        mainCamera.orthographicSize = Mathf.Lerp(mainCamera.orthographicSize, 25 + (playerVelocityMagnitude * 0.2f), 0.1f);
       }
     }
 
@@ -82,6 +83,12 @@ namespace zephkelly
       for (int i = 0; i < starfieldsLayers.Length; i++)
       {
         starfieldsLayers[i].Parallax(cameraLastPosition);
+      }
+
+      //Gas clouds
+      foreach(ParallaxGasCloud gasCloud in gasCloudLayers)
+      {
+        gasCloud.Parallax(cameraLastPosition);
       }
 
       //Home depo
