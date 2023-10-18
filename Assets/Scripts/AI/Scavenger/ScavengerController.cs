@@ -8,6 +8,7 @@ public class ScavengerController : MonoBehaviour
   private StateMachine stateMachine;
   private Rigidbody2D scavengerRigid2D;
   [SerializeField] private SpriteRenderer scavengerSpriteRenderer;
+  [SerializeField] public ParticleSystem scavengerLaserParticleSystem;
 
   private GameObject playerObject;
   private Transform playerTransform;
@@ -15,13 +16,10 @@ public class ScavengerController : MonoBehaviour
   public ParticleSystem scavengerThrusterParticle;
   public Light2D scavengerThrusterLight;
 
-  [SerializeField] public Vector3[] positiveAngles = new Vector3[16];
-  [SerializeField] public Vector3[] negativeAngles = new Vector3[16];
-
   private int maxHealth = 100;
   public int health { get; private set; } = 100;
 
-  public float scavengerSpeed { get; private set; } = 100f;
+  public float scavengerSpeed = 100f;
 
   private void Awake()
   {
@@ -48,7 +46,7 @@ public class ScavengerController : MonoBehaviour
     if (scavengerRigid2D.velocity.magnitude < 0.1f) scavengerRigid2D.velocity = Vector2.zero;
   }
 
-  private int TakeDamage(int damage)
+  public int TakeDamage(int damage)
   {
     health -= damage;
     if (health <= 0)
@@ -77,6 +75,7 @@ public class ScavengerController : MonoBehaviour
       stateMachine.ChangeState(new ScavengerChaseState(this, playerTransform, scavengerRigid2D));
     }
   }
+  
   private void OnCollisionEnter2D(Collision2D other)
   {
     GameObject otherObject = other.gameObject;

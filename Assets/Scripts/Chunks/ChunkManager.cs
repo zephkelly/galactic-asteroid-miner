@@ -68,6 +68,8 @@ namespace zephkelly
 
       ChunkCreator(playerLastChunkPosition);
       SetActiveChunks(playerChunkPosition);
+
+      activeChunks[playerChunkPosition].SetDepo(new Depo(activeChunks[playerChunkPosition], DepoType.Standard));
       
       OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
       shipStarCompass.UpdateCompass();

@@ -66,7 +66,7 @@ namespace zephkelly
     {
       if (target == null) return;
 
-      Vector3 targetVector = target.position + currentOffsetAmount + (mouseLerpPosition * mouseInterpolateDistance * (playerVelocityMagnitude * 0.05f));      
+      Vector3 targetVector = target.position + currentOffsetAmount + (mouseLerpPosition * mouseInterpolateDistance * (playerVelocityMagnitude * 0.06f));     
 
       targetVector.z = cameraTransform.position.z;
 
@@ -85,7 +85,7 @@ namespace zephkelly
       }
 
       //Home depo
-      depoParallax.Parallax(cameraLastPosition);
+      // depoParallax.Parallax(cameraLastPosition);
     }
 
     public void ChangeFocus(Transform newFocus) => target = newFocus;

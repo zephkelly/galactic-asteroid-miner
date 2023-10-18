@@ -222,9 +222,6 @@ namespace zephkelly
 
           if (activeAsteroids.ContainsKey(asteroid.Key)) activeAsteroids.Remove(asteroid.Key);
           if (lazyAsteroids.ContainsKey(asteroid.Key)) lazyAsteroids.Remove(asteroid.Key);
-
-          GetActiveAsteroids();
-          GetLazyAsteroids();
         }
 
         asteoridToRemove.Clear();
@@ -237,9 +234,6 @@ namespace zephkelly
           if (asteroid.Key == null) continue;
           asteroid.Key.UpdateCurrentPosition();
           asteroid.Value.Asteroids.Add(asteroid.Key);
-
-          GetActiveAsteroids();
-          GetLazyAsteroids();
         }
 
         asteroidToAdd.Clear();

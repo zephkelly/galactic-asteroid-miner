@@ -70,6 +70,10 @@ namespace zephkelly
 
         OcclusionManager.Instance.RemoveAsteroid.Add(asteroidInfo, asteroidInfo.ParentChunk);
       }
+      else if (hitObject.CompareTag("Enemy"))
+      {
+        hitObject.GetComponentInParent<ScavengerController>().TakeDamage(10);
+      }
 
       //Fade the explosion light over time and destroy when done
       StartCoroutine(Explosion(0.5f, hitPoint));
