@@ -11,7 +11,6 @@ namespace zephkelly
     private Vector2 chunkWorldPosition;
     private bool hasBeenPopulated;
 
-    private GameObject attachedObject;
     private Bounds chunkBounds;
 
     private List<Asteroid> asteroids = new List<Asteroid>();
@@ -28,7 +27,6 @@ namespace zephkelly
     public Vector2 Position { get => chunkWorldPosition; }
 
     public Bounds ChunkBounds { get => chunkBounds; }
-    public GameObject AttachedObject { get => attachedObject; }
 
     public List<Asteroid> Asteroids { 
       get => asteroids; 
@@ -44,12 +42,11 @@ namespace zephkelly
 
     //------------------------------------------------------------------------------
 
-    public Chunk(Vector2Int _chunkKey, int _chunkDiameter, GameObject _object)
+    public Chunk(Vector2Int _chunkKey, int _chunkDiameter)
     {
       chunkKey = _chunkKey;
       chunkWorldPosition = chunkKey * _chunkDiameter;
 
-      attachedObject = _object;
       chunkBounds =  new Bounds(chunkWorldPosition, Vector2.one * _chunkDiameter);
 
       hasStar = false;

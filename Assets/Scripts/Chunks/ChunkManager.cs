@@ -86,15 +86,10 @@ namespace zephkelly
         DeactivateActiveChunks();
         ChunkCreator(playerChunkPosition);
         SetActiveChunks(playerChunkPosition);
-
-        OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
-        shipStarCompass.UpdateCompass();
-      }
-      else 
-      {
-        OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
       }
 
+      shipStarCompass.UpdateCompass();
+      OcclusionManager.Instance.UpdateChunks(activeChunks, lazyChunks);
       playerLastChunkPosition = playerChunkPosition;
     }
 
@@ -104,11 +99,6 @@ namespace zephkelly
         Mathf.RoundToInt(position.x / chunkDiameter),
         Mathf.RoundToInt(position.y / chunkDiameter)
       );
-
-      // return new Vector2Int(
-      //   Mathf.RoundToInt((position.x + (chunkDiameter / 2)) / chunkDiameter),
-      //   Mathf.RoundToInt((position.y + (chunkDiameter / 2)) / chunkDiameter)
-      // );
     }
 
     public Chunk GetChunk(Vector2Int chunkKey)
@@ -131,7 +121,6 @@ namespace zephkelly
       {
         foreach (var activeChunk in activeChunks)
         {
-          activeChunk.Value.AttachedObject.SetActive(false);
           inactiveChunks.Add(activeChunk.Key, activeChunk.Value);
         }
 
@@ -143,7 +132,6 @@ namespace zephkelly
       {
         foreach (var lazyChunk in lazyChunks)
         {
-          lazyChunk.Value.AttachedObject.SetActive(false);
           inactiveChunks.Add(lazyChunk.Key, lazyChunk.Value);
         }
 
@@ -169,18 +157,8 @@ namespace zephkelly
           }
           else
           {
-            GameObject newChunk = new GameObject("Chunk " + chunkNumber);
-            newChunk.transform.parent = this.transform;
-            // newChunk.SetActive(false);
-
-            Chunk newChunkInfo = new Chunk(lazyGridKey, chunkDiameter, newChunk);
+            Chunk newChunkInfo = new Chunk(lazyGridKey, chunkDiameter);
             chunkNumber++;
-
-            // //add a collider the size of the chunk to the chunk gameobject
-            // newChunk.transform.position = newChunkInfo.Position;
-            // BoxCollider2D chunkCollider = newChunk.AddComponent<BoxCollider2D>();
-            // chunkCollider.isTrigger = true;
-            // chunkCollider.size = new UnityEngine.Vector2(chunkDiameter, chunkDiameter);
 
             chunkPopulator.PopulateLargeBodies(newChunkInfo);
 
@@ -207,7 +185,6 @@ namespace zephkelly
           if (lazyChunks.ContainsKey(activeGridKey))
           {
             Chunk lazyChunk = lazyChunks[activeGridKey];
-            lazyChunk.AttachedObject.SetActive(true);
 
             chunkPopulator.PopulateSmallBodies(lazyChunk);
 

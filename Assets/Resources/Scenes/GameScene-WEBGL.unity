@@ -18050,12 +18050,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 931842595}
-  starsMax: 40
+  cloudsMax: 30
   starSizeMin: 18
   starSizeMax: 28
   starSpawnRadius: 80
   parallaxFactor: 48
-  perlinScale: 5
+  perlinScale: 3
   perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!199 &931842597
@@ -30022,12 +30022,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1479046119}
-  starsMax: 30
-  starSizeMin: 18
-  starSizeMax: 28
+  cloudsMax: 12
+  starSizeMin: 24
+  starSizeMax: 32
   starSpawnRadius: 80
-  parallaxFactor: 49
-  perlinScale: 1
+  parallaxFactor: 49.5
+  perlinScale: 0.5
   perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!199 &1479046121
@@ -53347,12 +53347,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1883260934}
-  starsMax: 5
+  cloudsMax: 5
   starSizeMin: 12
   starSizeMax: 22
   starSpawnRadius: 80
   parallaxFactor: 40
-  perlinScale: 15
+  perlinScale: 7
   perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!1 &1892463191
@@ -60831,12 +60831,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 2006634002}
-  starsMax: 10
+  cloudsMax: 40
   starSizeMin: 14
   starSizeMax: 22
   starSpawnRadius: 80
   parallaxFactor: 45
-  perlinScale: 10
+  perlinScale: 6
   perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!4 &2006634002

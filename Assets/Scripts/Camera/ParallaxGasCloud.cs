@@ -20,6 +20,7 @@ namespace zephkelly
 
     private Gradient gasGradient;
     [SerializeField] private float perlinScale = 20.0f; // Determines how stretched the noise is. You can adjust this value.
+    [SerializeField] private float countPerlinScale = 1f;
     [SerializeField] private Vector2 perlinOffset = new Vector2(200, 200);
 
     private Vector2 lastPosition = Vector2.zero;
@@ -49,15 +50,17 @@ namespace zephkelly
     {
       gasGradient = new Gradient();
 
-      GradientColorKey[] colorKey = new GradientColorKey[5];
+      GradientColorKey[] colorKey = new GradientColorKey[6];
       colorKey[0].color = Color.blue; 
-      colorKey[0].time = 0.6f;
+      colorKey[0].time = 0.5f;
       colorKey[1].color = Color.cyan; 
-      colorKey[1].time = 0.7f;
+      colorKey[1].time = 0.6f;
       colorKey[2].color = Color.red; 
-      colorKey[2].time = 0.8f;
+      colorKey[2].time = 0.7f;
       colorKey[3].color = new Color(0.1f, 0.1f, 0.8f); 
-      colorKey[3].time = 0.9f;
+      colorKey[3].time = 0.8f;
+      colorKey[3].color = new Color(0.1f, 0.1f, 0.1f); 
+      colorKey[3].time = 0.95f;
       colorKey[4].color = Color.black; 
       colorKey[4].time = 1f;
 
@@ -93,6 +96,7 @@ namespace zephkelly
     private void Update() 
     {
       Vector3 cameraParallaxDelta = (Vector2)(cameraTransform.position - parallaxLayer.position);
+      currentClouds = GetCurrentCloudsCount();
 
       for (int i = 0; i < currentClouds; i++)
       {
@@ -121,9 +125,20 @@ namespace zephkelly
 
     private int GetCurrentCloudsCount()
     {
-      float sinValue = Mathf.Abs(Mathf.Sin(cameraTransform.position.x * perlinScale + perlinOffset.x));
-      if (sinValue > 0.5f) sinValue = 0f;
-      return (int)(sinValue * 100);
+      float density = Mathf.PerlinNoise(cameraTransform.position.x * countPerlinScale + perlinOffset.x, cameraTransform.position.y * countPerlinScale + perlinOffset.y);
+    
+      if (density < 0.3f) // Arbitrary threshold. Adjust as needed.
+      {
+          return 0; // No clouds
+      }
+      else if (density < 0.7f)
+      {
+          return (int)(cloudsMax * 0.3f); // Sparse clouds
+      }
+      else
+      {
+          return (int)(cloudsMax * 0.8f); // Dense clouds
+      }
     }
 
     private Vector2 GetNewPosition()
