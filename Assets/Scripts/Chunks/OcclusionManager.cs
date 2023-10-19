@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,8 +12,10 @@ namespace zephkelly
     private PrefabInstantiator instantiator;
 
     private Transform playerTransform;
-    private const int starOcclusionRadius = 350;   //Should make it the largest star radius + players viewport size
-    private const int asteroidOcclusionDistance = 80;
+    private const int starOcclusionRadius = 300;
+    private const int asteroidOcclusionDistance = 90;
+    private const int starOcclusionRadiusSqr = starOcclusionRadius * starOcclusionRadius;
+    private const int asteroidOcclusionDistanceSqr = asteroidOcclusionDistance * asteroidOcclusionDistance;
 
     Dictionary<Vector2Int, Chunk> currentActiveChunks = new Dictionary<Vector2Int, Chunk>();
     Dictionary<Vector2Int, Chunk> currentLazyChunks = new Dictionary<Vector2Int, Chunk>();
@@ -79,38 +82,35 @@ namespace zephkelly
       GetActiveAsteroids();
     }
 
+    private void UpdateDictionary<TKey>(
+      Dictionary<TKey, Chunk> activeDict, 
+      Dictionary<Vector2Int, Chunk> chunks, 
+      Func<Chunk, bool> hasKeyPredicate, 
+      Func<Chunk, TKey> keySelector)
+    { 
+      foreach (var chunk in chunks)
+      {
+        if (!hasKeyPredicate(chunk.Value)) continue;
+        var key = keySelector(chunk.Value);
+        if (!activeDict.ContainsKey(key))
+          activeDict.Add(key, chunk.Value);
+      }
+    }
+
     private void GetActiveDepos()
     {
-      foreach (var lazyChunk in currentLazyChunks)
-      {
-        if (!lazyChunk.Value.HasDepo) continue;
-        if (activeDepos.ContainsKey(lazyChunk.Value.ChunkDepo)) continue;
-        activeDepos.Add(lazyChunk.Value.ChunkDepo, lazyChunk.Value);
-      }
-
-      foreach (var activeChunk in currentActiveChunks)
-      {
-        if (!activeChunk.Value.HasDepo) continue;
-        if (activeDepos.ContainsKey(activeChunk.Value.ChunkDepo)) continue;
-        activeDepos.Add(activeChunk.Value.ChunkDepo, activeChunk.Value);
-      }
+      UpdateDictionary(activeDepos, currentLazyChunks, 
+        chunk => chunk.HasDepo, chunk => chunk.ChunkDepo);
+      UpdateDictionary(activeDepos, currentActiveChunks, 
+        chunk => chunk.HasDepo, chunk => chunk.ChunkDepo);
     }
 
     private void GetActiveStars()
     {
-      foreach (var lazyChunk in currentLazyChunks)
-      {
-        if (!lazyChunk.Value.HasStar) continue;
-        if (activeStars.ContainsKey(lazyChunk.Value.ChunkStar)) continue;
-        activeStars.Add(lazyChunk.Value.ChunkStar, lazyChunk.Value);
-      }
-
-      foreach (var activeChunk in currentActiveChunks)
-      {
-        if (!activeChunk.Value.HasStar) continue;
-        if (activeStars.ContainsKey(activeChunk.Value.ChunkStar)) continue;
-        activeStars.Add(activeChunk.Value.ChunkStar, activeChunk.Value);
-      }
+      UpdateDictionary(activeStars, currentLazyChunks, 
+        chunk => chunk.HasStar, chunk => chunk.ChunkStar);
+      UpdateDictionary(activeStars, currentActiveChunks, 
+        chunk => chunk.HasStar, chunk => chunk.ChunkStar);
     }
 
     private void GetLazyAsteroids()
@@ -130,58 +130,53 @@ namespace zephkelly
 
     private void GetActiveAsteroids()
     {
-      List<Chunk> starChunks = new List<Chunk>();
-
       foreach (var activeChunk in currentActiveChunks)
       {
-        if (activeChunk.Value.HasStar) {
-          starChunks.Add(activeChunk.Value);
-          continue;
-        }
+        // if (activeChunk.Value.HasStar) {
+        //   Vector2Int gridKey = new Vector2Int(activeChunk.Key.x -1, activeChunk.Key.y -1);
+
+        //   for (int y = 0; y < 3; y++)
+        //   {
+        //     for (int x = 0; x < 3; x++)
+        //     {
+        //       if (currentLazyChunks.ContainsKey(gridKey))
+        //       {
+        //         if (currentLazyChunks[gridKey].Asteroids.Count == 0) continue;
+
+        //         foreach (var lazyAsteroid in currentLazyChunks[gridKey].Asteroids)
+        //         {
+        //           if (activeAsteroids.ContainsKey(lazyAsteroid)) continue;
+        //           activeAsteroids.Add(lazyAsteroid, currentLazyChunks[gridKey]);
+        //         }
+        //       }
+
+        //       if (currentActiveChunks.ContainsKey(gridKey))
+        //       {
+        //         if (currentActiveChunks[gridKey].Asteroids.Count == 0) continue;
+
+        //         foreach (var activeAsteroid in currentActiveChunks[gridKey].Asteroids)
+        //         {
+        //           if (activeAsteroids.ContainsKey(activeAsteroid)) continue;
+        //           activeAsteroids.Add(activeAsteroid, currentActiveChunks[gridKey]);
+        //         }
+        //       }
+
+        //       gridKey.x++;
+        //     }
+
+        //     gridKey.x -= 3;
+        //     gridKey.y++;
+        //   }
+    
+        //   continue;
+        // }
+
         if (activeChunk.Value.Asteroids.Count == 0) continue;
 
         foreach (var activeAsteroid in activeChunk.Value.Asteroids)
         {
           if (activeAsteroids.ContainsKey(activeAsteroid)) continue;
           activeAsteroids.Add(activeAsteroid, activeChunk.Value);
-        }
-      }
-
-      foreach (var starChunk in starChunks)
-      {
-        Vector2Int gridKey = new Vector2Int(starChunk.Key.x -5, starChunk.Key.y -5);
-
-        for (int y = 0; y < 5; y++)
-        {
-          for (int x = 0; x < 5; x++)
-          {
-            if (currentLazyChunks.ContainsKey(gridKey))
-            {
-              if (currentLazyChunks[gridKey].Asteroids.Count == 0) continue;
-
-              foreach (var lazyAsteroid in currentLazyChunks[gridKey].Asteroids)
-              {
-                if (activeAsteroids.ContainsKey(lazyAsteroid)) continue;
-                activeAsteroids.Add(lazyAsteroid, currentLazyChunks[gridKey]);
-              }
-            }
-
-            if (currentActiveChunks.ContainsKey(gridKey))
-            {
-              if (currentActiveChunks[gridKey].Asteroids.Count == 0) continue;
-
-              foreach (var activeAsteroid in currentActiveChunks[gridKey].Asteroids)
-              {
-                if (activeAsteroids.ContainsKey(activeAsteroid)) continue;
-                activeAsteroids.Add(activeAsteroid, currentActiveChunks[gridKey]);
-              }
-            }
-
-            gridKey.x++;
-          }
-
-          gridKey.x -= 5;
-          gridKey.y++;
         }
       }
     }
@@ -265,7 +260,7 @@ namespace zephkelly
           starObject.GetComponent<StarController>().SetStarInfo(activeStar.Key);
         }
 
-        if (starDistance < starOcclusionRadius)
+        if (starDistance < starOcclusionRadiusSqr)
         {
           if (activeStar.Key.AttachedObject.activeSelf) continue;
           activeStar.Key.AttachedObject.SetActive(true);
@@ -309,19 +304,15 @@ namespace zephkelly
 
         var asteroidDistance = FastDistance(lazyAsteroid.Key.CurrentPosition, playerTransform.position);
 
-        if (asteroidDistance < asteroidOcclusionDistance)
+        if (asteroidDistance < asteroidOcclusionDistanceSqr)
         {
-          if (lazyAsteroid.Key.AttachedObject == null) continue;
           if (lazyAsteroid.Key.RendererStatus) continue;
           lazyAsteroid.Key.IsRendered(true);
-          lazyAsteroid.Key.UpdateCurrentPosition();
         }
         else
         {
-          if (lazyAsteroid.Key.AttachedObject == null) continue;
           if (!lazyAsteroid.Key.RendererStatus) continue;
           lazyAsteroid.Key.IsRendered(false);
-          lazyAsteroid.Key.UpdateCurrentPosition();
         }
       }
     }
@@ -332,7 +323,7 @@ namespace zephkelly
       {
         var asteroidDistance = FastDistance(activeAsteroid.Key.CurrentPosition, playerTransform.position);
 
-        if (asteroidDistance < asteroidOcclusionDistance)
+        if (asteroidDistance < asteroidOcclusionDistanceSqr)
         {
           //Make object if null
           if (activeAsteroid.Key.AttachedObject == null)
@@ -341,6 +332,7 @@ namespace zephkelly
             activeAsteroid.Key.SetObject(asteroidObject);
           } 
           else {
+            activeAsteroid.Key.IsRendered(true);
             activeAsteroid.Key.UpdateCurrentPosition();
           }
         }
@@ -357,12 +349,13 @@ namespace zephkelly
       }
     }
 
+    //This returns the fast distance squared between two points, need to compare against the distance squared
     private float FastDistance(Vector2 _point1, Vector2 _point2)
     {
       var x = _point1.x - _point2.x;
       var y = _point1.y - _point2.y;
 
-      return Mathf.Sqrt(x * x + y * y);
+      return x * x + y * y;
     }
   }
 }

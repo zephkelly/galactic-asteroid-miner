@@ -121,8 +121,12 @@ namespace zephkelly
       Chunk parentChunk = parentAsteroid.ParentChunk;
       AsteroidType rubbleType = parentAsteroid.Type;
 
-      //Spawn 2 children
-      for (int i = 0; i < 2; i++)
+      int regularChance = Random.Range(1,3);
+      int rareChance = Random.Range(1, 10);
+      int finalCount = rareChance >= 9 ? 3 : regularChance;
+
+      //Spawn 2-3 children
+      for (int i = 0; i < finalCount; i++)
       {
         //Get a random position in the parent asteroid bounds
         newRandomBoundsPosition = new Vector2(
@@ -131,7 +135,7 @@ namespace zephkelly
 
         switch (parentSize)
         {
-          case AsteroidSize.ExtraLarge:
+          case AsteroidSize.Huge:
             newSize = AsteroidSize.Large;
 
             newAsteroidInfo = CreateAsteroidInfo();

@@ -11,8 +11,7 @@ namespace zephkelly
     Small,
     Medium,
     Large,
-    Huge,
-    ExtraLarge
+    Huge
   }
 
   public enum AsteroidType
