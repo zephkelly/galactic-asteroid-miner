@@ -8586,6 +8586,7 @@ MonoBehaviour:
   - {fileID: 1883260938}
   - {fileID: 2006634001}
   - {fileID: 931842596}
+  - {fileID: 1479046120}
   depoParallax: {fileID: 0}
 --- !u!1 &521539905
 GameObject:
@@ -18049,11 +18050,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 931842595}
-  starsMax: 20
+  starsMax: 40
   starSizeMin: 18
   starSizeMax: 28
   starSpawnRadius: 80
   parallaxFactor: 48
+  perlinScale: 5
+  perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!199 &931842597
 ParticleSystemRenderer:
@@ -29990,7 +29993,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1479046119
 Transform:
   m_ObjectHideFlags: 0
@@ -30019,11 +30022,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1479046119}
-  starsMax: 20
+  starsMax: 30
   starSizeMin: 18
   starSizeMax: 28
   starSpawnRadius: 80
-  parallaxFactor: -40
+  parallaxFactor: 49
+  perlinScale: 1
+  perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!199 &1479046121
 ParticleSystemRenderer:
@@ -53342,11 +53347,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1883260934}
-  starsMax: 15
+  starsMax: 5
   starSizeMin: 12
   starSizeMax: 22
   starSpawnRadius: 80
   parallaxFactor: 40
+  perlinScale: 15
+  perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!1 &1892463191
 GameObject:
@@ -60824,11 +60831,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 2006634002}
-  starsMax: 15
+  starsMax: 10
   starSizeMin: 14
   starSizeMax: 22
   starSpawnRadius: 80
   parallaxFactor: 45
+  perlinScale: 10
+  perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!4 &2006634002
 Transform:
