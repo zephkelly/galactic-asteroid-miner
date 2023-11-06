@@ -18,13 +18,21 @@ namespace zephkelly
 
   public class Pointer : MonoBehaviour
   {
-    private PointerType pointerType;
-    private GameObject _pointerObject;
     [SerializeField] TextMeshProUGUI _text;
     [SerializeField] Image _pointerImage;
     [SerializeField] Transform _pointerImageContainer;
+    private PointerType pointerType;
+    private GameObject _pointerObject;
+
+    private Vector2 screenPosition;
+    private Vector2 lastScreenPosition;
+    private Vector2 moveDirection;
 
     public Vector2 PointerWorldPosition { get; private set;}
+    public Vector2 ScreenPosition { get => screenPosition; }
+    public Vector2 LastScreenPosition { get => lastScreenPosition; }
+    public Vector2 MoveDirection { get => moveDirection; }
+
     public float PointerDistance { get; private set;}
     public PointerType PointerType { get => pointerType; }
     public Image PointerImage { get => _pointerImage; }
@@ -43,6 +51,22 @@ namespace zephkelly
       PointerDistance = distance;
       distance = (int)distance / 3;
       _text.text = $"{distance.ToString()}Km";
+    }
+
+    public void UpdateScreenPosition(Vector2 cappedPosition)
+    {
+      lastScreenPosition = screenPosition;
+      screenPosition = cappedPosition;
+    }
+
+    public void UpdateMoveDirection()
+    {
+      moveDirection = (screenPosition - lastScreenPosition).normalized;
+    }
+
+    public void ResetMoveDirection()
+    {
+      moveDirection = Vector2.zero;
     }
 
     public void SetupStarPointer(StarType starType)

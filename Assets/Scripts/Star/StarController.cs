@@ -17,10 +17,11 @@ namespace zephkelly
     private Transform starTransform;
     private Vector2 starPosition;
 
+    public Chunk ParentChunk { get; private set; }
+
     //------------------------------------------------------------------------------
 
     public Star StarInfo { get => starInfo; }
-    public Chunk ParentChunk { get => starInfo.ParentChunk; }
     public StarOrbitingBehaviour OrbitingBehaviour { get => starOrbitingBehaviour; }
     public Vector2 StarPosition { get => starPosition; }
     public float StarRadius { get => starInfo.MaxOrbitRadius; }

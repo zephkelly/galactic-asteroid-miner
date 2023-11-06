@@ -39,6 +39,8 @@ namespace zephkelly
     public Dictionary<Asteroid, Chunk> RemoveAsteroid { get => asteoridToRemove; set => asteoridToRemove = value; }
     public Dictionary<Asteroid, Chunk> AddAsteroid { get => asteroidToAdd; set => asteroidToAdd = value; }
 
+    public void UpdatePlayerTransform(Transform newPlayer) => playerTransform = newPlayer;
+
     private void Awake()
     {
       if (Instance == null) {
@@ -47,8 +49,6 @@ namespace zephkelly
         Destroy(this);
       }
     }
-
-    public void UpdatePlayerTransform(Transform newPlayer) => playerTransform = newPlayer;
 
     private void Start()
     {
@@ -70,14 +70,13 @@ namespace zephkelly
       GetLazyAsteroids();
       GetActiveAsteroids();
 
+      if (playerTransform == null) return;
+
       UpdateChunkContents();
       ActiveDepoOcclusion();
       ActiveStarOcclusion();
       LazyAsteroidOcclusion();
       ActiveAsteroidOcclusion();
-
-      Debug.Log("Active: " + activeAsteroids.Count);
-      Debug.Log("Lazy: " + lazyAsteroids.Count);
     }
 
     private void UpdateDictionary<TKey>(
@@ -245,7 +244,8 @@ namespace zephkelly
       {
         if (activeDepo.Key.AttachedObject == null)
         {
-          var depoObject = instantiator.GetDepo(activeDepo.Key);
+          // if (instantiator == null) continue;
+          GameObject depoObject = instantiator.GetDepo(activeDepo.Key);
           activeDepo.Key.SetDepoObject(depoObject);
         }
       }
@@ -296,7 +296,6 @@ namespace zephkelly
     {
       foreach (var lazyAsteroid in lazyAsteroids)
       {
-        //Make object if null
         if (lazyAsteroid.Key.AttachedObject == null)
         {
           var asteroidObject = instantiator.GetAsteroid(lazyAsteroid.Key);
@@ -313,13 +312,11 @@ namespace zephkelly
         {
           if (lazyAsteroid.Key.RendererStatus) continue;
           lazyAsteroid.Key.IsRendered(true);
-          Debug.LogWarning("Star asteroid displayed!");
         }
         else
         {
           if (lazyAsteroid.Key.RendererStatus == false) continue;
           lazyAsteroid.Key.IsRendered(false);
-          Debug.LogWarning("Star asteroid hidden!");
         }
       }
     }

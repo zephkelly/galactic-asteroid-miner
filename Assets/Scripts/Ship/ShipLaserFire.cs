@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+using zephkelly.AI.Scavenger;
 
 namespace zephkelly
 {
@@ -73,6 +74,11 @@ namespace zephkelly
       else if (hitObject.CompareTag("Enemy"))
       {
         hitObject.GetComponentInParent<ScavengerController>().TakeDamage(10);
+      }
+      else if (hitObject.CompareTag("Player"))
+      {
+        Debug.Log("Scavenger hit player!");
+        hitObject.GetComponent<ShipController>().ShipConfig.TakeDamage(4);
       }
 
       //Fade the explosion light over time and destroy when done

@@ -2,32 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ScavengerIdleState : IState
+namespace zephkelly.AI.Scavenger
 {
-  private ScavengerController scavenger;
-
-  public ScavengerIdleState(ScavengerController scavenger)
+  public class ScavengerIdleState : IState
   {
-    this.scavenger = scavenger;
-  }
+    private ScavengerController scavenger;
 
-  public void Enter()
-  {
-    Debug.Log("Scavenger is idle!");
-  }
+    public ScavengerIdleState(ScavengerController scavenger)
+    {
+      this.scavenger = scavenger;
+    }
 
-  public void Execute()
-  {
+    public void Enter()
+    {
+      Debug.Log("Scavenger is idle!");
+    }
 
-  }
+    public void Execute()
+    {
 
-  public void FixedUpdate()
-  {
+    }
 
-  }
+    public void FixedUpdate()
+    {
 
-  public void Exit()
-  {
+    }
 
+    public void Exit()
+    {
+
+    }
   }
 }

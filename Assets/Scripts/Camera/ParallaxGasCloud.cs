@@ -40,7 +40,7 @@ namespace zephkelly
 
     private void Start () 
     {
-      currentClouds = cloudsMax;
+      currentClouds = cloudsMax ;
 
       InitializeGradient();
       CreateCloud();
@@ -51,15 +51,15 @@ namespace zephkelly
       gasGradient = new Gradient();
 
       GradientColorKey[] colorKey = new GradientColorKey[6];
-      colorKey[0].color = Color.blue; 
+      colorKey[0].color = new Color(0.8f, 0.4f, 0.08f); 
       colorKey[0].time = 0.5f;
-      colorKey[1].color = Color.cyan; 
+      colorKey[1].color = new Color(0.5f, 0.2f, 0.08f);  
       colorKey[1].time = 0.6f;
-      colorKey[2].color = Color.red; 
+      colorKey[2].color = new Color(0.8f, 0.2f, 0.15f); 
       colorKey[2].time = 0.7f;
       colorKey[3].color = new Color(0.1f, 0.1f, 0.8f); 
       colorKey[3].time = 0.8f;
-      colorKey[3].color = new Color(0.1f, 0.1f, 0.1f); 
+      colorKey[3].color = new Color(0.2f, 0.2f, 0.2f); 
       colorKey[3].time = 0.95f;
       colorKey[4].color = Color.black; 
       colorKey[4].time = 1f;
@@ -77,7 +77,7 @@ namespace zephkelly
 
     private void CreateCloud()
     {
-      cloudParticles = new ParticleSystem.Particle[cloudsMax];
+      cloudParticles = new ParticleSystem.Particle[cloudsMax * 4];
 
       for (int i = 0; i < currentClouds; i++)
       {
@@ -104,7 +104,7 @@ namespace zephkelly
 
         if((starPosition - (Vector2)cameraTransform.position).sqrMagnitude > starDistanceSqr) 
         {
-          cloudParticles[i].position = (Vector2)(Random.insideUnitCircle.normalized * starSpawnRadius) + (Vector2)cameraParallaxDelta;
+          cloudParticles[i].position = GetNewPosition() + (Vector2)cameraParallaxDelta;
           cloudParticles[i].startColor = GetPerlinColor();
         }
       }
@@ -127,18 +127,16 @@ namespace zephkelly
     {
       float density = Mathf.PerlinNoise(cameraTransform.position.x * countPerlinScale + perlinOffset.x, cameraTransform.position.y * countPerlinScale + perlinOffset.y);
     
-      if (density < 0.3f) // Arbitrary threshold. Adjust as needed.
+      if (density < 0.7f) // Arbitrary threshold. Adjust as needed.
       {
           return 0; // No clouds
       }
-      else if (density < 0.7f)
+      else if (density < 0.8f)
       {
           return (int)(cloudsMax * 0.3f); // Sparse clouds
       }
-      else
-      {
-          return (int)(cloudsMax * 0.8f); // Dense clouds
-      }
+
+      return (int)(cloudsMax * 4f); // Dense clouds
     }
 
     private Vector2 GetNewPosition()

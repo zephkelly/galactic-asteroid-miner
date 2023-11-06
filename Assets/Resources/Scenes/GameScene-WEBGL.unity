@@ -10844,6 +10844,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 552012604753449322, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
+      propertyPath: scavengerLaserFire
+      value: 
+      objectReference: {fileID: 1936932356}
     - target: {fileID: 5669869464088341632, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
       propertyPath: m_Name
       value: Scavenger
@@ -10891,7 +10895,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3637848183562159587, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1936932356}
   m_SourcePrefab: {fileID: 100100000, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
 --- !u!1 &695687268
 GameObject:
@@ -18050,12 +18057,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 931842595}
-  cloudsMax: 30
+  cloudsMax: 100
   starSizeMin: 18
   starSizeMax: 28
   starSpawnRadius: 80
-  parallaxFactor: 48
-  perlinScale: 3
+  parallaxFactor: 45
+  perlinScale: 0.2
+  countPerlinScale: 1
   perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!199 &931842597
@@ -30022,12 +30030,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1479046119}
-  cloudsMax: 12
+  cloudsMax: 200
   starSizeMin: 24
   starSizeMax: 32
   starSpawnRadius: 80
   parallaxFactor: 49.5
   perlinScale: 0.5
+  countPerlinScale: 1
   perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!199 &1479046121
@@ -41622,7 +41631,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: mediumTankCost
-      value: 0
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: darkoreHullCost
@@ -41630,7 +41639,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: photonWeaponCost
-      value: 0
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: plasmaWeaponCost
@@ -41638,11 +41647,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: titaniumHullCost
-      value: 0
+      value: 1200
       objectReference: {fileID: 0}
     - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: impulseEngineCost
-      value: 0
+      value: 1200
       objectReference: {fileID: 0}
     - target: {fileID: 8123636021447081114, guid: 0adecb785bbeeeb48a1c30184058354e, type: 3}
       propertyPath: largeCargoBayCost
@@ -53347,12 +53356,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 1883260934}
-  cloudsMax: 5
+  cloudsMax: 65
   starSizeMin: 12
   starSizeMax: 22
   starSpawnRadius: 80
-  parallaxFactor: 40
-  perlinScale: 7
+  parallaxFactor: 10
+  perlinScale: 0.05
+  countPerlinScale: 1
   perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!1 &1892463191
@@ -54518,6 +54528,31 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1936932352 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3637848183562159587, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
+  m_PrefabInstance: {fileID: 679979921}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &1936932353 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 8673389611067832784, guid: beb052826a8ab2a4ba446e0731a5c7fc, type: 3}
+  m_PrefabInstance: {fileID: 679979921}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1936932356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1936932352}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f80c5774afe6865489be16c3e5e5a7fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  laserParticleSystem: {fileID: 1936932353}
+  explosionPrefab: {fileID: 9040800380259856629, guid: 86fb0dd900976b7479798859db239e30, type: 3}
+  explosionForce: 4
 --- !u!1 &1953812757
 GameObject:
   m_ObjectHideFlags: 0
@@ -60831,12 +60866,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parallaxLayer: {fileID: 2006634002}
-  cloudsMax: 40
+  cloudsMax: 120
   starSizeMin: 14
   starSizeMax: 22
   starSpawnRadius: 80
-  parallaxFactor: 45
-  perlinScale: 6
+  parallaxFactor: 34
+  perlinScale: 0.1
+  countPerlinScale: 1
   perlinOffset: {x: 0, y: 0}
   particleZ: 2
 --- !u!4 &2006634002

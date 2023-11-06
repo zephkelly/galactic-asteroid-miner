@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using System.ComponentModel.Design;
+using System.Linq;
 
-namespace zephkelly
+namespace zephkelly.UI
 {
   public class ShipStarCompass : MonoBehaviour
   {
@@ -19,8 +19,7 @@ namespace zephkelly
     private float borderX = 25f;
     private float borderY = 20f;
 
-    private Dictionary<Vector2, Pointer> pointers =
-      new Dictionary<Vector2, Pointer>();
+    private Dictionary<Vector2, Pointer> pointers = new Dictionary<Vector2, Pointer>();
 
     private Pointer closestBasePointer;
     private Pointer closestStarPointer;
@@ -99,6 +98,8 @@ namespace zephkelly
             float cappedPositionY = Mathf.Clamp(screenPosition.y, borderY, Screen.height - (borderY + 10f));
 
             cappedScreenPosition = new Vector2(cappedPositionX, cappedPositionY);
+            pointerInfo.UpdateScreenPosition(cappedScreenPosition);
+            pointerInfo.UpdateMoveDirection();
           }
         }
 
@@ -110,9 +111,51 @@ namespace zephkelly
           }
           else
           {
-            pointerInfo.PointerObject.transform.position = cappedScreenPosition;
+            foreach (var otherPointer in pointers)
+            {
+              if (otherPointer.Value == pointerInfo) continue;
+              var distance = Vector2.Distance(otherPointer.Value.ScreenPosition, cappedScreenPosition);
+
+              var lastMoveDirectionOfOtherPointer = otherPointer.Value.MoveDirection;
+
+              if (distance < 50f)
+              {
+                if (lastMoveDirectionOfOtherPointer == Vector2.zero)
+                {
+                  pointerInfo.UpdateScreenPosition(cappedScreenPosition + pointerInfo.MoveDirection * 50f);
+                  pointerInfo.PointerObject.transform.position = cappedScreenPosition + pointerInfo.MoveDirection * 50f;
+
+                  pointerInfo.ResetMoveDirection();
+                  // otherPointer.Value.UpdateMoveDirection();
+                }
+                else
+                {
+                  otherPointer.Value.UpdateScreenPosition(otherPointer.Value.ScreenPosition + lastMoveDirectionOfOtherPointer * 50f);
+                  otherPointer.Value.PointerObject.transform.position = otherPointer.Value.ScreenPosition + lastMoveDirectionOfOtherPointer * 50f;
+
+                  otherPointer.Value.ResetMoveDirection();
+                  // pointerInfo.UpdateMoveDirection();
+                }
+              }
+              else
+              {
+                pointerInfo.PointerObject.transform.position = cappedScreenPosition;
+              }
+            }
           }
         }
+
+        // void MovePointer()
+        // {
+        //   if (isOnScreen)
+        //   {
+        //     pointerInfo.PointerObject.transform.position = screenPosition;
+        //   }
+        //   else
+        //   {
+        //     pointerInfo.PointerObject.transform.position = cappedScreenPosition;
+        //   }
+        // }
 
         void CheckForClosestPointers()
         {
@@ -148,13 +191,13 @@ namespace zephkelly
     public void UpdateCompass()
     {
       ResetCurrentPointers();
-      GetActiveStars();
+      GetActiveObjects();
       // GetActiveDepos();
     }
 
     private void ResetCurrentPointers()
     {
-      var disposablePointers = new List<Vector2>();
+      List<Vector2> disposablePointers = new List<Vector2>();
 
       foreach (var pointerStar in pointers)
       {
@@ -170,7 +213,7 @@ namespace zephkelly
       }
     }
 
-    private void GetActiveStars()
+    private void GetActiveObjects()
     {
       //lazyStars
       foreach (var lazyChunk in ChunkManager.Instance.LazyChunks)
